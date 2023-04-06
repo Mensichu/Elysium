@@ -1,17 +1,6 @@
 
-/*import { requireAsync } from "@handlebars/require-async";
 
-requireAsync('../controllers/products.controller').then((module) => {
-  const getComboMarca = module.getComboMarca;
-  // Utiliza la función getComboMarca aquí
-}).catch((err) => {
-  console.error(err);
-});
-*/
-
-
-//import {createNewProduct} from '../../controllers/products.controller'
-
+//import Toastify from 'toastify-js';
 //Vehiculos
 //Al instante
 
@@ -524,9 +513,11 @@ window.addEventListener('load',()=>{
 
         guardarBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if(filaSeleccionada != null && filaSeleccionada!=''){
+            if(filaSeleccionada != null && filaSeleccionada!='' && !validacion()){
                 ejecutarAnimacion(abrirModal1,1);
                 //abrirModal1();
+            }else{
+
             }
             
         });
@@ -591,7 +582,7 @@ window.addEventListener('load',()=>{
 
         nuevoBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            ejecutarAnimacion(abrirModal2,2);
+            if(!validacion())ejecutarAnimacion(abrirModal2,2);
             //abrirModal2();
         });
 
@@ -804,12 +795,14 @@ window.addEventListener('load',()=>{
 
         function validacion(){
             const Datos = obtenerDatos();
+            const valido = true;
             console.log(Datos);
             //Combo Marca
             const comboMarca = document.getElementById('comboMarca');
             if(comboMarca.value == null || comboMarca.value.trim()=="0"){
                 comboMarca.classList.add('is-invalid');
                 comboMarca.classList.remove('is-valid');
+                valido = false
             }else{
                 comboMarca.classList.add('is-valid');
                 comboMarca.classList.remove('is-invalid');
@@ -819,6 +812,7 @@ window.addEventListener('load',()=>{
             if(alias.value==null || alias.value.trim()==""){
                 alias.classList.add('is-invalid');
                 alias.classList.remove('is-valid');
+                valido = false
             }else{
                 alias.classList.add('is-valid');
                 alias.classList.remove('is-invalid');
@@ -828,6 +822,7 @@ window.addEventListener('load',()=>{
             if(comboModelo.value == null || comboModelo.value.trim()=="0"){
                 comboModelo.classList.add('is-invalid');
                 comboModelo.classList.remove('is-valid');
+                valido = false
             }else{
                 comboModelo.classList.add('is-valid');
                 comboModelo.classList.remove('is-invalid');
@@ -837,6 +832,7 @@ window.addEventListener('load',()=>{
             if(modelo.value==null || modelo.value.trim()==""){
                 modelo.classList.add('is-invalid');
                 modelo.classList.remove('is-valid');
+                valido = false
             }else{
                 modelo.classList.add('is-valid');
                 modelo.classList.remove('is-invalid');
@@ -845,7 +841,8 @@ window.addEventListener('load',()=>{
             const año = document.getElementById("Datos-Año");
             if(año.value==null || año.value.trim()=="" || año.value< 1900 || año.value> 2050){
                 año.classList.add('is-invalid');
-                año.classList.remove('is-valid');
+                año.classList.remove('is-valid');                
+                valido = false
             }else{
                 año.classList.add('is-valid');
                 año.classList.remove('is-invalid');
@@ -855,6 +852,7 @@ window.addEventListener('load',()=>{
             if(cilindraje.value==null || cilindraje.value.trim()=="" || cilindraje.value< 0.0 || cilindraje.value> 10){
                 cilindraje.classList.add('is-invalid');
                 cilindraje.classList.remove('is-valid');
+                valido = false
             }else{
                 cilindraje.classList.add('is-valid');
                 cilindraje.classList.remove('is-invalid');
@@ -864,6 +862,7 @@ window.addEventListener('load',()=>{
             if(capacidadMotor.value==null || capacidadMotor.value.trim()=="" || capacidadMotor.value< 0 || capacidadMotor.value> 20){
                 capacidadMotor.classList.add('is-invalid');
                 capacidadMotor.classList.remove('is-valid');
+                valido = false
             }else{
                 capacidadMotor.classList.add('is-valid');
                 capacidadMotor.classList.remove('is-invalid');
@@ -873,10 +872,13 @@ window.addEventListener('load',()=>{
             if(capacidadCaja.value==null || capacidadCaja.value.trim()=="" || capacidadCaja.value< 0 || capacidadCaja.value> 20){
                 capacidadCaja.classList.add('is-invalid');
                 capacidadCaja.classList.remove('is-valid');
+                valido = false
             }else{
                 capacidadCaja.classList.add('is-valid');
                 capacidadCaja.classList.remove('is-invalid');
             }
+
+            return valido;
         }
 
 
@@ -948,10 +950,21 @@ window.addEventListener('load',()=>{
         }
 
 
+
+        
+
         const btnPrueba = document.getElementById('btnPrueba');
 
         btnPrueba.addEventListener('click',(e)=>{
-            validacion();
+            //validacion();
+            // crea un mensaje emergente
+            Toastify({
+                text: "Este es un mensaje emergente",
+                duration: 3000, // duración en milisegundos
+                gravity: "bottom", // posición en pantalla (top, bottom, left, right)
+                position: "center", // alineación del mensaje (center, left, right)
+                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)", // color de fondo
+                }).showToast();
         });
 
 
