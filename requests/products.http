@@ -1,0 +1,79 @@
+@api = http://localhost:4000/products
+
+
+GET {{api}}
+
+###
+POST {{api}}
+Content-Type: application/json
+
+{
+    "name": "SILLA GAMING",
+    "description": "silla gamer corsair",
+    "quantity": 3
+}
+
+###
+GET {{api}}/8
+
+
+###
+DELETE {{api}}/6
+
+
+###
+GET {{api}}/count
+
+
+
+###
+PUT {{api}}/2
+Content-Type: application/json
+
+{
+    "name": "PRODUCTO UPDATED",
+    "description": "descripcion updated",
+    "quantity": 11
+}
+
+
+@api1 = http://localhost:4000/Auto
+
+###
+GET {{api1}}/4
+
+
+
+@api2 = http://localhost:4000/modificarAuto
+
+###
+PUT {{api2}}/4
+Content-Type: application/json
+
+{
+    "Marca": 3,
+    "Modelo": "Hiluxa",
+    "Alias": "Hilux",
+    "Año": 1994,
+    "Cilindraje": "1.6",
+    "Consumo_Motor":4,
+    "Consumo_Caja":1,
+    "Combustible": true
+  }
+
+@api3 = http://localhost:4000/nuevoAuto/
+
+###
+POST {{api3}}
+Content-Type: application/json
+
+{
+    "Marca": 3,
+    "Modelo": "TEST",
+    "Año": 1994,
+    "Cilindraje": "1.6",
+    "Consumo_Motor":4,
+    "Consumo_Caja":1,
+    "Combustible": true
+  }
+
