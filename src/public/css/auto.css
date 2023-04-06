@@ -1,0 +1,197 @@
+:root{
+    --ancho:200px;
+}
+
+
+/* Estilos para el cuadro modal */
+.modal {
+    visibility: hidden;
+    display: block;
+    position: fixed;
+    z-index: 3;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    opacity: 0;
+    transition: visibility 0.2s,opacity 0.1s ease-in 0s;
+}
+
+.modal.show {
+    visibility: visible;
+    opacity: 1;
+  }
+
+/* Estilos para el contenido del cuadro modal */
+.modal-content {
+    /*background-color: #414040;*/
+    margin: 15% auto;/*
+    padding: 20px;*/
+    border: 1px solid #505050;
+    width: 500px;
+    max-width: 500px;
+    transition: visibility 0.2s,opacity 0.1s ease-in 0s;
+}
+
+
+
+/* Estilos para los botones */
+.modal-text {
+    width: 100%;
+    margin: 10px auto;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #000;
+    font-size: 16px;
+    cursor: pointer;
+    justify-self: center;
+    
+}
+
+.modal-button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 6px;
+    /*background-color: #2195f3a4;*/
+    width: 180px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    
+}
+
+.modal-button-new {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.modal-text:hover {
+    cursor: text;
+}
+
+.modal-button:hover {
+    background-color: #0b7dda;
+}
+
+
+
+.table-info-selected {
+    background-color: blue;
+  }
+
+
+
+
+  .showDelay2{
+    visibility: hidden;
+    position: relative;
+    opacity: 0;
+    height: 0;
+    transition: visibility 0s,opacity 0.5s ease-in-out 0.1s;
+    
+}
+
+
+.showNow2{
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Se agrega el scroll a la tabla */
+.tabla-con-scroll {
+    max-height: 780px;
+    overflow: auto;
+  }
+
+
+  thead tr {
+    position: sticky;
+    z-index: 2;
+    top: 0;
+    background-color: #444444;
+    padding-top: 0;
+  }
+
+
+
+
+.cambio-tamañoSel {
+    border-radius: 20px;
+    transform: scale(1.01);
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .cambio-tamañoSel2 {
+    
+    transform: scale(1.01);
+    transition: transform 0.2s ease-in-out;
+    border-radius: 50%;
+  }
+
+
+.cambio-tamaño{
+    border-radius: 20px;
+    transform: scale(1.01);
+    transition: transform 0.2s ease-in-out 0.4s;
+}
+
+.cambioColor{
+    animation-name: filaActualizada;
+    animation-duration: 1.8s;
+    /*color: white;*/
+}
+
+@keyframes filaActualizada{
+    0%{
+        background-color: #00BC8C;
+    }35%{
+        background-color: #00BC8C;
+    }100%{
+        background-color: #3498DB;
+    }
+
+}
+
+
+
+/* ANIMACION DE BOTON */
+
+
+  .circuloOrig {
+    position: fixed;
+    transition: all 0.3s ease-out;
+    top: calc(100% + 50px); /* Posición final al final del eje vertical */
+    left: 50%; /* Centrar horizontalmente */
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #3E59F3;
+    z-index: 2;
+  }
+
+
+  .circuloAnim {
+    position: fixed;
+    transition: all 0.3s ease-out;
+    border-radius: 5px;
+    border: 1px solid #505050;
+    background-color: #414040;
+    width: 10px;
+    height: 10px;
+    top: 50%; /* Posición final al final del eje vertical */
+    left: 50%; /* Centrar horizontalmente */
+    
+    z-index: 2;
+  }
+  

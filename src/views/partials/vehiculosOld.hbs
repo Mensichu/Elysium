@@ -1,0 +1,60 @@
+
+<link rel="stylesheet" href="/css/styleCombo.css">
+    
+    <div id="comboVehiculos">
+        <nav id="subMenu" class="subMenu">
+        <div class="textoSeleccionado">Placas</div>
+        <ul>
+            <li><a id="si" class="active" href="../vehiculos">Placas</a></li>
+            <li><a id="si" href="../vehiculos/autos">Autos</a></li>
+        </ul>
+    </nav>
+    </div>
+    
+    
+
+<style>
+    nav a:nth-child(2){
+        width: 16%;
+        left: 0;
+        background-color: #3e59f3;
+        border-radius: 8px;
+    }
+</style>
+
+
+<script>
+    window.addEventListener('load',()=>{
+        const navSubMenu = document.querySelector('.subMenu');
+
+        navSubMenu.addEventListener('click',(e)=>{
+            e.preventDefault();
+            const cond1 = navSubMenu.classList.contains("_expand");
+            const cond2 = e.target.tagName == 'A';
+            if(!cond1)navSubMenu.classList.toggle("_expand");
+
+            if(cond1 && cond2){
+                navSubMenu.classList.toggle("_expand")
+                document.querySelector(".active").classList.remove("active");
+                e.target.classList.add('active');
+            };
+            const seleccion= e.target.textContent;
+            document.querySelector('.textoSeleccionado').textContent= cond2?seleccion:"";
+            
+        });
+
+        const body = document.getElementsByTagName('body');
+        body[0].addEventListener('click',(e)=>{
+            
+            if(e.target.id == 'cuerpo'){
+                navSubMenu.classList.remove("_expand");
+                const activo = document.querySelector('.active');
+                document.querySelector('.textoSeleccionado').textContent= activo.textContent;
+                //console.log(e.target.id)
+            }
+            
+        });
+    
+    });
+</script>
+{{> pagos}}

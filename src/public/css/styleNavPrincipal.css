@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:500&display=swap');
+
+:root{
+    --itemVariable: 6;
+    --anchoItem: 16.667%;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat",sans-serif;
+    
+}
+
+#idNavigation{
+    background: #3d4f61;
+    padding: 10px;
+    padding-top: 0px;
+}
+
+.divTitulo{
+    width: 100%;
+    align-items: center;
+    
+}
+
+.titulo{
+    text-align: center;
+}
+
+nav#idNavPrincipal{
+    margin: 0px auto 0;
+
+    position:relative;
+    width:60%;
+    height:40px;
+    background-color: #385b7e;
+    border-radius: 8px;
+    font-size: 0;
+}
+
+nav#idNavPrincipal a{
+    line-height: 40px;
+    height: 100%;
+    font-size: 16px;
+    font-weight: 400;
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+    width: var(--anchoItem);
+}
+
+nav#idNavPrincipal .animation{
+    position: absolute;
+    height: 100%;
+    top:0;
+    z-index: 0;
+    transition: all .5s ease 0s;
+    border-radius: 8px;
+}
+
+
+nav#idNavPrincipal .item1:hover~.animation{
+    width: var(--anchoItem);
+    left: 0%;
+    background-color: #1abc9c;
+    border-radius: 8px;
+    
+}
+
+nav#idNavPrincipal .item2:hover~.animation{
+    width: var(--anchoItem);
+    left: 16.667%;
+    background-color: #3e59f3;
+}
+
+
+nav#idNavPrincipal .item3:hover~.animation{
+    width: var(--anchoItem);
+    left: 33.334%;
+    background-color: #eb4e10;
+    
+}
+
+nav#idNavPrincipal .item4:hover~.animation{
+    width: var(--anchoItem);
+    left: 50.001%;
+    background-color: #2dc571;
+}
+
+nav#idNavPrincipal .item5:hover~.animation{
+    width: var(--anchoItem);
+    left: 66.668%;
+    background-color: #b96a24;
+}
+
+nav#idNavPrincipal .item6:hover~.animation{
+    width: var(--anchoItem);
+    left: 83.335%;
+    background-color: #1c8fdb;
+}
+
+
+
+
+
+
+
+
+
+
+nav#idNavPrincipal .start-item1{
+    width: var(--anchoItem);
+    left: 0%;
+    background-color: #1abc9c;
+    border-radius: 8px;
+    
+}
+
+nav#idNavPrincipal .start-item2{
+    width: var(--anchoItem);
+    left: 16.667%;
+    background-color: #3e59f3;
+}
+
+
+nav#idNavPrincipal .start-item3{
+    width: var(--anchoItem);
+    left: 33.334%;
+    background-color: #eb4e10;
+    
+}
+
+nav#idNavPrincipal .start-item4{
+    width: var(--anchoItem);
+    left: 50.001%;
+    background-color: #2dc571;
+}
+
+nav#idNavPrincipal .start-item5{
+    width: var(--anchoItem);
+    left: 66.668%;
+    background-color: #b96a24;
+}
+
+nav#idNavPrincipal .start-item6{
+    width: var(--anchoItem);
+    left: 83.335%;
+    background-color: #1c8fdb;
+}
