@@ -450,12 +450,10 @@ window.addEventListener('load',()=>{
             if (xhr.status === 200) {
                 const response = JSON.parse(xhr.responseText);
                 console.log("Me llego el id generado: "+response.id);
-                //cargarlo en el combobox sin hacer una consulta extra
-                //cargarComboMarca(response.id);
-                //idSeleccionar(response.id)
                 data.idMarca= response.id;
                 nuevaMarcaCombo(data)
             } else {
+                toast("Error con el servidor", "toastColorError");
                 console.log('Error al modificar la marca');
             }
             };
@@ -469,7 +467,18 @@ window.addEventListener('load',()=>{
         const btnGuardarAliasMarca = document.getElementById('btn-GuardarAlias');
 
         btnGuardarAliasMarca.addEventListener('click', (e)=>{
-            modificarAliasMarca();
+            //Alias
+            const alias = document.getElementById("Datos-Alias");
+            if(alias.value==null || alias.value.trim()==""){
+                alias.classList.add('is-invalid');
+                alias.classList.remove('is-valid');
+                //toast
+                toast("Llene el campo alias", "toastColorError");
+            }else{
+                alias.classList.add('is-valid');
+                alias.classList.remove('is-invalid');
+                modificarAliasMarca();
+            }
         });
 
         function modificarAliasMarca() {
@@ -486,12 +495,10 @@ window.addEventListener('load',()=>{
             if (xhr.status === 200) {
                 //Una vez confirmado de parte del servidor
                 const response = JSON.parse(xhr.responseText);
-                //Enviamos los datos y retornan como la filaModificada (tr)
-                //const filaModificada = datosAFila(data);
-                //Enviamos a actualizar la fila existente mediante su id
-                //actualizarFilaTabla(filaModificada);
                 console.log(response);
+                toast("Alias de marca actualizado", "toastColorSuccess");
             } else {
+                toast("Error con el servidor", "toastColorError");
                 console.log('Error al modificar el alias de la marca');
             }
             };
@@ -513,12 +520,17 @@ window.addEventListener('load',()=>{
 
         guardarBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if(filaSeleccionada != null && filaSeleccionada!='' && !validacion()){
-                ejecutarAnimacion(abrirModal1,1);
-                //abrirModal1();
+            if(filaSeleccionada != null && filaSeleccionada!=''){
+                if(validacion()){
+                    ejecutarAnimacion(abrirModal1,1);
+                }else{
+                    //toast
+                    toast("Llene todos los campos en rojo!", "toastColorError");
+                }
             }else{
-
+                toast("Vuelva a seleccionar la fila", "toastColorError");
             }
+            
             
         });
 
@@ -559,7 +571,9 @@ window.addEventListener('load',()=>{
                 //Enviamos a actualizar la fila existente mediante su id
                 actualizarFilaTabla(filaModificada);
                 console.log(response);
+                toast("Modelo guardado", "toastColorSuccess");
             } else {
+                toast("Error con el servidor", "toastColorError");
                 console.log('Error al modificar el modelo');
             }
             };
@@ -582,8 +596,12 @@ window.addEventListener('load',()=>{
 
         nuevoBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if(!validacion())ejecutarAnimacion(abrirModal2,2);
-            //abrirModal2();
+            if(validacion()){
+                ejecutarAnimacion(abrirModal2,2)
+            }else{
+                //toast
+                toast("Llene todos los campos en rojo!", "toastColorError");
+            }
         });
 
         confirmarNuevo.addEventListener('click',(e)=>{
@@ -624,8 +642,9 @@ window.addEventListener('load',()=>{
                 nuevaFilaTabla(filaNueva);
                 //seleccionTabla(response.id);
                 console.log("Me llego el id generado: "+response.id);
-                //idSeleccionar(response.id)
+                toast("Modelo agregado", "toastColorSuccess");
             } else {
+                toast("Error con el servidor", "toastColorError");
                 console.log('Error al agregar nuevo modelo');
             }
             };
@@ -795,7 +814,7 @@ window.addEventListener('load',()=>{
 
         function validacion(){
             const Datos = obtenerDatos();
-            const valido = true;
+            let valido = true;
             console.log(Datos);
             //Combo Marca
             const comboMarca = document.getElementById('comboMarca');
@@ -822,6 +841,7 @@ window.addEventListener('load',()=>{
             if(comboModelo.value == null || comboModelo.value.trim()=="0"){
                 comboModelo.classList.add('is-invalid');
                 comboModelo.classList.remove('is-valid');
+                //toast("Campo combo modelo no valido", "toastColorError");
                 valido = false
             }else{
                 comboModelo.classList.add('is-valid');
@@ -958,15 +978,22 @@ window.addEventListener('load',()=>{
         btnPrueba.addEventListener('click',(e)=>{
             //validacion();
             // crea un mensaje emergente
-            Toastify({
-                text: "Este es un mensaje emergente",
-                duration: 3000, // duración en milisegundos
-                gravity: "bottom", // posición en pantalla (top, bottom, left, right)
-                position: "center", // alineación del mensaje (center, left, right)
-                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)", // color de fondo
-                }).showToast();
+            
         });
 
+
+        function toast(mensaje,colorClass){
+            Toastify({
+                text: mensaje+" ",
+                duration: 3000, // duración en milisegundos
+                gravity: "bottom", // posición en pantalla (top, bottom, left, right)
+                position: "right", // alineación del mensaje (center, left, right)
+                close:true,
+                className: colorClass,
+                //background: "radial-gradient(circle, #46b000, #46b0008a)" // color de fondo
+                //"linear-gradient(to right, #00b09b, #96c93d)", // color de fondo
+                }).showToast();
+        }
 
     }
 

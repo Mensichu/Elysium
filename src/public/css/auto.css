@@ -109,7 +109,7 @@
 
 /* Se agrega el scroll a la tabla */
 .tabla-con-scroll {
-    max-height: 780px;
+    max-height: 750px;
     overflow: auto;
   }
 
@@ -193,5 +193,13 @@
     left: 50%; /* Centrar horizontalmente */
     
     z-index: 2;
-  }
+    }
   
+
+    .toastColorSuccess{
+        background: radial-gradient(ellipse, #00b09b, #00b09bde)  
+    }
+
+    .toastColorError{
+        background: radial-gradient(ellipse, #db2f2f, #db2f2fe1)  
+    }
