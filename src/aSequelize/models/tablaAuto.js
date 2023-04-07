@@ -1,0 +1,46 @@
+import {DataTypes} from 'sequelize'
+import {sequelize} from '../database/database'
+
+
+export const crearTablaAuto = sequelize.define('Auto',{
+    id:{
+        type: DataTypes.INTEGER,
+        primaryKey:true,
+        autoIncrement: true
+    },
+    nom_auto:{
+        type: DataTypes.STRING(50),
+        allowNull: false
+    },
+    ano:{
+        type: DataTypes.INTEGER,
+        allowNull: false
+
+    },
+    cilindraje:{
+        type: DataTypes.FLOAT,
+        allowNull: false
+
+    },
+    consumo_motor:{
+        type: DataTypes.FLOAT,
+        allowNull: false
+
+    },
+    consumo_caja:{
+        type: DataTypes.FLOAT,
+        allowNull: false
+
+    },
+    combustible:{
+        type: DataTypes.BOOLEAN,
+        defaultValue:false
+    },
+    estado:{
+        type: DataTypes.BOOLEAN,
+        defaultValue:true
+    }
+},{
+    //habilita la creacion createAt updateAt
+    timestamps: true
+})
