@@ -2,7 +2,7 @@ import {DataTypes} from 'sequelize'
 import {sequelize} from '../database/database'
 
 
-export const crearTablaAuto = sequelize.define('Auto',{
+export const tablaAuto = sequelize.define('Auto',{
     id:{
         type: DataTypes.INTEGER,
         primaryKey:true,

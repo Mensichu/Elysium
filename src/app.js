@@ -7,6 +7,7 @@ const {engine} = require('express-handlebars');
 const morgan = require('morgan');
 
 import productsRoutes from './routes/products.routes';
+import autoRoutes from './routes/auto.routes';
 
 
 const app = express();
@@ -34,6 +35,7 @@ app.use(express.urlencoded({extended: false}));//reciba desde from en html
 
 
 app.use(productsRoutes);
+app.use(autoRoutes);
 
 // Public
 app.use(express.static(path.join(__dirname, 'public')));

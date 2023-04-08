@@ -1,9 +1,9 @@
 import {DataTypes} from 'sequelize'
 import {sequelize} from '../database/database'
 //Importamos tablas dependientes de Marca
-import {crearTablaAuto} from './tablaAuto'
+import {tablaAuto} from './tablaAuto'
 
-export const crearTablaMarca = sequelize.define('Marca',{
+export const tablaMarca = sequelize.define('Marca',{
     id:{
         type: DataTypes.INTEGER,
         primaryKey:true,
@@ -28,12 +28,12 @@ export const crearTablaMarca = sequelize.define('Marca',{
 })
 
 
-crearTablaMarca.hasMany(crearTablaAuto,{
+tablaMarca.hasMany(tablaAuto,{
     foreignKey: 'id_marca',
     sourceKey: 'id'
 })
 
-crearTablaAuto.belongsTo(crearTablaMarca,{
+tablaAuto.belongsTo(tablaMarca,{
     foreignKey: 'id_marca',
     targetId: 'id'
 })
