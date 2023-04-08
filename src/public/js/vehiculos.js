@@ -73,44 +73,44 @@ window.addEventListener('load',()=>{
 
         cargarComboMarca(0);
         //Combo Marca
-        function cargarComboMarca(id){
+        async function cargarComboMarca(id){
+            try{
+                const data = await $.ajax({
+                    url: '/comboMarcas',
+                    method: 'GET',
+                });
+                // Almacena la lista de marcas de vehículos en un objeto en el archivo 'vehiculos.js'
+                var marcas = data;
+    
+                console.log("Numero de marcas en el combo marca: "+marcas.length); // Imprime la lista de marcas de vehículos en la consola
+                //Creamos el elemento temporal
+                const fragmento = document.createDocumentFragment();
+                for(i=0;i<marcas.length;i++){
+                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
+                    const item = document.createElement("OPTION");
+                    item.innerHTML = marcas[i].nom_marca;
+                    item.value =marcas[i].id;
+                    fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+                }
+    
+                //Vaciamos el combo primero
+                for(i=comboMarca.options.length-1;i>=0;i--){
+                    comboMarca.remove(i);
+                }
+    
+                //Se agrega al combobox comboMarca
+                comboMarca.appendChild(fragmento);
+                console.log("El i que envio es: "+id)
+                if(id!=0){
+                    const index = comboMarca.querySelector(`option[value='${id}']`).index;
+                    comboMarca.selectedIndex=index;
+                }
+        
+            }catch(error){
+                console.log('Error al obtener comboMarca:', error);
+            }
             // Hace una llamada AJAX a la ruta '/productsa' para obtener la lista de marcas de vehículos
-        $.ajax({
-            url: '/comboMarca',
-            method: 'GET',
-            success: function(data) {
-            // Almacena la lista de marcas de vehículos en un objeto en el archivo 'vehiculos.js'
-            var marcas = data;
-
-            console.log("Numero de marcas en el combo marca: "+marcas.length); // Imprime la lista de marcas de vehículos en la consola
-            //Creamos el elemento temporal
-            const fragmento = document.createDocumentFragment();
-            for(i=0;i<marcas.length;i++){
-                //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
-                const item = document.createElement("OPTION");
-                item.innerHTML = marcas[i].Marca;
-                item.value =marcas[i].Id;
-                fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
-            }
-
-            //Vaciamos el combo primero
-            for(i=comboMarca.options.length-1;i>=0;i--){
-                comboMarca.remove(i);
-            }
-
-            //Se agrega al combobox comboMarca
-            comboMarca.appendChild(fragmento);
-            console.log("El i que envio es: "+id)
-            if(id!=0){
-                const index = comboMarca.querySelector(`option[value='${id}']`).index;
-                comboMarca.selectedIndex=index;
-            }
-
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-            console.log('Error al obtener la lista de marcas de vehículos:', textStatus, errorThrown);
-            }
-        });
+        
         }
         
 
@@ -124,84 +124,89 @@ window.addEventListener('load',()=>{
         });
 
         //Actualizamos combo Modelo
-        function cambioComboMarca(){
+        async function cambioComboMarca(){
             if(comboMarcaSelecc!=comboMarca.value){
-                //console.log("Cambio");
-                $.ajax({
-                    url: '/comboModelo/'+comboMarca.value,
-                    method: 'GET',
-                    async:false,
-                    success: function(data) {
-                    // Almacena la lista de Modelos en un objeto en el archivo 'vehiculos.js'
-                    var modelos = data;
-        
-                    //console.log("Numero de modelos en el combo modelo: "+modelos.length); // Imprime la lista de marcas de vehículos en la consola
+                try{
+                    console.log('llega a cambioComboMarca(): '+comboMarca.value);                
+                        console.log("Cambio");
+                        const data = await $.ajax({
+                            url: '/comboAutos/'+comboMarca.value,
+                            method: 'GET'
+                        });        
+                        // Almacena la lista de Modelos en un objeto en el archivo 'vehiculos.js'
+                        var modelos = data;
+                        //console.log(data)
+                        //console.log("Numero de modelos en el combo modelo: "+modelos.length); // Imprime la lista de marcas de vehículos en la consola
+                        
+                        //Creamos el elemento temporal
+                        const fragmento = document.createDocumentFragment();
+                        for(i=0;i<modelos.length;i++){
+                            //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
+                            const item = document.createElement("OPTION");
+                            item.innerHTML = modelos[i].nom_auto;
+                            item.value =modelos[i].id;
+                            fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+                        }
+                        //Vaciamos el combo primero
+                        for(i=comboModelo.options.length-1;i>=0;i--){
+                            comboModelo.remove(i);
+                        }
+                        //Se agrega al combobox comboModelo
+                        comboModelo.appendChild(fragmento);
+                        //console.log("Termine de actualizar combomodelo!");
+                        
                     
-                    //Creamos el elemento temporal
-                    const fragmento = document.createDocumentFragment();
-                    for(i=0;i<modelos.length;i++){
-                        //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
-                        const item = document.createElement("OPTION");
-                        item.innerHTML = modelos[i].Modelo;
-                        item.value =modelos[i].Id;
-                        fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
-                    }
-                    //Vaciamos el combo primero
-                    for(i=comboModelo.options.length-1;i>=0;i--){
-                        comboModelo.remove(i);
-                    }
-                    //Se agrega al combobox comboModelo
-                    comboModelo.appendChild(fragmento);
-                    //console.log("Termine de actualizar combomodelo!");
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                    console.log('Error al obtener la lista de marcas de vehículos:', textStatus, errorThrown);
-                    }
-                });    
-
+                        comboMarcaSelecc= comboMarca.value;
+                
+                }catch(error){
+                    console.log('Error al obtener comboModelo:', error);
+                }
+            }else{
+                console.log('no cambio de marca,no hay necesidad de actualizar el combo modelo')
             }
-            comboMarcaSelecc= comboMarca.value;
+            console.log('termine cambioComboMarca()')
+            
+            
+            
             
         }
 
         //------------------------------ TABLA ModeloS
 
         const tablaModelos = document.getElementById("tablaModelos");
-        cargarTablaModelos(0);
-        function cargarTablaModelos(id){
-            // Hace una llamada AJAX a la ruta '/tablaModelos' para obtener la lista de Modelos y sus marcas
-            $.ajax({
-                url: '/tablaModelos',
-                method: 'GET',
-                success: function(data) {
+        cargarTablaModelos();
+        async function cargarTablaModelos(){
+            try{
+                // Hace una llamada AJAX a la ruta '/tablaModelos' para obtener la lista de Modelos y sus marcas
+                const data = await $.ajax({
+                    url: '/tablaAutos',
+                    method: 'GET',
+                });
                 // Almacena la lista de marcas de vehículos en un objeto en el archivo 'vehiculos.js'
                 var Modelos = data;
-
+                console.log(data)
                 //console.log("Numeros de Modelos en la tabla: "+Modelos.length); // Imprime la lista de marcas de vehículos en la consola
                 //Creamos el elemento temporal
                 const fragmento = document.createDocumentFragment();
                 for(i=0;i<Modelos.length;i++){
                     //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
-                    const item1 = document.createElement("TH");item1.innerHTML =Modelos[i].Marca;//item1.scope="row";
-                    const item2 = document.createElement("TD");item2.innerHTML =Modelos[i].Modelo; 
-                    const item3 = document.createElement("TD");item3.innerHTML =Modelos[i].Año;
-                    const item4 = document.createElement("TD");item4.innerHTML =Modelos[i].Cilindraje;
-                    const item5 = document.createElement("TD");item5.innerHTML =Modelos[i].Combustible?"DIESEL":"GAS";
+                    const item1 = document.createElement("TH");item1.innerHTML =Modelos[i].Marca.nom_marca;//item1.scope="row";
+                    const item2 = document.createElement("TD");item2.innerHTML =Modelos[i].nom_auto; 
+                    const item3 = document.createElement("TD");item3.innerHTML =Modelos[i].ano;
+                    const item4 = document.createElement("TD");item4.innerHTML =Modelos[i].cilindraje;
+                    const item5 = document.createElement("TD");item5.innerHTML =Modelos[i].combustible?"DIESEL":"GAS";
 
                     const itemTR = document.createElement("TR");
-                    itemTR.id=Modelos[i].Id;
+                    itemTR.id=Modelos[i].id;
                     itemTR.appendChild(item1);
                     itemTR.appendChild(item2);
                     itemTR.appendChild(item3);
                     itemTR.appendChild(item4);
                     itemTR.appendChild(item5);
                     itemTR.style.backgroundColor = '#ADB5BD';//Pone fondo gris a las filas
-                    if(id!=0 && id == itemTR.id){
-                        itemTR.classList.add('table-info');
-                        itemTR.classList.add('cambio-tamaño');
-                    }
+
                     fragmento.appendChild(itemTR);
-    
+
                 }
                 //Se agrega a la tabla Modelos
                 // Obtiene una lista de todos los nodos hijos del elemento padre
@@ -215,25 +220,15 @@ window.addEventListener('load',()=>{
                 tablaModelos.appendChild(fragmento);
 
                 const filaSeleccionada = tablaModelos.querySelector(".table-info");
-                if(id!=0 && false){
-                    // Cambia la fila a color Verde
-                    filaSeleccionada.classList.remove('table-info');
-                    filaSeleccionada.classList.add('cambioColor');
-                    setTimeout(() => {
-                        filaSeleccionada.classList.remove('cambioColor');
-                        filaSeleccionada.classList.add('table-info');
-                    }, 1200);
-                }
-
-
-
-                console.log("Termine de cargar tabla Modelos")
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                console.log('Error al obtener la lista de marcas de vehículos:', textStatus, errorThrown);
-                }
                 
-            });
+                console.log("Termine de cargar tabla Modelos")
+            }catch(error){
+                console.log('Error al obtener el auto:', error);
+            }
+            
+                
+                
+            
         }
 
 
@@ -242,25 +237,14 @@ window.addEventListener('load',()=>{
         tablaModelos.addEventListener('click',(e)=>{
 
             const idModeloSeleccionado = e.target.parentNode.id;
-            console.log("'"+idModeloSeleccionado+"'");
+            console.log("id auto: '"+idModeloSeleccionado+"'");
             if(idModeloSeleccionado != null && idModeloSeleccionado!=''){
                 idSeleccionar(idModeloSeleccionado);
                 seleccionTabla(idModeloSeleccionado);
             }
         });
         
-        //Animacion de mouse en tabla
-
-        tablaModelos.addEventListener('mouseover',(e)=>{
-            filaMouse = e.target.parentNode;
-            filaMouse.classList.add("cambio-tamaño");
-
-        });
-        tablaModelos.addEventListener('mouseout',(e)=>{
-            filaMouse = e.target.parentNode;
-            if(!filaMouse.classList.contains("table-info"))filaMouse.classList.remove("cambio-tamaño");
-
-        });
+        
 
 
 
@@ -273,68 +257,96 @@ window.addEventListener('load',()=>{
             //mediante este foreach removera a cada elemento la clase table-info(seleccion)
             hijos.forEach(function(hijo){
                 hijo.classList.remove("table-info");
-                hijo.style.color = '#000000';
                 hijo.classList.remove("cambio-tamaño");
             });
             filaSeleccionada = document.getElementById(id);
             if (filaSeleccionada.tagName==="TR"){
                 filaSeleccionada.classList.add("table-info")
                 filaSeleccionada.classList.add("cambio-tamaño");
-                filaSeleccionada.style.color = '';
             };
         }
 
-
-        function seleccionTabla(id){
-            $.ajax({
-                url: '/Modelo/'+id,
-                method: 'GET',
-                success: function(data) {
-                console.log("Comenzo seleccion tabla")
-                // Almacena los datos del modelo en un objeto en el archivo 'vehiculos.js'
-                
-                var modelo = data[0];
-                
-                //console.log("data seleccionado (debe ser 1): "+data.length);
-                
-                //Cargamos los datos en Datos del modelo
-                //ComboMarca es un elemento tipo select que almacena varios elementos tipo option
-                //console.log(comboMarca.options[comboMarca.selectedIndex].innerHTML);
-                for(i=0;i<comboMarca.children.length;i++){
-                    if(comboMarca.children[i].value == modelo.Marca){
-                        //console.log(comboMarca.children[i].innerHTML)
-                        comboMarca.selectedIndex=i;
-                        cambioComboMarca();//Esto actualiza el combomodelo
-                    }
-                }
-
-                for(i=0;i<comboModelo.children.length;i++){
-                    if(comboModelo.children[i].value == modelo.Id){
-                        //console.log(comboModelo.children[i].innerHTML)
-                        comboModelo.selectedIndex=i;
-                        
-                    }
-                }
-                document.getElementById("Datos-Modelo").value=modelo.Modelo;
-                document.getElementById("Datos-Alias").value=modelo.Alias;
-                document.getElementById("Datos-Año").value=modelo.Año;
-                document.getElementById("Datos-Cilindraje").value=modelo.Cilindraje;
-                //Selecciona si es a Gas o Diesel
-                var gasSeleccion = document.getElementById('btnradio1');
-                var dieselSeleccion = document.getElementById('btnradio2');
-                gasSeleccion.checked = !modelo.Combustible;
-                dieselSeleccion.checked = modelo.Combustible;
-
-                document.getElementById("Datos-CMotor").value=modelo.Consumo_Motor;
-                document.getElementById("Datos-CCaja").value=modelo.Consumo_Caja;
-                
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                console.log('Error al obtener la lista de marcas de vehículos:', textStatus, errorThrown);
-                }
-            });
+        function obtenerFilaSeleccion(){
+            const filaSeleccionada = document.querySelector('.table-info');
+            if(filaSeleccionada != null){
+                console.log("fila Seleccionada");
+                console.log(filaSeleccionada.id);
+                return filaSeleccionada;
+            }
+            return null;
         }
 
+
+        async function seleccionTabla(id) {
+            try{
+                const data = await $.ajax({
+                    url: '/auto/'+id,
+                    method: 'GET'
+                    
+                });
+                console.log("Comenzo seleccionTabla()")
+                // carga los datos de data en los combos y textos de "Datos del Modelo"
+                await cargarDatosDesdeSeleccion(data);
+                console.log('termino seleccionTabla()')
+                
+        }catch(error){
+            console.log('Error al obtener el auto:', error);
+        }
+    }
+
+
+
+    async function cargarDatosDesdeSeleccion(data){
+        // almaceno la respuesta ajax en la variable modelo
+        var modelo = data;
+        
+        await seleccionComboMarca(modelo.id_marca);
+        //Una vez seleccionado el comboMarca y cargado el comboModelo
+        //se selecciona el modelo mediante el id
+        seleccionComboModelo(modelo.id);
+        //Cargamos el resto de datos
+        document.getElementById("Datos-Modelo").value=modelo.nom_auto;
+        document.getElementById("Datos-Alias").value=modelo.Marca.alias;
+        document.getElementById("Datos-Año").value=modelo.ano;
+        document.getElementById("Datos-Cilindraje").value=modelo.cilindraje;
+        //Selecciona si es a Gas o Diesel
+        var gasSeleccion = document.getElementById('btnradio1');
+        var dieselSeleccion = document.getElementById('btnradio2');
+        gasSeleccion.checked = !modelo.combustible;
+        dieselSeleccion.checked = modelo.combustible;
+
+        document.getElementById("Datos-CMotor").value=modelo.consumo_motor;
+        document.getElementById("Datos-CCaja").value=modelo.consumo_caja;
+    }
+
+
+    async function seleccionComboMarca(id_marca){
+        //ComboMarca es un elemento tipo select que almacena varios elementos tipo option
+        //Buscamos en el comboMarca .value(id de cada marca) el que corresponda al id_marca del auto seleccionado
+        for(i=0;i<comboMarca.options.length;i++){
+            if(comboMarca.options[i].value == id_marca){
+                //una vez encontrado mostramos en el comboMarca dicha marca
+                comboMarca.selectedIndex=i;
+                //al actualizar el combo marca, cargamos los modelos de dicha marca
+                await cambioComboMarca();//Esto actualiza el combomodelo
+                break;
+            }
+        }
+    }
+
+    function seleccionComboModelo(id_auto){
+        //Se busca el .value(id del modelo) que corresponda al id del auto que recibe
+        for(i=0;i<comboModelo.options.length;i++){
+            //console.log('comboModelo '+i+': '+comboModelo.options[i].value)
+            if(comboModelo.options[i].value == id_auto){
+                //console.log(comboModelo.children[i].innerHTML)
+                comboModelo.selectedIndex=i;
+                console.log('exito');
+                break;
+                
+            }
+        }
+    }
 
 //--------------------------------------------- Modales
 
@@ -435,14 +447,13 @@ window.addEventListener('load',()=>{
         });
 
         function nuevaMarca(){
-            console.log('Hola');
             // Guarda la marca texto para enviar como array data
             const data = {
-                Marca: document.getElementById('textoNuevaMarca').value
+                nom_marca: document.getElementById('textoNuevaMarca').value
             };
             //Una vez que tenemos el texto de nueva Marca, las enviamos mediante un httpRequest
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', `/nuevaMarca`);
+            xhr.open('POST', `/marca`);
             // Agrega los encabezados necesarios si es necesario
             xhr.setRequestHeader('Content-Type', 'application/json');
             
@@ -450,8 +461,9 @@ window.addEventListener('load',()=>{
             if (xhr.status === 200) {
                 const response = JSON.parse(xhr.responseText);
                 console.log("Me llego el id generado: "+response.id);
-                data.idMarca= response.id;
+                data.id= response.id;
                 nuevaMarcaCombo(data)
+                toast("Marca agregado", "toastColorSuccess");
             } else {
                 toast("Error con el servidor", "toastColorError");
                 console.log('Error al modificar la marca');
@@ -487,7 +499,7 @@ window.addEventListener('load',()=>{
             console.log(data);
             //Una vez que tenemos el alias actual de la marca, las enviamos mediante un httpRequest
             const xhr = new XMLHttpRequest();
-            xhr.open('PUT', `/modificarAliasMarca/${data.Marca}`);
+            xhr.open('PUT', `/marcaAlias/${data.id_marca}`);
             // Agrega los encabezados necesarios si es necesario
             xhr.setRequestHeader('Content-Type', 'application/json');
 
@@ -558,7 +570,7 @@ window.addEventListener('load',()=>{
             console.log(data);
             //Una vez que tenemos los datos del carro actuales, las enviamos mediante un httpRequest
             const xhr = new XMLHttpRequest();
-            xhr.open('PUT', `/modificarModelo/${data.Id}`);
+            xhr.open('PUT', `/auto/${data.id}`);
             // Agrega los encabezados necesarios si es necesario
             xhr.setRequestHeader('Content-Type', 'application/json');
 
@@ -628,15 +640,16 @@ window.addEventListener('load',()=>{
             console.log(data);
             //Una vez que tenemos los datos del nuevo modelo, las enviamos mediante un httpRequest
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', `/nuevoModelo`);
+            xhr.open('POST', `/auto`);
             // Agrega los encabezados necesarios si es necesario
             xhr.setRequestHeader('Content-Type', 'application/json');
 
             xhr.onload = function() {
             if (xhr.status === 200) {
                 const response = JSON.parse(xhr.responseText);
-                //cargarTablaModelos(response.id);
+                console.log(response)
                 //Enviamos los datos y retornan como la filaNueva (tr)
+                data.id = response.id
                 const filaNueva = datosAFila(data);
                 //Enviamos esta fila tr a la tabla y la ubica de forma alfabetica
                 nuevaFilaTabla(filaNueva);
@@ -686,21 +699,12 @@ window.addEventListener('load',()=>{
         }
         
         
-        function obtenerFilaSeleccion(){
-            const filaSeleccionada = document.querySelector('.table-info');
-            if(filaSeleccionada != null){
-                console.log("fila Seleccionada");
-                console.log(filaSeleccionada.id);
-                return filaSeleccionada;
-            }
-            return null;
-        }
+        
 
         function vaciarSeleccion(){
             const filas = document.querySelectorAll(".table-info");
             filas.forEach(function(fila){
                 fila.classList.remove("table-info");
-                fila.style.color = '#000000';
                 fila.classList.remove("cambio-tamaño");
             });
             filaSeleccionada =null;
@@ -710,9 +714,9 @@ window.addEventListener('load',()=>{
 
         function nuevaMarcaCombo(marcaNueva){
             const nuevaMarcaOption = document.createElement("OPTION");
-            nuevaMarcaOption.textContent = marcaNueva.Marca;
-            nuevaMarcaOption.value =marcaNueva.idMarca;
-            console.log("Marca: "+marcaNueva.idMarca)
+            nuevaMarcaOption.textContent = marcaNueva.nom_marca;
+            nuevaMarcaOption.value =marcaNueva.id;
+            console.log("Marca: "+marcaNueva.id)
 
             for (let i = 1; i < comboMarca.options.length; i++) {
                 console.log('fila: '+i);
@@ -722,6 +726,7 @@ window.addEventListener('load',()=>{
                     console.log(nuevaMarcaOption);
                     console.log(option);
                     comboMarca.insertBefore(nuevaMarcaOption, option);
+                    seleccionComboMarca(marcaNueva.id);
                     break;
                     
                 }
@@ -776,14 +781,14 @@ window.addEventListener('load',()=>{
 
 
         function datosAFila(data){
-            const item1 = document.createElement("TH");item1.textContent = data.MarcaNombre;
-            const item2 = document.createElement("TD");item2.textContent = data.Modelo; 
-            const item3 = document.createElement("TD");item3.textContent = data.Año;
-            const item4 = document.createElement("TD");item4.textContent = data.Cilindraje;
-            const item5 = document.createElement("TD");item5.textContent = data.Combustible?"DIESEL":"GAS";
+            const item1 = document.createElement("TH");item1.textContent = data.Marca.nom_marca;
+            const item2 = document.createElement("TD");item2.textContent = data.nom_auto; 
+            const item3 = document.createElement("TD");item3.textContent = data.ano;
+            const item4 = document.createElement("TD");item4.textContent = data.cilindraje;
+            const item5 = document.createElement("TD");item5.textContent = data.combustible?"DIESEL":"GAS";
 
             const itemTR = document.createElement("TR");
-            itemTR.id=data.Id;
+            itemTR.id=data.id;
             itemTR.appendChild(item1);
             itemTR.appendChild(item2);
             itemTR.appendChild(item3);
@@ -796,18 +801,18 @@ window.addEventListener('load',()=>{
         function obtenerDatos(){
             const comboMarca = document.getElementById('comboMarca');
             const data = {
-                Id: (filaSeleccionada!==null)?filaSeleccionada.id:0,// si es que el idSeleccionado no existe
-                Marca: document.getElementById('comboMarca').value,
-                MarcaNombre: comboMarca.options[comboMarca.selectedIndex].text,
-                Modelo: document.getElementById('Datos-Modelo').value,
-                Alias: document.getElementById("Datos-Alias").value,
-                Año: document.getElementById("Datos-Año").value,
-                Cilindraje: document.getElementById("Datos-Cilindraje").value,
-                Consumo_Motor: document.getElementById("Datos-CMotor").value,
-                Consumo_Caja: document.getElementById("Datos-CCaja").value,
-                Combustible: document.getElementById('btnradio2').checked
+                id: (filaSeleccionada!==null)?filaSeleccionada.id:0,// si es que el idSeleccionado no existe
+                id_marca: document.getElementById('comboMarca').value,
+                Marca: {nom_marca: comboMarca.options[comboMarca.selectedIndex].text},
+                nom_auto: document.getElementById('Datos-Modelo').value,
+                alias: document.getElementById("Datos-Alias").value,
+                ano: document.getElementById("Datos-Año").value,
+                cilindraje: document.getElementById("Datos-Cilindraje").value,
+                consumo_motor: document.getElementById("Datos-CMotor").value,
+                consumo_caja: document.getElementById("Datos-CCaja").value,
+                combustible: document.getElementById('btnradio2').checked
               };
-
+              console.log(data)
               return data;
         }
 
@@ -955,12 +960,27 @@ window.addEventListener('load',()=>{
 
 //----------------------------------------------ANIMACIONES
 
+
+        //Animacion de mouse en tabla
+
+        tablaModelos.addEventListener('mouseover',(e)=>{
+            filaMouse = e.target.parentNode;
+            filaMouse.classList.add("cambio-tamaño");
+
+        });
+        tablaModelos.addEventListener('mouseout',(e)=>{
+            filaMouse = e.target.parentNode;
+            if(!filaMouse.classList.contains("table-info"))filaMouse.classList.remove("cambio-tamaño");
+
+        });
+
+        //Animacion al agregar filas
+
         function animacionFilaAgregada(nuevaFila){
 
                 // Cambia la fila a color Verde
                 vaciarSeleccion();
                 nuevaFila.classList.add('cambioColor');
-                nuevaFila.style.color= '#ffffff';
                 setTimeout(() => {
                     nuevaFila.classList.remove('cambioColor');
                     
@@ -978,7 +998,11 @@ window.addEventListener('load',()=>{
         btnPrueba.addEventListener('click',(e)=>{
             //validacion();
             // crea un mensaje emergente
-            
+            //obtenerDatos()
+            const sauto = {name:'asd',apellido:'lasdt'}
+            const nom = {nom_marca:'ads'};
+            sauto.nom = nom;
+            console.log(sauto)
         });
 
 

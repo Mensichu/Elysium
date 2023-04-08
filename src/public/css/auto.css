@@ -148,7 +148,7 @@
 .cambioColor{
     animation-name: filaActualizada;
     animation-duration: 1.8s;
-    /*color: white;*/
+    color: white;
 }
 
 @keyframes filaActualizada{

@@ -16,16 +16,30 @@ export const getMarcas = async (req,res) =>{
 
 }
 
+export const getComboMarcas = async (req,res) =>{
+    try{
+        const marcas = await tablaMarca.findAll({
+            where:{estado:true},
+            attributes: ['id','nom_marca'],
+            order:[['nom_marca','ASC']]
+        });
+        res.json(marcas);
+    }catch(error){
+        return res.status(500).json({ message: error.message });
+    }
+
+}
+
 export const createMarca = async (req,res) =>{
     try{
-        const {nom_marca,alias}= req.body;
+        const {nom_marca}= req.body;
 
         const newMarca = await tablaMarca.create({
-            nom_marca,
-            alias
+            nom_marca:nom_marca,
+            alias:nom_marca
         })
         console.log(newMarca);
-        res.send('creating Marca');
+        res.json(newMarca);
     }catch(error){
         return res.status(500).json({ message: error.message });
     }
@@ -49,6 +63,29 @@ export const updateMarca = async (req,res) =>{
         }else{
             console.log('Not found');
             res.send('not found');
+        }
+    }catch(error){
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+export const updateMarcaAlias = async (req,res) =>{
+    const {id} = req.params;
+    const {alias} = req.body;
+    console.log('me llego este id: '+id)
+    try{
+        const marca = await tablaMarca.findByPk(id);
+        if(marca!==null){
+            console.log(marca instanceof tablaMarca);
+            marca.alias=alias;
+
+            await marca.save();
+
+            res.json(marca);
+
+        }else{
+            console.log('Not found');
+            res.status(404).json({message: 'marca not found'});
         }
     }catch(error){
         return res.status(500).json({ message: error.message });
@@ -137,15 +174,34 @@ export const getAutos = async (req,res) =>{
     }
 }
 
+export const getComboAutos = async (req,res) =>{
+    const {id} = req.params
+    try{
+        const autos = await tablaAuto.findAll({
+            where:{
+                id_marca: id,
+                estado:true
+            },
+            attributes:['id','nom_auto'],
+            order: [['nom_auto','ASC']]
+        });
+        res.json(autos);
+    }catch(error){
+        //500 es un error que indica q es error del servidor
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 export const getTablaAutos = async (req,res) =>{
     try{
         const autos = await tablaAuto.findAll({
             where:{estado:true},
-            attributes:['nom_auto','ano','cilindraje','combustible'],
+            attributes:['id','nom_auto','ano','cilindraje','combustible'],
             include:{
                 model: tablaMarca,
                 attributes: ['nom_marca']
-            }
+            },
+            order:[[tablaMarca,'nom_marca','ASC'],['nom_auto','ASC']]
         });
         res.json(autos);
     }catch(error){
@@ -158,7 +214,8 @@ export const createAuto = async (req,res) =>{
     try{
         const {nom_auto,ano,cilindraje,consumo_motor,consumo_caja,combustible,id_marca} = req.body;
 
-        const auto = await tablaAuto.create({
+        const auto = await tablaAuto.create(
+            {
             nom_auto,
             ano,
             cilindraje,
@@ -166,7 +223,9 @@ export const createAuto = async (req,res) =>{
             consumo_caja,
             combustible,
             id_marca
-        });
+            
+            }
+        );
         res.json(auto);
     }catch(error){
         //500 es un error que indica q es error del servidor
@@ -180,7 +239,13 @@ export const getAutoById = async (req,res)=>{
     try{
         const auto = await tablaAuto.findOne({
             where:{id},
-            attributes: ['nom_auto']
+            attributes:{
+                exclude:['estado','createdAt','updatedAt']
+            },
+            include:{
+                model:tablaMarca,
+                attributes:['alias']
+            }
         })
         if (auto!==null){
             res.json(auto);
@@ -196,10 +261,11 @@ export const getAutoById = async (req,res)=>{
 
 export const updateAuto = async (req,res)=>{
     const {id} = req.params;
-
+    console.log('recibi este id: '+id)
     try{
         const auto = await tablaAuto.findByPk(id);
         if(auto!==null){
+            console.log('encontre');
             //Al ser los mismos nombres de parametros se usa auto = req.body
             //si solo paso los campos que quiero actualizar el solo actualizo esos campos
             auto.set(req.body)

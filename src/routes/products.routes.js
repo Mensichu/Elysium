@@ -55,7 +55,7 @@ router.put('/products/:id', updateProductById);
 
 console.log("Products.routes");
 
-
+/*
 //-------------------------ComboMarca
 
 router.get('/comboMarca', getComboMarca);
@@ -88,6 +88,6 @@ router.post('/nuevaMarca', createNewMarca);
 //--------------------------Crear nueva Marca
 
 router.put('/modificarAliasMarca/:id', updateAliasMarca);
-
+*/
 
 export default router;
