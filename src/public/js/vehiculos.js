@@ -4,6 +4,8 @@
 //Vehiculos
 //Al instante
 
+//import { response } from "express";
+
 window.addEventListener('load',()=>{
     
     //Solo se ejecuta cada vez que se recargue la pagina y sea Vehiculos
@@ -75,12 +77,12 @@ window.addEventListener('load',()=>{
         //Combo Marca
         async function cargarComboMarca(id){
             try{
-                const data = await $.ajax({
-                    url: '/comboMarcas',
-                    method: 'GET',
-                });
+                
+                let marcas = await fetch('/comboMarcas')
+                .then(response => response.json());
+
                 // Almacena la lista de marcas de vehículos en un objeto en el archivo 'vehiculos.js'
-                var marcas = data;
+                //var marcas = data;
     
                 console.log("Numero de marcas en el combo marca: "+marcas.length); // Imprime la lista de marcas de vehículos en la consola
                 //Creamos el elemento temporal
@@ -118,7 +120,8 @@ window.addEventListener('load',()=>{
         //Funcion solo cuando hubo un cambio en el comboMarca
         let comboMarcaSelecc= 0;
         comboMarca.addEventListener('click',(e)=>{
-            cambioComboMarca();
+            //Solo ejecuta si esta conectado a internet
+            if(conectado())cambioComboMarca();
             //console.log("Hiciste click en el combo marca!");
             
         });
@@ -129,10 +132,9 @@ window.addEventListener('load',()=>{
                 try{
                     console.log('llega a cambioComboMarca(): '+comboMarca.value);                
                         console.log("Cambio");
-                        const data = await $.ajax({
-                            url: '/comboAutos/'+comboMarca.value,
-                            method: 'GET'
-                        });        
+                        const data = await fetch('/comboAutos/'+comboMarca.value)
+                        .then(response => response.json());
+
                         // Almacena la lista de Modelos en un objeto en el archivo 'vehiculos.js'
                         var modelos = data;
                         //console.log(data)
@@ -178,10 +180,8 @@ window.addEventListener('load',()=>{
         async function cargarTablaModelos(){
             try{
                 // Hace una llamada AJAX a la ruta '/tablaModelos' para obtener la lista de Modelos y sus marcas
-                const data = await $.ajax({
-                    url: '/tablaAutos',
-                    method: 'GET',
-                });
+                const data = await fetch('/tablaAutos')
+                .then(response => response.json());
                 // Almacena la lista de marcas de vehículos en un objeto en el archivo 'vehiculos.js'
                 var Modelos = data;
                 console.log(data)
@@ -235,12 +235,14 @@ window.addEventListener('load',()=>{
 
 
         tablaModelos.addEventListener('click',(e)=>{
-
-            const idModeloSeleccionado = e.target.parentNode.id;
-            console.log("id auto: '"+idModeloSeleccionado+"'");
-            if(idModeloSeleccionado != null && idModeloSeleccionado!=''){
-                idSeleccionar(idModeloSeleccionado);
-                seleccionTabla(idModeloSeleccionado);
+            //Solo ejecuta si esta conectado a internet
+            if(conectado()){
+                const idModeloSeleccionado = e.target.parentNode.id;
+                console.log("id auto: '"+idModeloSeleccionado+"'");
+                if(idModeloSeleccionado != null && idModeloSeleccionado!=''){
+                    idSeleccionar(idModeloSeleccionado);
+                    seleccionTabla(idModeloSeleccionado);
+                }
             }
         });
         
@@ -279,11 +281,9 @@ window.addEventListener('load',()=>{
 
         async function seleccionTabla(id) {
             try{
-                const data = await $.ajax({
-                    url: '/auto/'+id,
-                    method: 'GET'
-                    
-                });
+                const data = await fetch('/auto/'+id)
+                .then(response => response.json());
+
                 console.log("Comenzo seleccionTabla()")
                 // carga los datos de data en los combos y textos de "Datos del Modelo"
                 await cargarDatosDesdeSeleccion(data);
@@ -390,7 +390,8 @@ window.addEventListener('load',()=>{
 
         modal0.addEventListener('click', (e)=>{
             console.log(e.target.parentNode)
-            if(e.target.parentNode.id=="fondo")cerrarModals();
+            if(e.target.parentNode.id=="fondo" ||
+                e.target.parentNode.id=="contVehiculos1" )cerrarModals();
         });
 
 
@@ -401,7 +402,8 @@ window.addEventListener('load',()=>{
         //cerrar Modal1 al hacer clic externo
         modal1.addEventListener('click', (e)=>{
             console.log(e.target.parentNode)
-            if(e.target.parentNode.id=="fondo")cerrarModals();
+            if(e.target.parentNode.id=="fondo" ||
+            e.target.parentNode.id=="contVehiculos1" )cerrarModals();
         });
 
 
@@ -410,7 +412,8 @@ window.addEventListener('load',()=>{
         //cerrar Modal2 al hacer clic externo
         modal2.addEventListener('click', (e)=>{
             console.log(e.target.parentNode)
-            if(e.target.parentNode.id=="fondo")cerrarModals();
+            if(e.target.parentNode.id=="fondo" ||
+            e.target.parentNode.id=="contVehiculos1" )cerrarModals();
 });
 
 
@@ -431,7 +434,8 @@ window.addEventListener('load',()=>{
 
         confirmarMarca.addEventListener('click',(e)=>{
             e.preventDefault();
-            nuevaMarca();
+            //Solo ejecuta si esta conectado a internet
+            if(conectado())nuevaMarca();
             
         });
 
@@ -446,7 +450,35 @@ window.addEventListener('load',()=>{
             
         });
 
-        function nuevaMarca(){
+        async function nuevaMarca(){
+            const data = {
+                nom_marca: document.getElementById('textoNuevaMarca').value
+            };
+
+            fetch('/marca',{
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-type':'application/json' 
+                }
+            })
+            .then(response => response.json())
+            .then(res =>{
+                data.id= res.id;
+                nuevaMarcaCombo(data);
+                toast("Marca agregado", "toastColorSuccess");
+                // Cerrar el cuadro modal
+                cerrarModals();
+            })
+            .catch(error => {
+                toast("Error con el servidor", "toastColorError");
+                console.log('Error al agregar marca nueva');
+            });
+            
+
+        }
+
+        function nuevaMarca2(){
             // Guarda la marca texto para enviar como array data
             const data = {
                 nom_marca: document.getElementById('textoNuevaMarca').value
@@ -481,7 +513,7 @@ window.addEventListener('load',()=>{
         btnGuardarAliasMarca.addEventListener('click', (e)=>{
             //Alias
             const alias = document.getElementById("Datos-Alias");
-            if(alias.value==null || alias.value.trim()==""){
+            if(!conectado() ||alias.value==null || alias.value.trim()==""){
                 alias.classList.add('is-invalid');
                 alias.classList.remove('is-valid');
                 //toast
@@ -489,11 +521,38 @@ window.addEventListener('load',()=>{
             }else{
                 alias.classList.add('is-valid');
                 alias.classList.remove('is-invalid');
+                
                 modificarAliasMarca();
             }
         });
 
         function modificarAliasMarca() {
+            const data = obtenerDatos();
+
+            fetch(`/marcaAlias/${data.id_marca}`,{
+                method: 'PUT',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type':'application/json'
+                }
+            })
+            .then(response => {
+                if(!response.ok){
+                    toast(response.status, "toastColorError");
+                    throw new Error('modificarAliasMarca PUT fallo!');
+                }
+                return response.json();
+            })
+            .then(res => {
+                toast("Alias de marca actualizado", "toastColorSuccess");
+                cerrarModals();
+            }).catch(error =>{
+                toast("Error con el servidor", "toastColorError");
+                console.log(error);
+            })
+        }
+
+        function modificarAliasMarca2() {
 			// Recojemos el Alias de la Marca
             const data = obtenerDatos();
             console.log(data);
@@ -548,7 +607,8 @@ window.addEventListener('load',()=>{
 
         confirmarGuardar.addEventListener('click',(e)=>{
             e.preventDefault();
-            modificarModelo();
+            //Solo ejecuta si esta conectado a internet
+            if(conectado())modificarModelo();
             
         });
 
@@ -563,36 +623,69 @@ window.addEventListener('load',()=>{
             
         });
 
-        
-        function modificarModelo() {
-			// Recojemos los datos de: 'Datos del Modelo'
+        function modificarModelo(){
             const data = obtenerDatos();
-            console.log(data);
-            //Una vez que tenemos los datos del carro actuales, las enviamos mediante un httpRequest
-            const xhr = new XMLHttpRequest();
-            xhr.open('PUT', `/auto/${data.id}`);
-            // Agrega los encabezados necesarios si es necesario
-            xhr.setRequestHeader('Content-Type', 'application/json');
-
-            xhr.onload = function() {
-            if (xhr.status === 200) {
-                //Una vez confirmado de parte del servidor
-                const response = JSON.parse(xhr.responseText);
-                //Enviamos los datos y retornan como la filaModificada (tr)
+            
+            fetch(`/auto/${data.id}`,{
+                method: 'PUT',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if(!response.ok){
+                    toast(response.status, "toastColorError");
+                    throw new Error('modificarModelo PUT fallo!');
+                }
+                return response.json()
+            })
+            .then(res =>{
                 const filaModificada = datosAFila(data);
-                //Enviamos a actualizar la fila existente mediante su id
                 actualizarFilaTabla(filaModificada);
-                console.log(response);
                 toast("Modelo guardado", "toastColorSuccess");
-            } else {
+                cerrarModals();
+            }).catch(error =>{
+                console.log(error)
                 toast("Error con el servidor", "toastColorError");
-                console.log('Error al modificar el modelo');
+            });
+        }
+        
+        function modificarModelo2() {
+            try{
+                // Recojemos los datos de: 'Datos del Modelo'
+                const data = obtenerDatos();
+                console.log(data);
+                //Una vez que tenemos los datos del carro actuales, las enviamos mediante un httpRequest
+                const xhr = new XMLHttpRequest();
+                xhr.open('PUT', `/auto/${data.id}`);
+                // Agrega los encabezados necesarios si es necesario
+                xhr.setRequestHeader('Content-Type', 'application/json');
+
+                xhr.onload = function() {
+                if (xhr.status === 200) {
+                    //Una vez confirmado de parte del servidor
+                    const response = JSON.parse(xhr.responseText);
+                    //Enviamos los datos y retornan como la filaModificada (tr)
+                    const filaModificada = datosAFila(data);
+                    //Enviamos a actualizar la fila existente mediante su id
+                    actualizarFilaTabla(filaModificada);
+                    console.log(response);
+                    toast("Modelo guardado", "toastColorSuccess");
+                } else {
+                    toast("Error con el servidor", "toastColorError");
+                    console.log('Error al modificar el modelo');
+                }
+                };
+                //Se envia los datos que se recogio de 'Datos de Modelo'
+                xhr.send(JSON.stringify(data));
+                // Cerrar el cuadro modal al finalizar la modificacion
+                cerrarModals();
+            }catch(error){
+                toast("Error con el servidor", "toastColorError");
             }
-            };
-            //Se envia los datos que se recogio de 'Datos de Modelo'
-            xhr.send(JSON.stringify(data));
-			// Cerrar el cuadro modal al finalizar la modificacion
-			cerrarModals();
+			
+			
 		}
 
 
@@ -618,7 +711,8 @@ window.addEventListener('load',()=>{
 
         confirmarNuevo.addEventListener('click',(e)=>{
             e.preventDefault();
-            nuevoModelo();
+            //Solo ejecuta si esta conectado a internet
+            if(conectado())nuevoModelo();
             
         });
 
@@ -633,8 +727,35 @@ window.addEventListener('load',()=>{
             
         });
 
-
         function nuevoModelo(){
+            const data = obtenerDatos();
+
+            fetch('/auto',{
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers:{
+                    'Content-Type':'application/json'
+                }
+            })
+            .then(response =>{
+                if(!response.ok){
+                    throw new Error('nuevoModelo POST fallo!');
+                }
+                return response.json();
+            })
+            .then(res =>{
+                data.id = res.id
+                const filaNueva = datosAFila(data);
+                nuevaFilaTabla(filaNueva);
+                toast("Modelo agregado", "toastColorSuccess");
+                cerrarModals();
+            }).catch(error =>{
+                console.log(error)
+                toast("Error con el servidor", "toastColorError");
+            })
+        }
+
+        function nuevoModelo2(){
             // Recojemos los datos de: 'Datos del Modelo'
             const data = obtenerDatos();
             console.log(data);
@@ -817,6 +938,19 @@ window.addEventListener('load',()=>{
         }
 
 
+        function conectado(){
+            if (navigator.onLine) {
+                // El navegador está en línea, se puede enviar la solicitud al servidor
+                return true;
+              } else {
+                // El navegador no está en línea, muestra un mensaje de alerta al usuario
+                toast("No hay conexión a Internet. Por favor, revisa tu conexión y vuelve a intentarlo.", "toastColorError");
+                return false;
+              }
+        }
+
+
+
         function validacion(){
             const Datos = obtenerDatos();
             let valido = true;
@@ -989,20 +1123,37 @@ window.addEventListener('load',()=>{
 
         }
 
+       
 
-
+        async function validarCedula(identidad) {
+            console.log('entre')
+            const url = 'https://srienlinea.sri.gob.ec/verificador-de-identidad/rest/validarIdentidad';
+            const data = {
+              tipoIdentificacion: 'R',
+              identificacion: identidad,
+              codigoPais: '593',
+            };
+            const response = await fetch(url, {
+              method: 'POST',
+              //mode: 'no-cors',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + 'MDkwMTY5MzQ3MzAwMToyMjIyTFVKQw=='
+              },
+              body: JSON.stringify(data),
+            });
+            console.log(response);
+            const result = await response.json();
+            return result;
+          }
         
 
         const btnPrueba = document.getElementById('btnPrueba');
 
         btnPrueba.addEventListener('click',(e)=>{
-            //validacion();
-            // crea un mensaje emergente
-            //obtenerDatos()
-            const sauto = {name:'asd',apellido:'lasdt'}
-            const nom = {nom_marca:'ads'};
-            sauto.nom = nom;
-            console.log(sauto)
+            console.log('voy')
+            const estado= validarCedula('0901693473001');
+            console.log(estado)
         });
 
 
