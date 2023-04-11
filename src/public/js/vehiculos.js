@@ -239,7 +239,7 @@ window.addEventListener('load',()=>{
             if(conectado()){
                 const idModeloSeleccionado = e.target.parentNode.id;
                 console.log("id auto: '"+idModeloSeleccionado+"'");
-                if(idModeloSeleccionado != null && idModeloSeleccionado!=''){
+                if(idModeloSeleccionado != null && idModeloSeleccionado!='' && e.target.parentNode.tagName === 'TR'){
                     idSeleccionar(idModeloSeleccionado);
                     seleccionTabla(idModeloSeleccionado);
                 }
@@ -287,6 +287,7 @@ window.addEventListener('load',()=>{
                 console.log("Comenzo seleccionTabla()")
                 // carga los datos de data en los combos y textos de "Datos del Modelo"
                 await cargarDatosDesdeSeleccion(data);
+                validacionVaciar();
                 console.log('termino seleccionTabla()')
                 
         }catch(error){
@@ -478,51 +479,19 @@ window.addEventListener('load',()=>{
 
         }
 
-        function nuevaMarca2(){
-            // Guarda la marca texto para enviar como array data
-            const data = {
-                nom_marca: document.getElementById('textoNuevaMarca').value
-            };
-            //Una vez que tenemos el texto de nueva Marca, las enviamos mediante un httpRequest
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', `/marca`);
-            // Agrega los encabezados necesarios si es necesario
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            
-            xhr.onload = function() {
-            if (xhr.status === 200) {
-                const response = JSON.parse(xhr.responseText);
-                console.log("Me llego el id generado: "+response.id);
-                data.id= response.id;
-                nuevaMarcaCombo(data)
-                toast("Marca agregado", "toastColorSuccess");
-            } else {
-                toast("Error con el servidor", "toastColorError");
-                console.log('Error al modificar la marca');
-            }
-            };
-            
-            xhr.send(JSON.stringify(data));
-			// Cerrar el cuadro modal
-			cerrarModals();
-            
-        };
+
+//---------------------------------------------- MODIFICAR Alias Marca
+
 
         const btnGuardarAliasMarca = document.getElementById('btn-GuardarAlias');
 
         btnGuardarAliasMarca.addEventListener('click', (e)=>{
             //Alias
-            const alias = document.getElementById("Datos-Alias");
-            if(!conectado() ||alias.value==null || alias.value.trim()==""){
-                alias.classList.add('is-invalid');
-                alias.classList.remove('is-valid');
+            if(conectado() && validacionAlias()){
+                modificarAliasMarca();
+            }else{
                 //toast
                 toast("Llene el campo alias", "toastColorError");
-            }else{
-                alias.classList.add('is-valid');
-                alias.classList.remove('is-invalid');
-                
-                modificarAliasMarca();
             }
         });
 
@@ -552,32 +521,9 @@ window.addEventListener('load',()=>{
             })
         }
 
-        function modificarAliasMarca2() {
-			// Recojemos el Alias de la Marca
-            const data = obtenerDatos();
-            console.log(data);
-            //Una vez que tenemos el alias actual de la marca, las enviamos mediante un httpRequest
-            const xhr = new XMLHttpRequest();
-            xhr.open('PUT', `/marcaAlias/${data.id_marca}`);
-            // Agrega los encabezados necesarios si es necesario
-            xhr.setRequestHeader('Content-Type', 'application/json');
 
-            xhr.onload = function() {
-            if (xhr.status === 200) {
-                //Una vez confirmado de parte del servidor
-                const response = JSON.parse(xhr.responseText);
-                console.log(response);
-                toast("Alias de marca actualizado", "toastColorSuccess");
-            } else {
-                toast("Error con el servidor", "toastColorError");
-                console.log('Error al modificar el alias de la marca');
-            }
-            };
-            //Se envia los datos que se recogio de 'Datos de Modelo'
-            xhr.send(JSON.stringify(data));
-			// Cerrar el cuadro modal al finalizar la modificacion
-			cerrarModals();
-		}
+
+
 //---------------------------------------------- MODIFICAR modelo
 
         
@@ -592,11 +538,11 @@ window.addEventListener('load',()=>{
         guardarBtn.addEventListener('click',(e)=>{
             e.preventDefault();
             if(filaSeleccionada != null && filaSeleccionada!=''){
-                if(validacion()){
+                if(validacionGuardar()){
                     ejecutarAnimacion(abrirModal1,1);
                 }else{
                     //toast
-                    toast("Llene todos los campos en rojo!", "toastColorError");
+                    //toast("Llene todos los campos en rojo!", "toastColorError");
                 }
             }else{
                 toast("Vuelva a seleccionar la fila", "toastColorError");
@@ -651,42 +597,7 @@ window.addEventListener('load',()=>{
             });
         }
         
-        function modificarModelo2() {
-            try{
-                // Recojemos los datos de: 'Datos del Modelo'
-                const data = obtenerDatos();
-                console.log(data);
-                //Una vez que tenemos los datos del carro actuales, las enviamos mediante un httpRequest
-                const xhr = new XMLHttpRequest();
-                xhr.open('PUT', `/auto/${data.id}`);
-                // Agrega los encabezados necesarios si es necesario
-                xhr.setRequestHeader('Content-Type', 'application/json');
 
-                xhr.onload = function() {
-                if (xhr.status === 200) {
-                    //Una vez confirmado de parte del servidor
-                    const response = JSON.parse(xhr.responseText);
-                    //Enviamos los datos y retornan como la filaModificada (tr)
-                    const filaModificada = datosAFila(data);
-                    //Enviamos a actualizar la fila existente mediante su id
-                    actualizarFilaTabla(filaModificada);
-                    console.log(response);
-                    toast("Modelo guardado", "toastColorSuccess");
-                } else {
-                    toast("Error con el servidor", "toastColorError");
-                    console.log('Error al modificar el modelo');
-                }
-                };
-                //Se envia los datos que se recogio de 'Datos de Modelo'
-                xhr.send(JSON.stringify(data));
-                // Cerrar el cuadro modal al finalizar la modificacion
-                cerrarModals();
-            }catch(error){
-                toast("Error con el servidor", "toastColorError");
-            }
-			
-			
-		}
 
 
         //---------------------------------------------- NUEVO modelo
@@ -701,11 +612,11 @@ window.addEventListener('load',()=>{
 
         nuevoBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if(validacion()){
+            if(validacionNuevo()){
                 ejecutarAnimacion(abrirModal2,2)
             }else{
                 //toast
-                toast("Llene todos los campos en rojo!", "toastColorError");
+                //toast("Llene todos los campos en rojo!", "toastColorError");
             }
         });
 
@@ -755,38 +666,11 @@ window.addEventListener('load',()=>{
             })
         }
 
-        function nuevoModelo2(){
-            // Recojemos los datos de: 'Datos del Modelo'
-            const data = obtenerDatos();
-            console.log(data);
-            //Una vez que tenemos los datos del nuevo modelo, las enviamos mediante un httpRequest
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', `/auto`);
-            // Agrega los encabezados necesarios si es necesario
-            xhr.setRequestHeader('Content-Type', 'application/json');
 
-            xhr.onload = function() {
-            if (xhr.status === 200) {
-                const response = JSON.parse(xhr.responseText);
-                console.log(response)
-                //Enviamos los datos y retornan como la filaNueva (tr)
-                data.id = response.id
-                const filaNueva = datosAFila(data);
-                //Enviamos esta fila tr a la tabla y la ubica de forma alfabetica
-                nuevaFilaTabla(filaNueva);
-                //seleccionTabla(response.id);
-                console.log("Me llego el id generado: "+response.id);
-                toast("Modelo agregado", "toastColorSuccess");
-            } else {
-                toast("Error con el servidor", "toastColorError");
-                console.log('Error al agregar nuevo modelo');
-            }
-            };
-            
-            xhr.send(JSON.stringify(data));
-			// Cerrar el cuadro modal
-			cerrarModals();
-        }
+
+
+
+
 
 
         
@@ -950,96 +834,8 @@ window.addEventListener('load',()=>{
         }
 
 
-
-        function validacion(){
-            const Datos = obtenerDatos();
-            let valido = true;
-            console.log(Datos);
-            //Combo Marca
-            const comboMarca = document.getElementById('comboMarca');
-            if(comboMarca.value == null || comboMarca.value.trim()=="0"){
-                comboMarca.classList.add('is-invalid');
-                comboMarca.classList.remove('is-valid');
-                valido = false
-            }else{
-                comboMarca.classList.add('is-valid');
-                comboMarca.classList.remove('is-invalid');
-            }
-            //Alias
-            const alias = document.getElementById("Datos-Alias");
-            if(alias.value==null || alias.value.trim()==""){
-                alias.classList.add('is-invalid');
-                alias.classList.remove('is-valid');
-                valido = false
-            }else{
-                alias.classList.add('is-valid');
-                alias.classList.remove('is-invalid');
-            }
-            //Combo Modelo
-            const comboModelo = document.getElementById('comboModelo');
-            if(comboModelo.value == null || comboModelo.value.trim()=="0"){
-                comboModelo.classList.add('is-invalid');
-                comboModelo.classList.remove('is-valid');
-                //toast("Campo combo modelo no valido", "toastColorError");
-                valido = false
-            }else{
-                comboModelo.classList.add('is-valid');
-                comboModelo.classList.remove('is-invalid');
-            }
-            //Modelo
-            const modelo = document.getElementById("Datos-Modelo");
-            if(modelo.value==null || modelo.value.trim()==""){
-                modelo.classList.add('is-invalid');
-                modelo.classList.remove('is-valid');
-                valido = false
-            }else{
-                modelo.classList.add('is-valid');
-                modelo.classList.remove('is-invalid');
-            }
-            //Modelo
-            const año = document.getElementById("Datos-Año");
-            if(año.value==null || año.value.trim()=="" || año.value< 1900 || año.value> 2050){
-                año.classList.add('is-invalid');
-                año.classList.remove('is-valid');                
-                valido = false
-            }else{
-                año.classList.add('is-valid');
-                año.classList.remove('is-invalid');
-            }
-            //Cilindraje
-            const cilindraje = document.getElementById("Datos-Cilindraje");
-            if(cilindraje.value==null || cilindraje.value.trim()=="" || cilindraje.value< 0.0 || cilindraje.value> 10){
-                cilindraje.classList.add('is-invalid');
-                cilindraje.classList.remove('is-valid');
-                valido = false
-            }else{
-                cilindraje.classList.add('is-valid');
-                cilindraje.classList.remove('is-invalid');
-            }
-            //capacidad Motor
-            const capacidadMotor = document.getElementById("Datos-CMotor");
-            if(capacidadMotor.value==null || capacidadMotor.value.trim()=="" || capacidadMotor.value< 0 || capacidadMotor.value> 20){
-                capacidadMotor.classList.add('is-invalid');
-                capacidadMotor.classList.remove('is-valid');
-                valido = false
-            }else{
-                capacidadMotor.classList.add('is-valid');
-                capacidadMotor.classList.remove('is-invalid');
-            }
-            //capacidad Motor
-            const capacidadCaja = document.getElementById("Datos-CCaja");
-            if(capacidadCaja.value==null || capacidadCaja.value.trim()=="" || capacidadCaja.value< 0 || capacidadCaja.value> 20){
-                capacidadCaja.classList.add('is-invalid');
-                capacidadCaja.classList.remove('is-valid');
-                valido = false
-            }else{
-                capacidadCaja.classList.add('is-valid');
-                capacidadCaja.classList.remove('is-invalid');
-            }
-
-            return valido;
-        }
-
+        
+        
 
 //---------------------------------------------------Se agrega un observador a la tabla:
 
@@ -1123,59 +919,36 @@ window.addEventListener('load',()=>{
 
         }
 
-       
-
-        async function validarCedula(identidad) {
-            console.log('entre')
-            const url = 'https://srienlinea.sri.gob.ec/verificador-de-identidad/rest/validarIdentidad';
-            const data = {
-              tipoIdentificacion: 'R',
-              identificacion: identidad,
-              codigoPais: '593',
-            };
-            const response = await fetch(url, {
-              method: 'POST',
-              //mode: 'no-cors',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + 'MDkwMTY5MzQ3MzAwMToyMjIyTFVKQw=='
-              },
-              body: JSON.stringify(data),
-            });
-            console.log(response);
-            const result = await response.json();
-            return result;
-          }
         
 
         const btnPrueba = document.getElementById('btnPrueba');
 
         btnPrueba.addEventListener('click',(e)=>{
-            console.log('voy')
-            const estado= validarCedula('0901693473001');
-            console.log(estado)
+            validacionVaciar();
         });
 
 
-        function toast(mensaje,colorClass){
-            Toastify({
-                text: mensaje+" ",
-                duration: 3000, // duración en milisegundos
-                gravity: "bottom", // posición en pantalla (top, bottom, left, right)
-                position: "right", // alineación del mensaje (center, left, right)
-                close:true,
-                className: colorClass,
-                //background: "radial-gradient(circle, #46b000, #46b0008a)" // color de fondo
-                //"linear-gradient(to right, #00b09b, #96c93d)", // color de fondo
-                }).showToast();
-        }
+        
+        
 
     }
 
 
 
-
 });
+
+function toast(mensaje,colorClass){
+    Toastify({
+        text: mensaje+" ",
+        duration: 3000, // duración en milisegundos
+        gravity: "bottom", // posición en pantalla (top, bottom, left, right)
+        position: "right", // alineación del mensaje (center, left, right)
+        close:true,
+        className: colorClass,
+        //background: "radial-gradient(circle, #46b000, #46b0008a)" // color de fondo
+        //"linear-gradient(to right, #00b09b, #96c93d)", // color de fondo
+        }).showToast();
+}
 
 
 
