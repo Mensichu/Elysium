@@ -6,7 +6,7 @@ import Toastify from 'toastify-js';
 const {engine} = require('express-handlebars');
 const morgan = require('morgan');
 
-import productsRoutes from './routes/products.routes';
+import productsRoutes from './routes/routes';
 import autoRoutes from './routes/auto.routes';
 
 

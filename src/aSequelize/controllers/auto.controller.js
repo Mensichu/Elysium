@@ -8,7 +8,6 @@ import {tablaAuto} from '../models/tablaAuto';
 export const getMarcas = async (req,res) =>{
     try{
         const marcas = await tablaMarca.findAll();
-        console.log(marcas);
         res.json(marcas);
     }catch(error){
         return res.status(500).json({ message: error.message });
@@ -38,7 +37,6 @@ export const createMarca = async (req,res) =>{
             nom_marca:nom_marca,
             alias:nom_marca
         })
-        console.log(newMarca);
         res.json(newMarca);
     }catch(error){
         return res.status(500).json({ message: error.message });
@@ -52,7 +50,7 @@ export const updateMarca = async (req,res) =>{
     try{
         const marca = await tablaMarca.findByPk(id);
         if(marca!==null){
-            console.log(marca instanceof tablaMarca);
+            //.log(marca instanceof tablaMarca);
             marca.nom_marca=nom_marca;
             marca.alias=alias;
 
@@ -61,7 +59,6 @@ export const updateMarca = async (req,res) =>{
             res.json(marca);
 
         }else{
-            console.log('Not found');
             res.send('not found');
         }
     }catch(error){
@@ -72,11 +69,9 @@ export const updateMarca = async (req,res) =>{
 export const updateMarcaAlias = async (req,res) =>{
     const {id} = req.params;
     const {alias} = req.body;
-    console.log('me llego este id: '+id)
     try{
         const marca = await tablaMarca.findByPk(id);
         if(marca!==null){
-            console.log(marca instanceof tablaMarca);
             marca.alias=alias;
 
             await marca.save();
@@ -84,7 +79,6 @@ export const updateMarcaAlias = async (req,res) =>{
             res.json(marca);
 
         }else{
-            console.log('Not found');
             res.status(404).json({message: 'marca not found'});
         }
     }catch(error){
@@ -95,7 +89,6 @@ export const updateMarcaAlias = async (req,res) =>{
 
 export const deleteMarca = async (req,res) =>{
     try{
-        console.log(req.params.id)
         const {id} = req.params
         await tablaMarca.destroy({
             where: {
@@ -182,6 +175,10 @@ export const getComboAutos = async (req,res) =>{
                 id_marca: id,
                 estado:true
             },
+            include:{
+                model: tablaMarca,
+                attributes: ['alias']
+            },
             attributes:['id','nom_auto'],
             order: [['nom_auto','ASC']]
         });
@@ -261,11 +258,9 @@ export const getAutoById = async (req,res)=>{
 
 export const updateAuto = async (req,res)=>{
     const {id} = req.params;
-    console.log('recibi este id: '+id)
     try{
         const auto = await tablaAuto.findByPk(id);
         if(auto!==null){
-            console.log('encontre');
             //Al ser los mismos nombres de parametros se usa auto = req.body
             //si solo paso los campos que quiero actualizar el solo actualizo esos campos
             auto.set(req.body)

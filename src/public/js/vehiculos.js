@@ -90,7 +90,7 @@ window.addEventListener('load',()=>{
                 for(i=0;i<marcas.length;i++){
                     //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
                     const item = document.createElement("OPTION");
-                    item.innerHTML = marcas[i].nom_marca;
+                    item.innerHTML = marcas[i].nom_marca.toUpperCase();
                     item.value =marcas[i].id;
                     fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
                 }
@@ -102,7 +102,6 @@ window.addEventListener('load',()=>{
     
                 //Se agrega al combobox comboMarca
                 comboMarca.appendChild(fragmento);
-                console.log("El i que envio es: "+id)
                 if(id!=0){
                     const index = comboMarca.querySelector(`option[value='${id}']`).index;
                     comboMarca.selectedIndex=index;
@@ -121,43 +120,50 @@ window.addEventListener('load',()=>{
         let comboMarcaSelecc= 0;
         comboMarca.addEventListener('click',(e)=>{
             //Solo ejecuta si esta conectado a internet
-            if(conectado())cambioComboMarca();
+            if(conectado())cambioComboMarca(false);
             //console.log("Hiciste click en el combo marca!");
             
         });
 
         //Actualizamos combo Modelo
-        async function cambioComboMarca(){
-            if(comboMarcaSelecc!=comboMarca.value){
+        async function cambioComboMarca(forzar){
+            if(forzar || comboMarcaSelecc!=comboMarca.value){
+                console.log('forzar: '+forzar);
+                console.log('comboMarca: '+comboMarca.value);
                 try{
-                    console.log('llega a cambioComboMarca(): '+comboMarca.value);                
-                        console.log("Cambio");
                         const data = await fetch('/comboAutos/'+comboMarca.value)
                         .then(response => response.json());
-
-                        // Almacena la lista de Modelos en un objeto en el archivo 'vehiculos.js'
-                        var modelos = data;
-                        //console.log(data)
-                        //console.log("Numero de modelos en el combo modelo: "+modelos.length); // Imprime la lista de marcas de vehículos en la consola
                         
-                        //Creamos el elemento temporal
-                        const fragmento = document.createDocumentFragment();
-                        for(i=0;i<modelos.length;i++){
-                            //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
-                            const item = document.createElement("OPTION");
-                            item.innerHTML = modelos[i].nom_auto;
-                            item.value =modelos[i].id;
-                            fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
-                        }
                         //Vaciamos el combo primero
                         for(i=comboModelo.options.length-1;i>=0;i--){
                             comboModelo.remove(i);
                         }
-                        //Se agrega al combobox comboModelo
-                        comboModelo.appendChild(fragmento);
-                        //console.log("Termine de actualizar combomodelo!");
-                        
-                    
+
+                        // Almacena la lista de Modelos en un objeto en el archivo 'vehiculos.js'
+                        var modelos = data;
+                        //En el caso de que sea una nueva marca sin modelos
+                        if(modelos.length!== 0){
+                            //Actualizamos Alias
+                            document.getElementById("Datos-Alias").value=modelos[0].Marca.alias.toUpperCase();
+                            //Creamos el elemento temporal
+                            const fragmento = document.createDocumentFragment();
+                            for(i=0;i<modelos.length;i++){
+                                //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
+                                const item = document.createElement("OPTION");
+                                item.innerHTML = modelos[i].nom_auto.toUpperCase();
+                                item.value =modelos[i].id;
+                                fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+                            }
+                            
+                            //Se agrega al combobox comboModelo
+                            comboModelo.appendChild(fragmento);
+                        }else{
+                            //Carga el alias por defecto
+                            const indice = comboMarca.selectedIndex;
+                            const textoComboMarca = comboMarca.options[indice].text;
+                            document.getElementById("Datos-Alias").value=textoComboMarca.toUpperCase();
+                        }
+
                         comboMarcaSelecc= comboMarca.value;
                 
                 }catch(error){
@@ -166,117 +172,200 @@ window.addEventListener('load',()=>{
             }else{
                 console.log('no cambio de marca,no hay necesidad de actualizar el combo modelo')
             }
-            console.log('termine cambioComboMarca()')
+            //console.log('termine cambioComboMarca()')
             
             
             
             
         }
 
+
+        let clasesFila='';
         //------------------------------ TABLA ModeloS
 
-        const tablaModelos = document.getElementById("tablaModelos");
+        //----------------------------------AG-GRID
+        // configurar la instancia de ag-Grid
+        const gridOptions = {
+
+            // each entry here represents one column
+            columnDefs: [
+                {headerName: "ID", 
+                        field: "id", hide: true},
+                {headerName: "Marca",
+                        field: "marca", sort: 'asc',floatingFilter:true, 
+                        width:130},
+                {headerName: "Modelo", 
+                        field: "modelo", sort: 'asc',floatingFilter:true, 
+                        minWidth: 150,flex: 150,
+                        //type: 'miEstilo',
+                        editable: true
+                        
+                    },
+
+                {headerName: "Año", 
+                        field: "año", filter: 'agNumberColumnFilter', flex: 110,
+                        minWidth: 75, maxWidth: 115},
+                {headerName: "Cilindraje", 
+                        field: "cilindraje", flex: 110,
+                        minWidth: 75,maxWidth: 120},
+                {headerName: "Combustible", 
+                        field: "combustible", flex: 140,
+                        minWidth: 100,maxWidth: 140}
+            ],
+
+            // default col def properties get applied to all columns
+            defaultColDef: {sortable: true, 
+                            filter: 'agTextColumnFilter', 
+                            enableRowGroup:true,
+                            filterParams:{
+                                buttons: ["apply","reset"]
+                            },
+                            resizable: true,
+                            //autoSizeAllColumns: true
+                        },
+
+            columnTypes:{
+                miEstilo:{
+                    editable: (params) =>{
+                        return params.data.combustible === 'DIESEL.';
+                    },
+                    cellStyle: (params)=>{
+                        if(params.data.combustible === 'borrarDIESEL.'){
+                        return {backgroundColor: 'lightBlue'};
+                        }
+                    }
+                }
+            },
+            getRowClass: (params) => {
+                if(params.data!== undefined){
+                    if(rowId === params.data.id){
+                        console.log('rowId:  '+rowId);
+                        console.log('params.data.id:  '+params.data.id);
+                        params.node.setSelected(true);
+                        seleccionTabla(params.data.id);
+                        return clasesFila;
+                    }
+                }
+                return '';
+            }
+            ,
+            onModelUpdated: (event) => {
+                if(rowId!==null){
+                    console.log('-----------------------------------------CHINGONNKNKN');
+                    console.log(event.data)
+                    //const selectedNodes = gridOptions.api.getSelectedNodes();
+                    //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
+                    clasesFila='cambioColor';
+                    gridOptions.api.redrawRows();
+                    guardarBtn.disabled=true;
+                }
+            },
+            onCellValueChanged: (event) => {
+                // Aquí va el código que se ejecutará cuando cambie el valor de una celda
+                //console.log('Celda modificada', event.data, event.colDef.field, event.newValue);
+                clasesFila='cambioColor';
+                gridOptions.api.redrawRows();
+            },
+
+            getRowId: (params) => { return params.data.id; },
+
+            //Usa el ancho maximo disponible
+            domLayout: 'autoHeight',
+
+            rowGroupPanelShow: 'always',
+            //popupParent: document.body,
+            rowSelection: 'single', // allow rows to be selected
+            animateRows: true, // have rows animate to new positions when sorted
+
+            // example event handler
+            onCellClicked: params => {
+                if(params.data!== undefined){
+                    //console.log('cell was clicked', params.data);
+                    rowId = params.data.id;
+                    seleccionTabla(rowId);
+                    guardarBtn.disabled=false;
+                }else{
+                    console.log('aja!')
+                    guardarBtn.disabled=true;
+                }
+            }
+        };
+
+        // get div to host the grid
+        const eGridDiv = document.getElementById("myGrid");
+        // new grid instance, passing in the hosting DIV and Grid Options
+        var grid = new agGrid.Grid(eGridDiv, gridOptions);
+        
+
+        function datosAFilaGrid(data) {
+            if (gridOptions.api) {
+                var newRow = [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
+                combustible: data.combustible? 'DIESEL.':'GAS.' }];
+                return newRow;
+            }
+        }
+        
+          function actualizarFilaAgGrid(filaActualizada) {
+            //Actualiza la fila
+            const selectedNodes = gridOptions.api.getSelectedNodes();
+            if (selectedNodes.length > 0) {
+                const selectedNode = selectedNodes[0];
+                const newData = Object.assign({}, selectedNode.data, filaActualizada[0]);
+                selectedNode.setData(newData);
+                //Se encargan de activar la animacion
+                gridOptions.api.ensureNodeVisible(selectedNode);
+                clasesFila = 'cambioColor';
+                gridOptions.api.redrawRows();
+            }
+
+          }
+          
+
+          function nuevaFilaAgGrid(filaNueva) {
+            const res = gridOptions.api.applyTransaction({ add: filaNueva });
+            if (res.add) {
+                const addedRow = res.add[0];
+                rowId = addedRow.rowId;
+                //Selecciona la fila nueva
+                gridOptions.api.deselectAll();
+                addedRow.setSelected(true);
+                //seleccionTabla(rowId);
+                gridOptions.api.ensureNodeVisible(addedRow);
+                // enfocar la celda 'marca' de la fila seleccionada
+                //gridOptions.api.setFocusedCell(addedRow.rowId, "marca");
+            }
+          }
+
+
         cargarTablaModelos();
         async function cargarTablaModelos(){
             try{
-                // Hace una llamada AJAX a la ruta '/tablaModelos' para obtener la lista de Modelos y sus marcas
+                // Hace una llamada fetch y trae el arreglo de datos para la tabla
                 const data = await fetch('/tablaAutos')
                 .then(response => response.json());
-                // Almacena la lista de marcas de vehículos en un objeto en el archivo 'vehiculos.js'
-                var Modelos = data;
-                console.log(data)
-                //console.log("Numeros de Modelos en la tabla: "+Modelos.length); // Imprime la lista de marcas de vehículos en la consola
-                //Creamos el elemento temporal
-                const fragmento = document.createDocumentFragment();
+                const Modelos = data;
+                //mediante un for vamos cargando fila por fila
                 for(i=0;i<Modelos.length;i++){
-                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
-                    const item1 = document.createElement("TH");item1.innerHTML =Modelos[i].Marca.nom_marca;//item1.scope="row";
-                    const item2 = document.createElement("TD");item2.innerHTML =Modelos[i].nom_auto; 
-                    const item3 = document.createElement("TD");item3.innerHTML =Modelos[i].ano;
-                    const item4 = document.createElement("TD");item4.innerHTML =Modelos[i].cilindraje;
-                    const item5 = document.createElement("TD");item5.innerHTML =Modelos[i].combustible?"DIESEL":"GAS";
-
-                    const itemTR = document.createElement("TR");
-                    itemTR.id=Modelos[i].id;
-                    itemTR.appendChild(item1);
-                    itemTR.appendChild(item2);
-                    itemTR.appendChild(item3);
-                    itemTR.appendChild(item4);
-                    itemTR.appendChild(item5);
-                    itemTR.style.backgroundColor = '#ADB5BD';//Pone fondo gris a las filas
-
-                    fragmento.appendChild(itemTR);
-
-                }
-                //Se agrega a la tabla Modelos
-                // Obtiene una lista de todos los nodos hijos del elemento padre
-                var nodosHijos = tablaModelos.childNodes;
-                
-                // Recorre la lista de nodos hijos y elimina cada nodo hijo de uno en uno
-                for (var i = nodosHijos.length - 1; i >= 0; i--) {
-                    tablaModelos.removeChild(nodosHijos[i]);
+                    let newRow = datosAFilaGrid(Modelos[i]);
+                    gridOptions.api.applyTransaction({ add: newRow });
                 }
 
-                tablaModelos.appendChild(fragmento);
-
-                const filaSeleccionada = tablaModelos.querySelector(".table-info");
-                
-                console.log("Termine de cargar tabla Modelos")
             }catch(error){
                 console.log('Error al obtener el auto:', error);
             }
-            
-                
-                
-            
         }
 
-
-
-
-        tablaModelos.addEventListener('click',(e)=>{
-            //Solo ejecuta si esta conectado a internet
-            if(conectado()){
-                const idModeloSeleccionado = e.target.parentNode.id;
-                console.log("id auto: '"+idModeloSeleccionado+"'");
-                if(idModeloSeleccionado != null && idModeloSeleccionado!='' && e.target.parentNode.tagName === 'TR'){
-                    idSeleccionar(idModeloSeleccionado);
-                    seleccionTabla(idModeloSeleccionado);
-                }
-            }
-        });
+        let rowId = null;
+        let rowIdTemp = null;
         
-        
-
-
-
-        let filaSeleccionada = tablaModelos.querySelector(".table-info");
-
-        function idSeleccionar(id){
-            //Primero removemos el table info de cada uno
-            const hijos = tablaModelos.querySelectorAll(".table-info");
-            //hijos es un vector en este caso de un elemento
-            //mediante este foreach removera a cada elemento la clase table-info(seleccion)
-            hijos.forEach(function(hijo){
-                hijo.classList.remove("table-info");
-                hijo.classList.remove("cambio-tamaño");
-            });
-            filaSeleccionada = document.getElementById(id);
-            if (filaSeleccionada.tagName==="TR"){
-                filaSeleccionada.classList.add("table-info")
-                filaSeleccionada.classList.add("cambio-tamaño");
-            };
-        }
-
-        function obtenerFilaSeleccion(){
-            const filaSeleccionada = document.querySelector('.table-info');
-            if(filaSeleccionada != null){
-                console.log("fila Seleccionada");
-                console.log(filaSeleccionada.id);
-                return filaSeleccionada;
+        function getSelectedRowId() {
+            const selectedRows = gridOptions.api.getSelectedRows();
+            if (selectedRows.length > 0) {
+                console.log(selectedRows[0]);
+                return selectedRows[0].id;
             }
             return null;
-        }
+          }
 
 
         async function seleccionTabla(id) {
@@ -284,11 +373,11 @@ window.addEventListener('load',()=>{
                 const data = await fetch('/auto/'+id)
                 .then(response => response.json());
 
-                console.log("Comenzo seleccionTabla()")
                 // carga los datos de data en los combos y textos de "Datos del Modelo"
                 await cargarDatosDesdeSeleccion(data);
                 validacionVaciar();
-                console.log('termino seleccionTabla()')
+                //Retorna el comboModelo
+                mostrarTextoModelo(false);
                 
         }catch(error){
             console.log('Error al obtener el auto:', error);
@@ -306,8 +395,8 @@ window.addEventListener('load',()=>{
         //se selecciona el modelo mediante el id
         seleccionComboModelo(modelo.id);
         //Cargamos el resto de datos
-        document.getElementById("Datos-Modelo").value=modelo.nom_auto;
-        document.getElementById("Datos-Alias").value=modelo.Marca.alias;
+        document.getElementById("Datos-Modelo").value=modelo.nom_auto.toUpperCase();
+        document.getElementById("Datos-Alias").value=modelo.Marca.alias.toUpperCase();
         document.getElementById("Datos-Año").value=modelo.ano;
         document.getElementById("Datos-Cilindraje").value=modelo.cilindraje;
         //Selecciona si es a Gas o Diesel
@@ -329,7 +418,7 @@ window.addEventListener('load',()=>{
                 //una vez encontrado mostramos en el comboMarca dicha marca
                 comboMarca.selectedIndex=i;
                 //al actualizar el combo marca, cargamos los modelos de dicha marca
-                await cambioComboMarca();//Esto actualiza el combomodelo
+                await cambioComboMarca(false);//Esto actualiza el combomodelo
                 break;
             }
         }
@@ -342,14 +431,55 @@ window.addEventListener('load',()=>{
             if(comboModelo.options[i].value == id_auto){
                 //console.log(comboModelo.children[i].innerHTML)
                 comboModelo.selectedIndex=i;
-                console.log('exito');
                 break;
                 
             }
         }
     }
 
-//--------------------------------------------- Modales
+
+
+    comboModelo.addEventListener('contextmenu', function(e) {
+        e.preventDefault(); // prevenir el menú contextual predeterminado del navegador
+        console.log(e.target);
+        if(e.target.tagName === 'SELECT'){
+            mostrarTextoModelo(true);
+        }
+      });
+      
+      const inputModelo = document.getElementById('Datos-Modelo')
+      inputModelo.addEventListener('contextmenu', function(e) {
+        e.preventDefault(); // prevenir el menú contextual predeterminado del navegador
+        console.log(e.target.tagName);
+        if(e.target.tagName === 'INPUT'){
+            mostrarTextoModelo(false);
+        }
+      });
+
+
+      function mostrarTextoModelo(mostar){
+        if(mostar){
+            //Si se decide mostrar el texto se debe ocultar el combo
+            var inputModelo = document.getElementById('formTextModelo')
+            var comboModelo = document.getElementById('formComboModelo')
+            inputModelo.style.display="block";
+            comboModelo.style.display="none";
+            
+            inputModelo.focus();
+        }else{
+            //Si se decide ocultar el texto se debe mostra el combo
+            var inputModelo = document.getElementById('formTextModelo')
+            var comboModelo = document.getElementById('formComboModelo')
+            inputModelo.style.display="none";
+            comboModelo.style.display="block";
+            
+            comboModelo.focus();
+        }
+      }
+
+
+
+//------------------------------------------------------- Modales
 
         // Obtener el cuadro modal
 		var modal0 = document.getElementById("myModal0");
@@ -402,7 +532,7 @@ window.addEventListener('load',()=>{
 
         //cerrar Modal1 al hacer clic externo
         modal1.addEventListener('click', (e)=>{
-            console.log(e.target.parentNode)
+            //console.log(e.target.parentNode)
             if(e.target.parentNode.id=="fondo" ||
             e.target.parentNode.id=="contVehiculos1" )cerrarModals();
         });
@@ -453,7 +583,7 @@ window.addEventListener('load',()=>{
 
         async function nuevaMarca(){
             const data = {
-                nom_marca: document.getElementById('textoNuevaMarca').value
+                nom_marca: document.getElementById('textoNuevaMarca').value.trim().toLowerCase()
             };
 
             fetch('/marca',{
@@ -497,7 +627,7 @@ window.addEventListener('load',()=>{
 
         function modificarAliasMarca() {
             const data = obtenerDatos();
-
+            
             fetch(`/marcaAlias/${data.id_marca}`,{
                 method: 'PUT',
                 body: JSON.stringify(data),
@@ -533,11 +663,12 @@ window.addEventListener('load',()=>{
         const cancelarGuardar1 = document.getElementById("cancelarGuardar1");
         const cancelarGuardar2 = document.getElementById("cancelarGuardar2");
 
-
+        guardarBtn.disabled=true;   
 
         guardarBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if(filaSeleccionada != null && filaSeleccionada!=''){
+            console.log('guardar: '+rowId);
+            if(rowId!== null){
                 if(validacionGuardar()){
                     ejecutarAnimacion(abrirModal1,1);
                 }else{
@@ -586,15 +717,21 @@ window.addEventListener('load',()=>{
                 }
                 return response.json()
             })
-            .then(res =>{
-                const filaModificada = datosAFila(data);
-                actualizarFilaTabla(filaModificada);
+            .then(async res =>{
+                const filaActualizada = datosAFilaGrid(data);
+                actualizarFilaAgGrid(filaActualizada);
+                await cambioComboMarca(true);
+                seleccionComboModelo(data.id)
                 toast("Modelo guardado", "toastColorSuccess");
+                guardarBtn.disabled=true;
                 cerrarModals();
             }).catch(error =>{
                 console.log(error)
                 toast("Error con el servidor", "toastColorError");
             });
+            console.log('entre');
+            
+            console.log('pase');
         }
         
 
@@ -656,9 +793,12 @@ window.addEventListener('load',()=>{
             })
             .then(res =>{
                 data.id = res.id
-                const filaNueva = datosAFila(data);
-                nuevaFilaTabla(filaNueva);
+                //const filaNueva = datosAFila(data);
+                //nuevaFilaTabla(filaNueva);
+                const filaNueva = datosAFilaGrid(data);
+                nuevaFilaAgGrid(filaNueva)
                 toast("Modelo agregado", "toastColorSuccess");
+                rowId=res.id;
                 cerrarModals();
             }).catch(error =>{
                 console.log(error)
@@ -703,23 +843,9 @@ window.addEventListener('load',()=>{
             
         }
         
-        
-        
-
-        function vaciarSeleccion(){
-            const filas = document.querySelectorAll(".table-info");
-            filas.forEach(function(fila){
-                fila.classList.remove("table-info");
-                fila.classList.remove("cambio-tamaño");
-            });
-            filaSeleccionada =null;
-
-        }
-
-
         function nuevaMarcaCombo(marcaNueva){
             const nuevaMarcaOption = document.createElement("OPTION");
-            nuevaMarcaOption.textContent = marcaNueva.nom_marca;
+            nuevaMarcaOption.textContent = marcaNueva.nom_marca.toUpperCase();
             nuevaMarcaOption.value =marcaNueva.id;
             console.log("Marca: "+marcaNueva.id)
 
@@ -738,79 +864,17 @@ window.addEventListener('load',()=>{
             }
         }
 
-        function nuevaFilaTabla(filaNueva){
-            const tabla = document.getElementById("table");//obtiene la tabla con id table
-            const tbody = tabla.getElementsByTagName("tbody")[0];//obtiene el tbody contenido en table
-            const filas = tbody.getElementsByTagName("tr");//devuelve un vector de filas tr
-            for (let i = 0; i < filas.length; i++) {
-                console.log('fila: '+i);
-                //Marca
-                let marcaTabla = filas[i].getElementsByTagName("th")[0].innerText;
-                let marcaNuevo = filaNueva.getElementsByTagName("th")[0].innerText;
-                //Modelo
-                let modeloTabla = filas[i].getElementsByTagName("td")[0].innerText;
-                let modeloNuevo = filaNueva.getElementsByTagName("td")[0].innerText;
-
-                if (marcaTabla.toUpperCase() >= marcaNuevo.toUpperCase()) {
-                    console.log('marca');
-                    if(modeloTabla.toUpperCase() >= modeloNuevo.toUpperCase()){
-                        console.log('modelo');
-                        tbody.insertBefore(filaNueva, filas[i]);
-                        break;
-                    }
-                }
-            }
-        }
-
-
-        function actualizarFilaTabla(filaActualizada){
-            const tabla = document.getElementById("table");//obtiene la tabla con id table
-            const tbody = tabla.getElementsByTagName("tbody")[0];//obtiene el tbody contenido en table
-            const filas = tbody.getElementsByTagName("tr");//devuelve un vector de filas tr
-            for (let i = 0; i < filas.length; i++) {
-                let idFila = filas[i].id;
-                if(idFila == filaActualizada.id){
-                    console.log("id Fila: "+idFila);
-                    filas[i].childNodes[0].textContent='';
-                    filas[i].childNodes[0].textContent=filaActualizada.childNodes[0].textContent;
-                    filas[i].childNodes[1].textContent=filaActualizada.childNodes[1].textContent;
-                    filas[i].childNodes[2].textContent=filaActualizada.childNodes[2].textContent;
-                    filas[i].childNodes[3].textContent=filaActualizada.childNodes[3].textContent;
-                    filas[i].childNodes[4].textContent=filaActualizada.childNodes[4].textContent;
-                    return true;
-                }                
-            }
-            return false;
-
-        }
-
-
-        function datosAFila(data){
-            const item1 = document.createElement("TH");item1.textContent = data.Marca.nom_marca;
-            const item2 = document.createElement("TD");item2.textContent = data.nom_auto; 
-            const item3 = document.createElement("TD");item3.textContent = data.ano;
-            const item4 = document.createElement("TD");item4.textContent = data.cilindraje;
-            const item5 = document.createElement("TD");item5.textContent = data.combustible?"DIESEL":"GAS";
-
-            const itemTR = document.createElement("TR");
-            itemTR.id=data.id;
-            itemTR.appendChild(item1);
-            itemTR.appendChild(item2);
-            itemTR.appendChild(item3);
-            itemTR.appendChild(item4);
-            itemTR.appendChild(item5);
-            return itemTR;
-        }
 
 
         function obtenerDatos(){
             const comboMarca = document.getElementById('comboMarca');
+            const idSeleccionado = getSelectedRowId();
             const data = {
-                id: (filaSeleccionada!==null)?filaSeleccionada.id:0,// si es que el idSeleccionado no existe
+                id: (idSeleccionado!==null)?idSeleccionado:0,// si es que el idSeleccionado no existe
                 id_marca: document.getElementById('comboMarca').value,
-                Marca: {nom_marca: comboMarca.options[comboMarca.selectedIndex].text},
-                nom_auto: document.getElementById('Datos-Modelo').value,
-                alias: document.getElementById("Datos-Alias").value,
+                Marca: {nom_marca: comboMarca.options[comboMarca.selectedIndex].text.trim().toLowerCase()},
+                nom_auto: document.getElementById('Datos-Modelo').value.trim().toLowerCase(),
+                alias: document.getElementById("Datos-Alias").value.trim().toLowerCase(),
                 ano: document.getElementById("Datos-Año").value,
                 cilindraje: document.getElementById("Datos-Cilindraje").value,
                 consumo_motor: document.getElementById("Datos-CMotor").value,
@@ -835,54 +899,10 @@ window.addEventListener('load',()=>{
 
 
         
+
         
 
 //---------------------------------------------------Se agrega un observador a la tabla:
-
-        // Seleccionar la tabla a observar
-        const tabla = document.getElementById("table");
-
-        // Crear un observador de mutaciones
-        var observador = new MutationObserver(function(mutaciones) {
-            //foreach
-            mutaciones.forEach(function(mutacion) {
-                //Muestra el tipo de observacion y el nombre de la etiqueta que activo la observacion EJ: th tr td
-                //console.log('NodeName Tipo :: '+mutacion.target.nodeName+' '+mutacion.type);
-                // si el tipo de observacion es de childList
-                if(mutacion.type === "childList"){
-                    // Verificar si se ha agregado una fila a la tabla
-                    if (mutacion.addedNodes.length > 0) {
-                        // Obtenemos las filas agregada para este caso solo uno [0] 
-                        let nuevaFila = mutacion.addedNodes[0];
-                        //console.log('nuevaFila')
-                        // Como este se encarga unicamente de detectar filas nuevas detectara elementos TR
-                        if (nuevaFila.nodeName === "TR") {
-                            console.log("Se ha agregado la siguiente fila a la tabla:", nuevaFila);
-                            //Ejectua la animacion mandandole la nuevaFila (tr)
-                            animacionFilaAgregada(nuevaFila);
-                        }
-                    }
-                    
-                    // Verificar si se ha modificado una fila en la tabla
-                    // Obtener la fila que se modifico mediante target
-                    let modificadaFila = mutacion.target;
-                    // Si este elemento es tipo th
-                    if (modificadaFila.nodeName === "TH") {
-                        // si la observacion es de tipo TH quiere decir que fue por una modificacion
-                        console.log("Se ha modificado la siguiente fila a la tabla:", modificadaFila);
-                        animacionFilaAgregada(modificadaFila.parentNode);
-                    }
-                    
-
-                }
-                
-
-            });
-        });
-
-        // Configurar el observador para que observe cambios en el cuerpo de la tabla
-        var opcionesObservador = { characterData: true, childList: true, subtree: true };
-        observador.observe(tabla.getElementsByTagName("tbody")[0], opcionesObservador);
 
 
 //-------------------------------------------------------fin del observador
@@ -891,42 +911,28 @@ window.addEventListener('load',()=>{
 //----------------------------------------------ANIMACIONES
 
 
-        //Animacion de mouse en tabla
-
-        tablaModelos.addEventListener('mouseover',(e)=>{
-            filaMouse = e.target.parentNode;
-            filaMouse.classList.add("cambio-tamaño");
-
-        });
-        tablaModelos.addEventListener('mouseout',(e)=>{
-            filaMouse = e.target.parentNode;
-            if(!filaMouse.classList.contains("table-info"))filaMouse.classList.remove("cambio-tamaño");
-
-        });
-
-        //Animacion al agregar filas
-
-        function animacionFilaAgregada(nuevaFila){
-
-                // Cambia la fila a color Verde
-                vaciarSeleccion();
-                nuevaFila.classList.add('cambioColor');
-                setTimeout(() => {
-                    nuevaFila.classList.remove('cambioColor');
-                    
-                    nuevaFila.classList.add('table-info');
-                }, 1200);
-
-        }
 
         
 
-        const btnPrueba = document.getElementById('btnPrueba');
 
-        btnPrueba.addEventListener('click',(e)=>{
-            validacionVaciar();
-        });
+let as=100;
+  // agregar una fila a la tabla cuando se hace clic en el botón
+  var btnPrueba = document.querySelector('#btnPrueba');
+  btnPrueba.addEventListener('click', function(e) {
+    e.preventDefault();
 
+    /*var newRows = [{ id:1, marca: "Hyundai", modelo: "Elantra", año: 2022, cilindraje: 4, combustible: "Gasoline" }];
+    const rowData = gridOptions.api.getRowData();
+    rowData.push(newRows);
+    */
+   as+=1;
+    var newRow = [{ id: as, marca: "NISSAN", modelo: "ZZZ", año: 2022, cilindraje: 4, combustible: "Gasoline" }];
+    nuevaFilaAgGrid(newRow);
+    
+
+
+  });
+        
 
         
         
@@ -949,6 +955,5 @@ function toast(mensaje,colorClass){
         //"linear-gradient(to right, #00b09b, #96c93d)", // color de fondo
         }).showToast();
 }
-
 
 

@@ -1,5 +1,6 @@
 :root{
     --ancho:200px;
+    --minAnchoDatosModelo:625px;
 }
 
 
@@ -92,7 +93,7 @@
 
 
 
-  .showDelay2{
+.showDelay2{
     visibility: hidden;
     position: relative;
     opacity: 0;
@@ -107,9 +108,26 @@
     opacity: 1;
 }
 
+
+.datosModeloBody{
+    height: 625px;
+    
+}
+
+.tablaModeloBody{
+    height: 80vh;
+    min-height: var(--minAnchoDatosModelo);
+}
+
+.diseñoTablaGrid{
+    max-width: 98%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
 /* Se agrega el scroll a la tabla */
 .tabla-con-scroll {
-    max-height: 750px;
+    height: 100%;
     overflow: auto;
   }
 
@@ -122,8 +140,51 @@
     padding-top: 0;
   }
 
+.texto-blanco{
+    color:white;
+}
 
 
+/*--------------------------------------TABLAS --------------------*/
+
+thead th span.icon-arrow {
+    display: inline-block;
+    width: 1.3rem;
+    height: 1.3rem;
+    border: 1.4px solid #6c00bd;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 1rem;
+    font-family: sans-serif;
+    margin-left: .5rem;
+}
+
+
+
+thead th {
+    position: sticky;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /*//--------------------------------Animaciones*/
 
 .cambio-tamañoSel {
     border-radius: 20px;
@@ -157,7 +218,7 @@
     }35%{
         background-color: #00BC8C;
     }100%{
-        background-color: #3498DB;
+        background-color: #224865e8;
     }
 
 }
@@ -202,4 +263,85 @@
 
     .toastColorError{
         background: radial-gradient(ellipse, #db2f2f, #db2f2fe1)  
+    }
+
+
+
+
+
+
+    /*------------------------------RESPONSIVE-------------*/
+    .orientacionDivs {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+      
+    
+
+
+    /*cuando es min-height la condicion es height-actual > 1080px*/
+    /*cuando es max-height la condicion es height-actual < 1080px*/
+
+    /* Si es mas alto que 1000px y mas ancho que 1000px*/
+    @media (min-height: 1000px) and (min-width: 1000px) {
+        .datosModeloBody{
+            height: 680px;
+        }
+    }
+
+    /* Si es menos alto que 1000px independientemente del ancho */
+    @media (max-height: 1000px){
+        .orientacionDivs {
+            flex-direction: row;
+          }
+  
+          .orientacionDivs .elementoOrientacion{
+              width: 100%;
+              padding-left: 2px;
+              padding-right: 2px;
+  
+          }
+    }
+
+    /* Si es menos alto que 1000px y mas ancho que 1000px*/
+    @media (max-height: 1000px) and (min-width: 1000px) {
+        .datosModeloBody{
+            height: 605px;
+        }
+    }
+
+
+    .orientacionDivsBotones{
+        display: flex; 
+        justify-content: center;
+        flex-direction: row;
+    }
+    
+    .orientacionDivsBotones .btn{
+        width: 100%;
+    }
+
+
+    /* Si es mas alto que 1000px y menos ancho que 1000px*/
+    @media (min-height: 1000px) and (max-width: 1000px) {
+        .orientacionDivsBotones {
+            flex-direction: column;
+          }
+
+        .orientacionDivsBotones .btn{
+            margin-top: 2px;
+            margin-bottom: 2px;
+        }
+
+        .datosModeloBody{
+            height:740px;
+        }
+    }
+
+    /* Si es menos alto que 1000px y menos ancho que 1000px*/
+    @media (max-height: 1000px) and (max-width: 1000px) {
+        .datosModeloBody{
+            height: 620px;
+        }
     }
