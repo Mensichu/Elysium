@@ -35,3 +35,21 @@ window.addEventListener('load',()=>{
 
     
 });
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ANIMACION TOAST 
+
+function toast(mensaje,colorClass){
+    Toastify({
+        text: mensaje+" ",
+        duration: 3000, // duración en milisegundos
+        gravity: "bottom", // posición en pantalla (top, bottom, left, right)
+        position: "right", // alineación del mensaje (center, left, right)
+        close:true,
+        className: colorClass,
+        //background: "radial-gradient(circle, #46b000, #46b0008a)" // color de fondo
+        //"linear-gradient(to right, #00b09b, #96c93d)", // color de fondo
+        }).showToast();
+}
+
+

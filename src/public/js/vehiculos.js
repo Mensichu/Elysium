@@ -1,13 +1,8 @@
-
-
-//import Toastify from 'toastify-js';
-//Vehiculos
-//Al instante
-
-//import { response } from "express";
-
 window.addEventListener('load',()=>{
     
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA MODELOS
+
     //Solo se ejecuta cada vez que se recargue la pagina y sea Vehiculos
     const pagina = window.location.pathname;
 
@@ -68,11 +63,11 @@ window.addEventListener('load',()=>{
         });
 
         
-        //Modelos
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBOBOX
 
+
+//------------------------------------------------------------------------------ ComboMarca: Cargar datos
         const comboMarca = document.getElementById('comboMarca');
-        const comboModelo = document.getElementById('comboModelo');
-
         cargarComboMarca(0);
         //Combo Marca
         async function cargarComboMarca(id){
@@ -115,7 +110,8 @@ window.addEventListener('load',()=>{
         }
         
 
-        //Combo Modelo
+//------------------------------------------------------------------------------  Combo Modelo: clic
+
         //Funcion solo cuando hubo un cambio en el comboMarca
         let comboMarcaSelecc= 0;
         comboMarca.addEventListener('click',(e)=>{
@@ -125,7 +121,10 @@ window.addEventListener('load',()=>{
             
         });
 
-        //Actualizamos combo Modelo
+
+//------------------------------------------------------------------------------ Combo Modelo: Cambio-Forzar Cargar datos
+        const comboModelo = document.getElementById('comboModelo');
+
         async function cambioComboMarca(forzar){
             if(forzar || comboMarcaSelecc!=comboMarca.value){
                 console.log('forzar: '+forzar);
@@ -180,10 +179,9 @@ window.addEventListener('load',()=>{
         }
 
 
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID
         let clasesFila='';
-        //------------------------------ TABLA ModeloS
 
-        //----------------------------------AG-GRID
         // configurar la instancia de ag-Grid
         const gridOptions = {
 
@@ -262,15 +260,19 @@ window.addEventListener('load',()=>{
             },
             onCellValueChanged: (event) => {
                 // Aquí va el código que se ejecutará cuando cambie el valor de una celda
-                //console.log('Celda modificada', event.data, event.colDef.field, event.newValue);
-                clasesFila='cambioColor';
-                gridOptions.api.redrawRows();
+                console.log('--------------------------------------------PERROS QUE PERRAN');
+                //clasesFila='cambioColor';
+                //gridOptions.api.redrawRows();
             },
 
             getRowId: (params) => { return params.data.id; },
 
             //Usa el ancho maximo disponible
-            domLayout: 'autoHeight',
+            //domLayout: 'autoHeight', Esto quita la virtualizacion y los setFocus
+            height: '100%',
+            rowHeight: 50, // altura de las filas en píxeles
+            headerHeight: 40, // altura del encabezado en píxeles
+            rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
 
             rowGroupPanelShow: 'always',
             //popupParent: document.body,
@@ -296,7 +298,13 @@ window.addEventListener('load',()=>{
         // new grid instance, passing in the hosting DIV and Grid Options
         var grid = new agGrid.Grid(eGridDiv, gridOptions);
         
+        const gridApi = gridOptions.api;
 
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID: ACTUALIZACION Y NUEVA FILA
+
+
+//---------------------------------------------------------------------Convierte los datos en una fila para AG-GRID
         function datosAFilaGrid(data) {
             if (gridOptions.api) {
                 var newRow = [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
@@ -304,8 +312,10 @@ window.addEventListener('load',()=>{
                 return newRow;
             }
         }
-        
-          function actualizarFilaAgGrid(filaActualizada) {
+
+//---------------------------------------------------------------------Actualiza la fila a la tabla AG-GRID
+          function actualizarFilaAgGrid(data) {
+            const filaActualizada = datosAFilaGrid(data);
             //Actualiza la fila
             const selectedNodes = gridOptions.api.getSelectedNodes();
             if (selectedNodes.length > 0) {
@@ -313,15 +323,18 @@ window.addEventListener('load',()=>{
                 const newData = Object.assign({}, selectedNode.data, filaActualizada[0]);
                 selectedNode.setData(newData);
                 //Se encargan de activar la animacion
-                gridOptions.api.ensureNodeVisible(selectedNode);
                 clasesFila = 'cambioColor';
                 gridOptions.api.redrawRows();
+                // Lo enfoca
+                gridOptions.api.ensureNodeVisible(selectedNode);
+
             }
 
-          }
+        }
           
-
-          function nuevaFilaAgGrid(filaNueva) {
+//---------------------------------------------------------------------Agrega una nueva fila a la tabla AG-GRID
+        function nuevaFilaAgGrid(data) {
+            const filaNueva = datosAFilaGrid(data);
             const res = gridOptions.api.applyTransaction({ add: filaNueva });
             if (res.add) {
                 const addedRow = res.add[0];
@@ -329,13 +342,13 @@ window.addEventListener('load',()=>{
                 //Selecciona la fila nueva
                 gridOptions.api.deselectAll();
                 addedRow.setSelected(true);
-                //seleccionTabla(rowId);
+                //Enfoca la nueva fila
                 gridOptions.api.ensureNodeVisible(addedRow);
-                // enfocar la celda 'marca' de la fila seleccionada
-                //gridOptions.api.setFocusedCell(addedRow.rowId, "marca");
-            }
-          }
 
+            }
+        }
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
 
         cargarTablaModelos();
         async function cargarTablaModelos(){
@@ -356,7 +369,6 @@ window.addEventListener('load',()=>{
         }
 
         let rowId = null;
-        let rowIdTemp = null;
         
         function getSelectedRowId() {
             const selectedRows = gridOptions.api.getSelectedRows();
@@ -367,6 +379,7 @@ window.addEventListener('load',()=>{
             return null;
           }
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ SELECCION TABLA AG-GRID
 
         async function seleccionTabla(id) {
             try{
@@ -384,7 +397,7 @@ window.addEventListener('load',()=>{
         }
     }
 
-
+//--------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
 
     async function cargarDatosDesdeSeleccion(data){
         // almaceno la respuesta ajax en la variable modelo
@@ -409,7 +422,7 @@ window.addEventListener('load',()=>{
         document.getElementById("Datos-CCaja").value=modelo.consumo_caja;
     }
 
-
+//-----------------------------------------------------Seteamos el comboMarca desde su Id
     async function seleccionComboMarca(id_marca){
         //ComboMarca es un elemento tipo select que almacena varios elementos tipo option
         //Buscamos en el comboMarca .value(id de cada marca) el que corresponda al id_marca del auto seleccionado
@@ -424,6 +437,8 @@ window.addEventListener('load',()=>{
         }
     }
 
+//-----------------------------------------------------Seteamos el comboModelo desde su Id
+
     function seleccionComboModelo(id_auto){
         //Se busca el .value(id del modelo) que corresponda al id del auto que recibe
         for(i=0;i<comboModelo.options.length;i++){
@@ -437,7 +452,7 @@ window.addEventListener('load',()=>{
         }
     }
 
-
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ EDITAR COMBO MODELO
 
     comboModelo.addEventListener('contextmenu', function(e) {
         e.preventDefault(); // prevenir el menú contextual predeterminado del navegador
@@ -445,19 +460,19 @@ window.addEventListener('load',()=>{
         if(e.target.tagName === 'SELECT'){
             mostrarTextoModelo(true);
         }
-      });
+    });
       
-      const inputModelo = document.getElementById('Datos-Modelo')
-      inputModelo.addEventListener('contextmenu', function(e) {
+    const inputModelo = document.getElementById('Datos-Modelo')
+    inputModelo.addEventListener('contextmenu', function(e) {
         e.preventDefault(); // prevenir el menú contextual predeterminado del navegador
         console.log(e.target.tagName);
         if(e.target.tagName === 'INPUT'){
             mostrarTextoModelo(false);
         }
-      });
+    });
 
 
-      function mostrarTextoModelo(mostar){
+    function mostrarTextoModelo(mostar){
         if(mostar){
             //Si se decide mostrar el texto se debe ocultar el combo
             var inputModelo = document.getElementById('formTextModelo')
@@ -475,147 +490,158 @@ window.addEventListener('load',()=>{
             
             comboModelo.focus();
         }
-      }
+    }
 
 
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBOMARCA: AGREGAR Y SETEA NUEVA MARCA
+      
+    function nuevaMarcaCombo(marcaNueva){
+        const nuevaMarcaOption = document.createElement("OPTION");
+        nuevaMarcaOption.textContent = marcaNueva.nom_marca.toUpperCase();
+        nuevaMarcaOption.value =marcaNueva.id;
+        console.log("Marca: "+marcaNueva.id)
 
-//------------------------------------------------------- Modales
+        for (let i = 1; i < comboMarca.options.length; i++) {
+            console.log('fila: '+i);
+            const option = comboMarca.options[i];
 
-        // Obtener el cuadro modal
-		var modal0 = document.getElementById("myModal0");
-        var modal1 = document.getElementById("myModal1");
-        var modal2 = document.getElementById("myModal2");
+            if (option.textContent.toUpperCase() >= nuevaMarcaOption.textContent.toUpperCase()) {
+                console.log(nuevaMarcaOption);
+                console.log(option);
+                comboMarca.insertBefore(nuevaMarcaOption, option);
+                seleccionComboMarca(marcaNueva.id);
+                break;
+                
+            }
+        }
+    }
 
-		// Función para abrir el cuadro modal
-		function abrirModal0() {
-			//modal0.style.display = "block";
-            modal0.classList.add('show');
-		}
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ OBTENER DATOS
 
-        // Función para abrir el cuadro modal
-        function abrirModal1() {
-            //modal1.style.display = "block";
-            modal1.classList.add('show');
-            //modal1.classList.remove('hide');
+    function obtenerDatos(){
+        const comboMarca = document.getElementById('comboMarca');
+        const idSeleccionado = getSelectedRowId();
+        const data = {
+            id: (idSeleccionado!==null)?idSeleccionado:0,// si es que el idSeleccionado no existe
+            id_marca: document.getElementById('comboMarca').value,
+            Marca: {nom_marca: comboMarca.options[comboMarca.selectedIndex].text.trim().toLowerCase()},
+            nom_auto: document.getElementById('Datos-Modelo').value.trim().toLowerCase(),
+            alias: document.getElementById("Datos-Alias").value.trim().toLowerCase(),
+            ano: document.getElementById("Datos-Año").value,
+            cilindraje: document.getElementById("Datos-Cilindraje").value,
+            consumo_motor: document.getElementById("Datos-CMotor").value,
+            consumo_caja: document.getElementById("Datos-CCaja").value,
+            combustible: document.getElementById('btnradio2').checked
+          };
+          console.log(data)
+          return data;
+    }
+
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ MODAL
+
+//-----------------------------------------------------------Construccion modal
+
+        function construirModal(numeroModal){
+            const titulo = ['Marca','Guardar','Nuevo'];
+
+            //Vaciar Modal
+            vaciarModal();
+            
+            //H5: TITLE
+            const h5Title = document.getElementById('tituloHeader');
+            h5Title.textContent=titulo[numeroModal];
+            //DIV: CardBody
+            const modalBody = document.getElementById('modalBody');
+            //INPUT: TEXT o elemento P
+            if(numeroModal == 0){
+                const inputText = document.createElement('INPUT');
+                inputText.type='text';
+                inputText.id='inputModal';
+                inputText.classList.add('modal-text');
+                inputText.placeholder='Ingrese la nueva marca';
+                inputText.maxlength='20';
+                modalBody.insertBefore(inputText,modalBody.firstChild);
+            }else{
+                const textoP = document.createElement('P');
+                textoP.classList.add('card-title');
+                if(numeroModal == 1)textoP.textContent='Guardar cambios a modelo existente';
+                if(numeroModal == 2)textoP.textContent='Guardar como un nuevo modelo';
+                modalBody.insertBefore(textoP,modalBody.firstChild);
+            }
+            //BUTTON 1
+            const boton1 = document.getElementById('confirmar');
+            boton1.value= numeroModal;
+            if(numeroModal == 0)boton1.textContent='Nueva Marca';
+            if(numeroModal == 1)boton1.textContent='Guardar';
+            if(numeroModal == 2)boton1.textContent='Nuevo';
+            
+            console.log('termine de construir el modal');
+            
         }
 
-        function abrirModal2() {
-            //modal2.style.display = "block";
-            modal2.classList.add('show');
+        function vaciarModal(){
+            const modalBody = document.getElementById('modalBody');
+            modalBody.firstChild.remove();
         }
+		
 
 
-		// Función para cerrar el cuadro modal
-		function cerrarModals() {
-			//modal0.style.display = "none";
-            //modal1.style.display = "none";
-            //modal2.style.display = "none";
+        //------------------------------------------------------Modal Confirmar
+
+        const btnConfirmar =document.getElementById('confirmar');
+        btnConfirmar.addEventListener('click',(e)=>{
+            //Ejecutar funcion
+            console.log(btnConfirmar.value);
+            if(conectado()){
+                //Nueva marca
+                if(btnConfirmar.value==0)nuevaMarca();
+                // Guardar cambios al modelo
+                if(btnConfirmar.value==1)modificarModelo();
+                // Nuevo modelo
+                if(btnConfirmar.value==2)nuevoModelo();
+            }
+        });
+
+        //-------------------------------------------------------Modal Cerrar
+
+        const modal = document.getElementById('myModal');
+        
+        function cerrarModal(){
+            modal.classList.remove('show');
             circulo.style = '';
             circulo.classList.remove('circuloAnim');
-            modal0.classList.remove('show');
-            modal1.classList.remove('show');
-            modal2.classList.remove('show');
-            //modal0.classList.add('hide');
-		}
-
-
-        modal0.addEventListener('click', (e)=>{
-            console.log(e.target.parentNode)
-            if(e.target.parentNode.id=="fondo" ||
-                e.target.parentNode.id=="contVehiculos1" )cerrarModals();
-        });
-
-
-
-
-
-
-        //cerrar Modal1 al hacer clic externo
-        modal1.addEventListener('click', (e)=>{
-            //console.log(e.target.parentNode)
-            if(e.target.parentNode.id=="fondo" ||
-            e.target.parentNode.id=="contVehiculos1" )cerrarModals();
-        });
-
-
-
-
-        //cerrar Modal2 al hacer clic externo
-        modal2.addEventListener('click', (e)=>{
-            console.log(e.target.parentNode)
-            if(e.target.parentNode.id=="fondo" ||
-            e.target.parentNode.id=="contVehiculos1" )cerrarModals();
-});
-
-
-
-
-//--------------------------------------------- AGREGAR MARCA
-
-        const btnAgregar = document.getElementById("btn-Agregar");
-        const confirmarMarca = document.getElementById("confirmarMarca");
-        const cancelarMarca1 = document.getElementById("cancelarMarca1");
-        const cancelarMarca2 = document.getElementById("cancelarMarca2");
-        
-        btnAgregar.addEventListener('click',(e)=>{
-            ejecutarAnimacion(abrirModal0,0);
-            //abrirModal0();
-
-        });
-
-        confirmarMarca.addEventListener('click',(e)=>{
-            e.preventDefault();
-            //Solo ejecuta si esta conectado a internet
-            if(conectado())nuevaMarca();
-            
-        });
-
-        cancelarMarca1.addEventListener('click',(e)=>{
-            e.preventDefault();
-            cerrarModals();
-            
-        });
-        cancelarMarca2.addEventListener('click',(e)=>{
-            e.preventDefault();
-            cerrarModals();
-            
-        });
-
-        async function nuevaMarca(){
-            const data = {
-                nom_marca: document.getElementById('textoNuevaMarca').value.trim().toLowerCase()
-            };
-
-            fetch('/marca',{
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-type':'application/json' 
-                }
-            })
-            .then(response => response.json())
-            .then(res =>{
-                data.id= res.id;
-                nuevaMarcaCombo(data);
-                toast("Marca agregado", "toastColorSuccess");
-                // Cerrar el cuadro modal
-                cerrarModals();
-            })
-            .catch(error => {
-                toast("Error con el servidor", "toastColorError");
-                console.log('Error al agregar marca nueva');
-            });
-            
-
         }
+        //Tres tipos de cancelar mediante el boton cancelar de cada modal, la X en el modal, y al hacer clic en la pantalla.
+        // Cancelar X
+        const btnCancelar1 = document.getElementById('cancelar1');
+        btnCancelar1.addEventListener('click', (e)=>{
+            cerrarModal();
+        });
+        // Cancelar boton
+        const btnCancelar = document.getElementById('cancelar');
+        btnCancelar.addEventListener('click', (e)=>{
+            cerrarModal();
+        });
+        // Cancelar fondo
+        modal.addEventListener('click', (e)=>{
+            console.log(e.target.parentNode)
+            if(e.target.parentNode.id=="fondo" ||
+                e.target.parentNode.id=="contVehiculos1" ||
+                e.target.parentNode.tagName === 'BODY' ){
+                    cerrarModal();
+                }
+        });
 
 
-//---------------------------------------------- MODIFICAR Alias Marca
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
 
 
-        const btnGuardarAliasMarca = document.getElementById('btn-GuardarAlias');
+//-------------------------BTN modificar Alias Marca
 
-        btnGuardarAliasMarca.addEventListener('click', (e)=>{
+        const guardarAliasMarcaBtn = document.getElementById('btn-GuardarAlias');
+
+        guardarAliasMarcaBtn.addEventListener('click', (e)=>{
             //Alias
             if(conectado() && validacionAlias()){
                 modificarAliasMarca();
@@ -624,6 +650,64 @@ window.addEventListener('load',()=>{
                 toast("Llene el campo alias", "toastColorError");
             }
         });
+
+
+//-------------------------BTN nueva Marca
+
+        const btnAgregar = document.getElementById("btn-Agregar");
+
+
+        btnAgregar.addEventListener('click',(e)=>{
+            //Construimos aqui el modal
+            construirModal(0);
+            //Una vez que tenemos las dimensiones construidas, lanzamos la animacion y mostramos
+            ejecutarAnimacion();
+
+        });
+
+//-------------------------BTN modificar Modelo
+
+        const guardarBtn = document.getElementById("btn-Guardar");
+
+        guardarBtn.disabled=true;
+        guardarBtn.addEventListener('click',(e)=>{
+            e.preventDefault();
+            console.log('guardar: '+rowId);
+            if(rowId!== null){
+                if(validacionGuardar()){
+                    //Construimos aqui el modal
+                    construirModal(1);
+                    //Una vez que tenemos las dimensiones construidas, lanzamos la animacion y mostramos
+                    ejecutarAnimacion();
+                }
+            }else{
+                toast("Vuelva a seleccionar la fila", "toastColorError");
+            }
+            
+            
+        });
+
+//-------------------------BTN nuevo Modelo
+
+        const nuevoBtn = document.getElementById("btn-Nuevo");
+
+        nuevoBtn.addEventListener('click',(e)=>{
+            e.preventDefault();
+            if(validacionNuevo()){
+                //Construimos aqui el modal
+                construirModal(2);
+                //Una vez que tenemos las dimensiones construidas, lanzamos la animacion y mostramos
+                ejecutarAnimacion();
+            }
+        });
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FUNCIONES PRINCIPALES
+
+
+//---------------------------------------------- MODIFICAR Alias Marca
+
+
 
         function modificarAliasMarca() {
             const data = obtenerDatos();
@@ -644,7 +728,7 @@ window.addEventListener('load',()=>{
             })
             .then(res => {
                 toast("Alias de marca actualizado", "toastColorSuccess");
-                cerrarModals();
+                //cerrarModals();
             }).catch(error =>{
                 toast("Error con el servidor", "toastColorError");
                 console.log(error);
@@ -653,52 +737,38 @@ window.addEventListener('load',()=>{
 
 
 
+//--------------------------------------------- NUEVA MARCA
+
+        async function nuevaMarca(){
+            const data = {
+                nom_marca: document.getElementById('inputModal').value.trim().toLowerCase()
+            };
+
+            fetch('/marca',{
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-type':'application/json' 
+                }
+            })
+            .then(response => response.json())
+            .then(res =>{
+                data.id= res.id;
+                nuevaMarcaCombo(data);
+                toast("Marca agregado", "toastColorSuccess");
+                // Cerrar el cuadro modal
+                cerrarModal();
+            })
+            .catch(error => {
+                toast("Error con el servidor", "toastColorError");
+                console.log('Error al agregar marca nueva');
+            });
+            
+
+        }
+
 
 //---------------------------------------------- MODIFICAR modelo
-
-        
-
-        const guardarBtn = document.getElementById("btn-Guardar");
-        const confirmarGuardar = document.getElementById("confirmarGuardar");
-        const cancelarGuardar1 = document.getElementById("cancelarGuardar1");
-        const cancelarGuardar2 = document.getElementById("cancelarGuardar2");
-
-        guardarBtn.disabled=true;   
-
-        guardarBtn.addEventListener('click',(e)=>{
-            e.preventDefault();
-            console.log('guardar: '+rowId);
-            if(rowId!== null){
-                if(validacionGuardar()){
-                    ejecutarAnimacion(abrirModal1,1);
-                }else{
-                    //toast
-                    //toast("Llene todos los campos en rojo!", "toastColorError");
-                }
-            }else{
-                toast("Vuelva a seleccionar la fila", "toastColorError");
-            }
-            
-            
-        });
-
-        confirmarGuardar.addEventListener('click',(e)=>{
-            e.preventDefault();
-            //Solo ejecuta si esta conectado a internet
-            if(conectado())modificarModelo();
-            
-        });
-
-        cancelarGuardar1.addEventListener('click',(e)=>{
-            e.preventDefault();
-            cerrarModals();
-            
-        });
-        cancelarGuardar2.addEventListener('click',(e)=>{
-            e.preventDefault();
-            cerrarModals();
-            
-        });
 
         function modificarModelo(){
             const data = obtenerDatos();
@@ -718,13 +788,13 @@ window.addEventListener('load',()=>{
                 return response.json()
             })
             .then(async res =>{
-                const filaActualizada = datosAFilaGrid(data);
-                actualizarFilaAgGrid(filaActualizada);
+                //const filaActualizada = datosAFilaGrid(data);
+                actualizarFilaAgGrid(data);
                 await cambioComboMarca(true);
                 seleccionComboModelo(data.id)
                 toast("Modelo guardado", "toastColorSuccess");
                 guardarBtn.disabled=true;
-                cerrarModals();
+                cerrarModal();
             }).catch(error =>{
                 console.log(error)
                 toast("Error con el servidor", "toastColorError");
@@ -737,43 +807,8 @@ window.addEventListener('load',()=>{
 
 
 
-        //---------------------------------------------- NUEVO modelo
 
-        
-
-        const nuevoBtn = document.getElementById("btn-Nuevo");
-        const confirmarNuevo = document.getElementById("confirmarNuevo");
-        const cancelarNuevo1 = document.getElementById("cancelarNuevo1");
-        const cancelarNuevo2 = document.getElementById("cancelarNuevo2");
-
-
-        nuevoBtn.addEventListener('click',(e)=>{
-            e.preventDefault();
-            if(validacionNuevo()){
-                ejecutarAnimacion(abrirModal2,2)
-            }else{
-                //toast
-                //toast("Llene todos los campos en rojo!", "toastColorError");
-            }
-        });
-
-        confirmarNuevo.addEventListener('click',(e)=>{
-            e.preventDefault();
-            //Solo ejecuta si esta conectado a internet
-            if(conectado())nuevoModelo();
-            
-        });
-
-        cancelarNuevo1.addEventListener('click',(e)=>{
-            e.preventDefault();
-            cerrarModals();
-            
-        });
-        cancelarNuevo2.addEventListener('click',(e)=>{
-            e.preventDefault();
-            cerrarModals();
-            
-        });
+//---------------------------------------------------- NUEVO modelo
 
         function nuevoModelo(){
             const data = obtenerDatos();
@@ -791,15 +826,13 @@ window.addEventListener('load',()=>{
                 }
                 return response.json();
             })
-            .then(res =>{
+            .then(async res =>{
                 data.id = res.id
-                //const filaNueva = datosAFila(data);
-                //nuevaFilaTabla(filaNueva);
-                const filaNueva = datosAFilaGrid(data);
-                nuevaFilaAgGrid(filaNueva)
+                await cambioComboMarca(true);
+                nuevaFilaAgGrid(data)
                 toast("Modelo agregado", "toastColorSuccess");
                 rowId=res.id;
-                cerrarModals();
+                cerrarModal();
             }).catch(error =>{
                 console.log(error)
                 toast("Error con el servidor", "toastColorError");
@@ -808,21 +841,19 @@ window.addEventListener('load',()=>{
 
 
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ANIMACION MODAL
 
 
 
-
-
-        
         const circulo = document.getElementById('circulo');
 
 
-        function ejecutarAnimacion(abrirModal, n){
+        function ejecutarAnimacion(){
             circulo.style.transition = 'all 0.2s ease-out';
             //Se agrega la animacion 
             circulo.classList.add('circuloAnim');
             //Se obteiene los datos de posicion y forma
-            const modalContent = document.querySelectorAll('.modal-content')[n];
+            const modalContent = document.querySelectorAll('.modal-content')[0];
             // Obtener las coordenadas absolutas del modal-content
             const rect = modalContent.getBoundingClientRect();
             // Se obtienen las coordenadas de posicion
@@ -838,53 +869,17 @@ window.addEventListener('load',()=>{
             
             //console.log("Este es la altura del modal actual: "+myModalHeight);
             setTimeout(() => {
-                abrirModal();
+                //Muestra el modal una vez construido y la animacion llegue a la posicion correcta
+                modal.classList.add('show');
             }, 200); /* Esperar a que termine la animación */
             
         }
+
         
-        function nuevaMarcaCombo(marcaNueva){
-            const nuevaMarcaOption = document.createElement("OPTION");
-            nuevaMarcaOption.textContent = marcaNueva.nom_marca.toUpperCase();
-            nuevaMarcaOption.value =marcaNueva.id;
-            console.log("Marca: "+marcaNueva.id)
-
-            for (let i = 1; i < comboMarca.options.length; i++) {
-                console.log('fila: '+i);
-                const option = comboMarca.options[i];
-
-                if (option.textContent.toUpperCase() >= nuevaMarcaOption.textContent.toUpperCase()) {
-                    console.log(nuevaMarcaOption);
-                    console.log(option);
-                    comboMarca.insertBefore(nuevaMarcaOption, option);
-                    seleccionComboMarca(marcaNueva.id);
-                    break;
-                    
-                }
-            }
-        }
 
 
 
-        function obtenerDatos(){
-            const comboMarca = document.getElementById('comboMarca');
-            const idSeleccionado = getSelectedRowId();
-            const data = {
-                id: (idSeleccionado!==null)?idSeleccionado:0,// si es que el idSeleccionado no existe
-                id_marca: document.getElementById('comboMarca').value,
-                Marca: {nom_marca: comboMarca.options[comboMarca.selectedIndex].text.trim().toLowerCase()},
-                nom_auto: document.getElementById('Datos-Modelo').value.trim().toLowerCase(),
-                alias: document.getElementById("Datos-Alias").value.trim().toLowerCase(),
-                ano: document.getElementById("Datos-Año").value,
-                cilindraje: document.getElementById("Datos-Cilindraje").value,
-                consumo_motor: document.getElementById("Datos-CMotor").value,
-                consumo_caja: document.getElementById("Datos-CCaja").value,
-                combustible: document.getElementById('btnradio2').checked
-              };
-              console.log(data)
-              return data;
-        }
-
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CONECTADO
 
         function conectado(){
             if (navigator.onLine) {
@@ -898,62 +893,24 @@ window.addEventListener('load',()=>{
         }
 
 
-        
-
-        
-
-//---------------------------------------------------Se agrega un observador a la tabla:
 
 
-//-------------------------------------------------------fin del observador
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++      FIN     +++++++++++++++++++++++++++++
+
+        // agregar una fila a la tabla cuando se hace clic en el botón
+        var btnPrueba = document.querySelector('#btnPrueba');
+        btnPrueba.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // codigo a ingresar
 
 
-//----------------------------------------------ANIMACIONES
-
-
-
-        
-
-
-let as=100;
-  // agregar una fila a la tabla cuando se hace clic en el botón
-  var btnPrueba = document.querySelector('#btnPrueba');
-  btnPrueba.addEventListener('click', function(e) {
-    e.preventDefault();
-
-    /*var newRows = [{ id:1, marca: "Hyundai", modelo: "Elantra", año: 2022, cilindraje: 4, combustible: "Gasoline" }];
-    const rowData = gridOptions.api.getRowData();
-    rowData.push(newRows);
-    */
-   as+=1;
-    var newRow = [{ id: as, marca: "NISSAN", modelo: "ZZZ", año: 2022, cilindraje: 4, combustible: "Gasoline" }];
-    nuevaFilaAgGrid(newRow);
-    
-
-
-  });
-        
-
-        
-        
+        });
+   
 
     }
 
 
 
 });
-
-function toast(mensaje,colorClass){
-    Toastify({
-        text: mensaje+" ",
-        duration: 3000, // duración en milisegundos
-        gravity: "bottom", // posición en pantalla (top, bottom, left, right)
-        position: "right", // alineación del mensaje (center, left, right)
-        close:true,
-        className: colorClass,
-        //background: "radial-gradient(circle, #46b000, #46b0008a)" // color de fondo
-        //"linear-gradient(to right, #00b09b, #96c93d)", // color de fondo
-        }).showToast();
-}
-
 
