@@ -143,6 +143,25 @@ export const getMarcaAutos = async (req,res) =>{
 }
 
 
+export const getMarcasRepetidas = async (req, res)=>{
+    const {nom_marca} = req.params;
+    console.log(nom_marca)
+    try{
+        const marcaEncontrada = await tablaMarca.findOne({
+            where:{
+                nom_marca:nom_marca
+            }
+        });
+        if(marcaEncontrada!==null){
+            res.json( {respuesta:true} );
+        }else{
+            res.json( {respuesta:false} );
+        }
+    }catch(error){
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 
 
 
@@ -258,13 +277,39 @@ export const getAutoById = async (req,res)=>{
 
 export const updateAuto = async (req,res)=>{
     const {id} = req.params;
+    const {ano,cilindraje,consumo_motor,consumo_caja} = req.body;
     try{
         const auto = await tablaAuto.findByPk(id);
         if(auto!==null){
             //Al ser los mismos nombres de parametros se usa auto = req.body
             //si solo paso los campos que quiero actualizar el solo actualizo esos campos
-            auto.set(req.body)
-            
+            //auto.set(req.body) No deseo actualizar modelo y marca
+            auto.ano = ano,
+            auto.cilindraje=cilindraje,
+            auto.consumo_motor=consumo_motor,
+            auto.consumo_caja=consumo_caja
+
+            await auto.save();
+
+            res.json(auto);
+        }else{
+            res.status(404).json({message: 'auto not found'});
+        }
+    }
+    catch(error){
+        return res.status(500).json({message: error.message});
+    }
+
+
+}
+
+export const updateNomAuto = async (req,res)=>{
+    const {id} = req.params;
+    const {nom_auto} = req.body;
+    try{
+        const auto = await tablaAuto.findByPk(id);
+        if(auto!==null){
+            auto.nom_auto = nom_auto
             await auto.save();
 
             res.json(auto);
@@ -295,4 +340,29 @@ export const deleteAuto = async (req,res)=>{
         return res.status(500).json({message: error.message});
     }
 
+}
+
+const { Op } = require("sequelize");
+
+export const getAutosRepetidos = async (req, res)=>{
+    const {id, nom_auto} = req.query;
+    console.log(id)
+    console.log(nom_auto)
+    try{
+        const autoEncontrado = await tablaAuto.findAll({
+            where:{
+                nom_auto:nom_auto,
+                id: {
+                    [Op.not]: id
+                  }
+            }
+        });
+        if(autoEncontrado!==null && autoEncontrado.length>0){
+            res.json( {respuesta:true} );
+        }else{
+            res.json( {respuesta:false} );
+        }
+    }catch(error){
+        return res.status(500).json({ message: error.message });
+    }
 }

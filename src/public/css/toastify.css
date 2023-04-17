@@ -83,3 +83,16 @@
         max-width: fit-content;
     }
 }
+
+
+.toastColorInfo{
+    background: radial-gradient(ellipse, #246896, #246896)  
+}
+
+.toastColorSuccess{
+    background: radial-gradient(ellipse, #00b09b, #00b09bde)  
+}
+
+.toastColorError{
+    background: radial-gradient(ellipse, #cc2a2ae1, #ad2323e1)  
+}

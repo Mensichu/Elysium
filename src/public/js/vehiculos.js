@@ -68,6 +68,7 @@ window.addEventListener('load',()=>{
 
 //------------------------------------------------------------------------------ ComboMarca: Cargar datos
         const comboMarca = document.getElementById('comboMarca');
+        comboMarca.disabled=true;
         cargarComboMarca(0);
         //Combo Marca
         async function cargarComboMarca(id){
@@ -124,7 +125,7 @@ window.addEventListener('load',()=>{
 
 //------------------------------------------------------------------------------ Combo Modelo: Cambio-Forzar Cargar datos
         const comboModelo = document.getElementById('comboModelo');
-
+        comboModelo.disabled=true;
         async function cambioComboMarca(forzar){
             if(forzar || comboMarcaSelecc!=comboMarca.value){
                 console.log('forzar: '+forzar);
@@ -255,6 +256,7 @@ window.addEventListener('load',()=>{
                     //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
                     clasesFila='cambioColor';
                     gridOptions.api.redrawRows();
+                    botonesModoNuevo(false);
                     guardarBtn.disabled=true;
                 }
             },
@@ -269,7 +271,7 @@ window.addEventListener('load',()=>{
 
             //Usa el ancho maximo disponible
             //domLayout: 'autoHeight', Esto quita la virtualizacion y los setFocus
-            height: '100%',
+            
             rowHeight: 50, // altura de las filas en píxeles
             headerHeight: 40, // altura del encabezado en píxeles
             rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
@@ -285,6 +287,7 @@ window.addEventListener('load',()=>{
                     //console.log('cell was clicked', params.data);
                     rowId = params.data.id;
                     seleccionTabla(rowId);
+                    botonesModoNuevo(false);
                     guardarBtn.disabled=false;
                 }else{
                     console.log('aja!')
@@ -305,17 +308,34 @@ window.addEventListener('load',()=>{
 
 
 //---------------------------------------------------------------------Convierte los datos en una fila para AG-GRID
-        function datosAFilaGrid(data) {
+        function datosAFilaGrid(data,n) {
+            //n es el tipo de fila
+            //0: todos los datos
+            //1: todos los datos menos marca y modelo
+            //2: solo nom_auto
             if (gridOptions.api) {
-                var newRow = [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
-                combustible: data.combustible? 'DIESEL.':'GAS.' }];
-                return newRow;
+                //var newRow = [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
+                //combustible: data.combustible? 'DIESEL.':'GAS.' }];
+                switch(n){
+                    case 0:
+                        return [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
+                            combustible: data.combustible? 'DIESEL.':'GAS.' }];
+                    case 1:
+                        return [{ id: data.id, año: data.ano, cilindraje: data.cilindraje, 
+                            combustible: data.combustible? 'DIESEL.':'GAS.' }];
+                    break;
+                    case 2:
+                        return [{ modelo: data.nom_auto.toUpperCase() }];
+                    break;
+
+                }
+                return null;
             }
         }
 
 //---------------------------------------------------------------------Actualiza la fila a la tabla AG-GRID
-          function actualizarFilaAgGrid(data) {
-            const filaActualizada = datosAFilaGrid(data);
+          function actualizarFilaAgGrid(data,n) {
+            const filaActualizada = datosAFilaGrid(data,n); //n es el tipo de fila: 1 o 2
             //Actualiza la fila
             const selectedNodes = gridOptions.api.getSelectedNodes();
             if (selectedNodes.length > 0) {
@@ -334,7 +354,7 @@ window.addEventListener('load',()=>{
           
 //---------------------------------------------------------------------Agrega una nueva fila a la tabla AG-GRID
         function nuevaFilaAgGrid(data) {
-            const filaNueva = datosAFilaGrid(data);
+            const filaNueva = datosAFilaGrid(data,0); //n es el tipo de fila: 0
             const res = gridOptions.api.applyTransaction({ add: filaNueva });
             if (res.add) {
                 const addedRow = res.add[0];
@@ -359,7 +379,7 @@ window.addEventListener('load',()=>{
                 const Modelos = data;
                 //mediante un for vamos cargando fila por fila
                 for(i=0;i<Modelos.length;i++){
-                    let newRow = datosAFilaGrid(Modelos[i]);
+                    let newRow = datosAFilaGrid(Modelos[i],0);
                     gridOptions.api.applyTransaction({ add: newRow });
                 }
 
@@ -390,7 +410,7 @@ window.addEventListener('load',()=>{
                 await cargarDatosDesdeSeleccion(data);
                 validacionVaciar();
                 //Retorna el comboModelo
-                mostrarTextoModelo(false);
+                mostrarTextoModelo(true);
                 
         }catch(error){
             console.log('Error al obtener el auto:', error);
@@ -452,6 +472,15 @@ window.addEventListener('load',()=>{
         }
     }
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ MOSTRAR MARCA ALIAS
+
+    const aliasMarca = document.getElementById('formTextAlias');
+    const labelMarca = document.getElementById('labelMarca');
+    labelMarca.addEventListener('contextmenu',(e)=>{
+        e.preventDefault();
+        aliasMarca.classList.toggle('hidden');
+    });
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ EDITAR COMBO MODELO
 
     comboModelo.addEventListener('contextmenu', function(e) {
@@ -467,7 +496,7 @@ window.addEventListener('load',()=>{
         e.preventDefault(); // prevenir el menú contextual predeterminado del navegador
         console.log(e.target.tagName);
         if(e.target.tagName === 'INPUT'){
-            mostrarTextoModelo(false);
+            mostrarTextoModelo(true);
         }
     });
 
@@ -537,6 +566,51 @@ window.addEventListener('load',()=>{
           return data;
     }
 
+//
+        function botonesModoNuevo(bloquear){
+            const modoActual = nuevoBtn.textContent;
+            if(bloquear && modoActual!='Agregar'){
+                //Bloqueado
+                comboMarca.disabled=false;
+                guardarNomAutoBtn.disabled=true;
+                guardarBtn.disabled=true;
+                nuevoBtn.textContent = 'Agregar';
+                toast("Nuevo modelo Activado", "toastColorInfo");
+            }else if(!bloquear && modoActual!='Nuevo'){
+                //Desbloqueado
+                comboMarca.disabled=true
+                guardarNomAutoBtn.disabled=false;
+                guardarBtn.disabled=true;
+                nuevoBtn.textContent = 'Nuevo';
+                toast("Nuevo modelo Desactivado", "toastColorInfo");
+            }
+            
+            
+        }
+
+
+        function modoNuevoModelo(){
+
+            if(nuevoBtn.textContent === 'Nuevo'){
+                vaciarDatosModelo()
+                botonesModoNuevo(true);
+                return false;
+            }else{
+                return true;
+
+            }
+        }
+
+
+        function vaciarDatosModelo(){
+            document.getElementById("Datos-Modelo").value='';
+            document.getElementById("Datos-Alias").value='';
+            document.getElementById("Datos-Año").value='';
+            document.getElementById("Datos-Cilindraje").value='';
+            
+            document.getElementById("Datos-CMotor").value='';
+            document.getElementById("Datos-CCaja").value='';
+        }
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ MODAL
 
@@ -652,6 +726,21 @@ window.addEventListener('load',()=>{
         });
 
 
+//-------------------------BTN modificar nom_auto
+
+const guardarNomAutoBtn = document.getElementById('btn-GuardarNomAuto');
+
+guardarNomAutoBtn.addEventListener('click', (e)=>{
+    //Alias
+    if(conectado() && validacionNomAuto()){
+        modificarNomAuto();
+    }else{
+        //toast
+        toast("Llene el campo alias", "toastColorError");
+    }
+});
+
+
 //-------------------------BTN nueva Marca
 
         const btnAgregar = document.getElementById("btn-Agregar");
@@ -693,7 +782,7 @@ window.addEventListener('load',()=>{
 
         nuevoBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if(validacionNuevo()){
+            if(modoNuevoModelo() && validacionNuevo()){
                 //Construimos aqui el modal
                 construirModal(2);
                 //Una vez que tenemos las dimensiones construidas, lanzamos la animacion y mostramos
@@ -735,7 +824,22 @@ window.addEventListener('load',()=>{
             })
         }
 
+//--------------------------------------------- MARCA REPETIDAS
 
+        async function marcasRepetidas(nom_marca){
+            //const data = {
+            //                nom_marca: document.getElementById('inputModal').value.trim().toLowerCase()
+            //};
+            const res = await fetch(`/marcasRepetidas/${nom_marca}`)
+            .then(response => response.json())
+            .catch(error =>{
+                toast("Error con el servidor: "+error, "toastColorError");
+                return null;
+            });
+            console.log('respuesta intermedia');
+
+            return res.respuesta;
+        }
 
 //--------------------------------------------- NUEVA MARCA
 
@@ -744,29 +848,92 @@ window.addEventListener('load',()=>{
                 nom_marca: document.getElementById('inputModal').value.trim().toLowerCase()
             };
 
-            fetch('/marca',{
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-type':'application/json' 
-                }
-            })
-            .then(response => response.json())
-            .then(res =>{
-                data.id= res.id;
-                nuevaMarcaCombo(data);
-                toast("Marca agregado", "toastColorSuccess");
-                // Cerrar el cuadro modal
-                cerrarModal();
-            })
-            .catch(error => {
-                toast("Error con el servidor", "toastColorError");
-                console.log('Error al agregar marca nueva');
-            });
-            
+            if(await marcasRepetidas(data.nom_marca)){
+                //Si devuelve true significa que encontro una marca igual
+                toast("La marca ya existe!", "toastColorError");
+            }else{
+                //No encontro una marca igual, procede a crearla
+                fetch('/marca',{
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Content-type':'application/json' 
+                    }
+                })
+                .then(response => response.json())
+                .then(res =>{
+                    data.id= res.id;
+                    nuevaMarcaCombo(data);
+                    toast("Marca agregado", "toastColorSuccess");
+                    // Cerrar el cuadro modal
+                    cerrarModal();
+                })
+                .catch(error => {
+                    toast("Error con el servidor", "toastColorError");
+                    console.log('Error al agregar marca nueva');
+                });
+            }
 
         }
 
+
+//--------------------------------------------- MODELOS REPETIDOS
+
+async function modelosRepetidos(id, nom_auto){
+
+    const queryParams = new URLSearchParams({id: id, nom_auto: nom_auto});
+
+    const res = await fetch(`/autosRepetidos?${queryParams.toString()}`)
+    .then(response => response.json())
+    .catch(error =>{
+        toast("Error con el servidor: "+error, "toastColorError");
+        return null;
+    });
+    console.log('respuesta intermedia');
+
+    return res.respuesta;
+}
+
+//---------------------------------------------- MODIFICAR nom_auto
+
+        async function modificarNomAuto(){
+            const data = obtenerDatos();
+            if(await modelosRepetidos(data.id,data.nom_auto)){
+                //Si devuelve true significa que encontro una marca igual
+                toast("El modelo ya existe!", "toastColorError");
+            }else{
+                fetch(`/nomAuto/${data.id}`,{
+                    method: 'PUT',
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if(!response.ok){
+                        toast(response.status, "toastColorError");
+                        throw new Error('modificarModelo PUT fallo!');
+                    }
+                    return response.json()
+                })
+                .then(async res =>{
+                    //const filaActualizada = datosAFilaGrid(data);
+                    actualizarFilaAgGrid(data,2);
+                    await cambioComboMarca(true);
+                    seleccionComboModelo(data.id)
+                    toast("Nombre de modelo guardado", "toastColorSuccess");
+                    guardarBtn.disabled=true;
+                    cerrarModal();
+                }).catch(error =>{
+                    console.log(error)
+                    toast("Error con el servidor", "toastColorError");
+                });
+            }
+            
+            console.log('entre');
+            
+            console.log('pase');
+        }
 
 //---------------------------------------------- MODIFICAR modelo
 
@@ -789,7 +956,7 @@ window.addEventListener('load',()=>{
             })
             .then(async res =>{
                 //const filaActualizada = datosAFilaGrid(data);
-                actualizarFilaAgGrid(data);
+                actualizarFilaAgGrid(data,1);
                 await cambioComboMarca(true);
                 seleccionComboModelo(data.id)
                 toast("Modelo guardado", "toastColorSuccess");
@@ -810,33 +977,40 @@ window.addEventListener('load',()=>{
 
 //---------------------------------------------------- NUEVO modelo
 
-        function nuevoModelo(){
+        async function nuevoModelo(){
             const data = obtenerDatos();
 
-            fetch('/auto',{
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers:{
-                    'Content-Type':'application/json'
-                }
-            })
-            .then(response =>{
-                if(!response.ok){
-                    throw new Error('nuevoModelo POST fallo!');
-                }
-                return response.json();
-            })
-            .then(async res =>{
-                data.id = res.id
-                await cambioComboMarca(true);
-                nuevaFilaAgGrid(data)
-                toast("Modelo agregado", "toastColorSuccess");
-                rowId=res.id;
-                cerrarModal();
-            }).catch(error =>{
-                console.log(error)
-                toast("Error con el servidor", "toastColorError");
-            })
+            if(await modelosRepetidos(0,data.nom_auto)){
+                //Si devuelve true significa que encontro una marca igual
+                toast("El modelo ya existe!", "toastColorError");
+            }else{
+                fetch('/auto',{
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers:{
+                        'Content-Type':'application/json'
+                    }
+                })
+                .then(response =>{
+                    if(!response.ok){
+                        throw new Error('nuevoModelo POST fallo!');
+                    }
+                    return response.json();
+                })
+                .then(async res =>{
+                    data.id = res.id
+                    await cambioComboMarca(true);
+                    nuevaFilaAgGrid(data)
+                    toast("Modelo agregado", "toastColorSuccess");
+                    botonesModoNuevo(false);
+                    rowId=res.id;
+                    cerrarModal();
+                }).catch(error =>{
+                    console.log(error)
+                    toast("Error con el servidor", "toastColorError");
+                })
+            }
+            
         }
 
 
@@ -899,11 +1073,15 @@ window.addEventListener('load',()=>{
 
         // agregar una fila a la tabla cuando se hace clic en el botón
         var btnPrueba = document.querySelector('#btnPrueba');
-        btnPrueba.addEventListener('click', function(e) {
+        btnPrueba.addEventListener('click', async function(e) {
             e.preventDefault();
-            
-            // codigo a ingresar
-
+            /*
+            console.log('paso inicial');
+            const respuesta = await modelosRepetidos(1,'sail');
+            console.log('paso final');
+            console.log(respuesta?'El modelo ya existe!':'Nuevo modelo');
+            */
+            modoNuevoModelo();
 
         });
    

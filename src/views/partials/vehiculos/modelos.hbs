@@ -2,32 +2,32 @@
     <div class="container">
         <div class="row ">
             <div class="col-12 col-md-4" >
-                <div class="card text-white bg-secondary">
+                <div class="card text-white ">
                     <div class="card-header">Datos del Modelo</div>
                     <div class="card-body datosModeloBody">
-                        <form id="formulario">
+                        
                             <div class="form-group">
-                                <label for="exampleSelect1" class="form-label">Marca:</label>
+                                <label id="labelMarca" for="exampleSelect1" class="form-label">Marca:</label>
                                 <div class="input-group">
-                                    <select class="form-select alert-light texto-blanco" id="comboMarca" >
+                                    <select class="form-select " id="comboMarca" >
                                         <option value="0">No aplica</option>
                                     </select>
-                                    <button class="btn btn-success" type="button" id="btn-Agregar" style="z-index: 0;">Agregar</button>
+                                    <button class="btn btn-outline-info" type="button" id="btn-Agregar" style="z-index: 0;">Agregar</button>
                                 </div>
                             </div>
                             
-                            <div class="form-group alias-group">
+                            <div id="formTextAlias" class="form-group hidden" >
                                 <fieldset>
                                     <label class="form-label mt-2" for="inputValid">Alias(Marca):</label>
                                     <div class="input-group">
                                         <input type="text" id="Datos-Alias" class="form-control form-input" name="Alias" placeholder="Alias" minlength="1"maxlength="60">
-                                        <button class="btn btn-success " type="button" id="btn-GuardarAlias" style="z-index: 0;">Guardar</button>
+                                        <button class="btn btn-outline-info " type="button" id="btn-GuardarAlias" style="z-index: 0;">Guardar</button>
                                     </div>
                                     <div class="invalid-feedback">Alias incorrecto!</div>
                                 </fieldset>
                                 
                             </div>
-                            <div id="formComboModelo" class="form-group" title="clic derecho para editar">
+                            <div id="formComboModelo" class="form-group" title="clic derecho para editar" style="display: none;">
                                 <label for="exampleSelect1" class="form-label mt-2">Modelo:</label>
                                 <div class="input-group">
                                     <select class="form-select" id="comboModelo">
@@ -35,14 +35,18 @@
                                     </select>
                                 </div>
                             </div>
-                            <div id="formTextModelo" class="form-group" title="clic derecho para regresar" style="display: none;">
+                            <div id="formTextModelo" class="form-group" title="clic derecho para regresar" >
                                 <fieldset>
                                     <label class="form-label mt-2" for="inputValid">Modelo (editable):</label>
-                                    <input type="text" id="Datos-Modelo" class="form-control form-input" name="Modelo" placeholder="Modelo" maxlength="60">
+                                    <div class="input-group">
+                                        <input type="text" id="Datos-Modelo" class="form-control form-input" name="Modelo" placeholder="Modelo" maxlength="60">
+                                        <button class="btn btn-outline-info " type="button" id="btn-GuardarNomAuto" style="z-index: 0;">Guardar</button>
+                                    </div>
+                                    <div class="invalid-feedback">Modelo incorrecto!</div>
                                 </fieldset>
-                                <div class="invalid-feedback">Modelo incorrecto!</div>
                             </div>
 
+                        <form id="formulario" class="formDatosModelo" >
 
                             <div class="form-group orientacionDivs">
 
@@ -68,9 +72,9 @@
                                 <label class="form-label mt-2" for="inputValid">Tipo de combustible:</label>
                                 <div class="form-group btn-group" role="group" aria-label="Basic radio toggle button group">
                                     <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked="">
-                                    <label class="btn btn-outline-warning" for="btnradio1">Gas.</label>
+                                    <label class="btn btn-outline-info" for="btnradio1">Gas.</label>
                                     <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" >
-                                    <label class="btn btn-outline-warning" for="btnradio2">Diesel</label>
+                                    <label class="btn btn-outline-info" for="btnradio2">Diesel</label>
                                 </div>
                             </div>
 
@@ -93,14 +97,17 @@
                                 </div>
                                 
                             </div>
-
-                            <div class="form-group" style="padding-top: 20px;">                        
-                                    <div class="orientacionDivsBotones" >
-                                        <button class="btn btn-primary  btnHover1" style="margin-right: 2px;" id="btn-Guardar">Guardar</button>
-                                        <button class="btn btn-primary  btnHover2" style="margin-left: 2px;" id="btn-Nuevo">Nuevo</button>
-                                    </div>
+                            <div class="form-group" style="padding-top: 10px; text-align: center;">
+                                <button class="btn btn-info  btnHover1" style="width:100%;" id="btn-Guardar">Guardar cambios</button>
                             </div>
                         </form>
+                            <div class="form-group" style="padding-top: 20px;">                        
+                                    <div class="orientacionDivsBotones" >
+                                        
+                                        <button class="btn btn-success  btnHover2" style="margin-left: 2px;" id="btn-Nuevo">Nuevo</button>
+                                    </div>
+                            </div>
+                        
                     </div>
             
                 </div>
@@ -109,7 +116,7 @@
             <!-------------------------------TABLAS------------------------------------>
             <!------------------------------------------------------------------------->
             <div class="col-12 col-md-8">
-                <div class="card text-white">
+                <div class="card text-white ">
                     <div class="card-header">Tabla de Modelos</div>
                         <div class="card-body tablaModeloBody">
                             <div id="idTabla" class="tabla-con-scroll" >
@@ -153,3 +160,4 @@
 <!-- ANIMACION DE BOTON                                                       -->
 
 <div id="circulo" class="circuloOrig"></div>
+<div class="loader"></div>

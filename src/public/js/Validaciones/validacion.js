@@ -124,13 +124,21 @@ const expresiones = {
         }
 
         function validacionNuevo(){
+            validacionComboMarca();
+            validacionNomAuto();
+            validacionDatos();
             return validacionComboMarca() && 
-                    validacionDatos()
+                validacionNomAuto() && validacionDatos()
         }
 
         function validacionAlias(){
             const alias = document.getElementById("Datos-Alias");
             return validarVehiculos(alias);
+        }
+
+        function validacionNomAuto(){
+            const modelo = document.getElementById("Datos-Modelo");
+            return validarVehiculos(modelo);
         }
 
         function validacionComboMarca(){
@@ -167,7 +175,7 @@ const expresiones = {
             idElementos.forEach((idElemento)=>{
                 let elemento = document.getElementById(idElemento);
                 //Datos no requiere validar Alias para guardar o nuevo
-                if(elemento.name!='Alias' && !validarVehiculos(elemento)) {
+                if(elemento.name!='Alias' && elemento.name!='Modelo' && !validarVehiculos(elemento)) {
                     toast("Ingrese correctamente el "+elemento.name+"!", "toastColorError");
                     validado = false;
                 }

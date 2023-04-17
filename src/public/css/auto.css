@@ -110,8 +110,22 @@
 
 
 .datosModeloBody{
-    height: 625px;
+    height: auto;
     
+}
+
+.formDatosModelo{
+    /*
+    background: #363636;
+    border: 2px solid #333232;
+    */
+    background: #3a3939;
+    border: 2px solid #3f3e3e;
+    border-radius:6px;
+    margin-top:10px;
+    padding-bottom:10px;
+    padding-left:10px;
+    padding-right:10px;
 }
 
 .tablaModeloBody{
@@ -173,7 +187,9 @@ thead th {
 
 
 
-
+.hidden {
+    display: none;
+  }
 
 
 
@@ -258,15 +274,26 @@ thead th {
     }
   
 
-    .toastColorSuccess{
-        background: radial-gradient(ellipse, #00b09b, #00b09bde)  
-    }
+    
 
-    .toastColorError{
-        background: radial-gradient(ellipse, #db2f2f, #db2f2fe1)  
-    }
-
-
+    .loader {
+        position: fixed;
+        top: 94%;
+        left: 94%;
+        border: 4px solid #fff;
+        /*border-image: linear-gradient(to right, #3498db, #8e44ad) 10;*/
+        border-top: 2px solid transparent;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        /*background: radial-gradient(circle at 10px 10px, rgba(52, 152, 219, 0.8), rgba(52, 152, 219, 0.2) 70%, transparent 80%);*/
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
 
 
 
@@ -286,9 +313,7 @@ thead th {
 
     /* Si es mas alto que 1000px y mas ancho que 1000px*/
     @media (min-height: 1000px) and (min-width: 1000px) {
-        .datosModeloBody{
-            height: 680px;
-        }
+
     }
 
     /* Si es menos alto que 1000px independientemente del ancho */
@@ -307,9 +332,7 @@ thead th {
 
     /* Si es menos alto que 1000px y mas ancho que 1000px*/
     @media (max-height: 1000px) and (min-width: 1000px) {
-        .datosModeloBody{
-            height: 605px;
-        }
+
     }
 
 
@@ -335,14 +358,10 @@ thead th {
             margin-bottom: 2px;
         }
 
-        .datosModeloBody{
-            height:740px;
-        }
+
     }
 
     /* Si es menos alto que 1000px y menos ancho que 1000px*/
     @media (max-height: 1000px) and (max-width: 1000px) {
-        .datosModeloBody{
-            height: 620px;
-        }
+
     }
