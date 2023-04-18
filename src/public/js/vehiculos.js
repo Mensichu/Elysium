@@ -68,7 +68,6 @@ window.addEventListener('load',()=>{
 
 //------------------------------------------------------------------------------ ComboMarca: Cargar datos
         const comboMarca = document.getElementById('comboMarca');
-        comboMarca.disabled=true;
         cargarComboMarca(0);
         //Combo Marca
         async function cargarComboMarca(id){
@@ -197,7 +196,7 @@ window.addEventListener('load',()=>{
                         field: "modelo", sort: 'asc',floatingFilter:true, 
                         minWidth: 150,flex: 150,
                         //type: 'miEstilo',
-                        editable: true
+                        //editable: true
                         
                     },
 
@@ -241,7 +240,7 @@ window.addEventListener('load',()=>{
                         console.log('rowId:  '+rowId);
                         console.log('params.data.id:  '+params.data.id);
                         params.node.setSelected(true);
-                        seleccionTabla(params.data.id);
+                        seleccionTabla(params.data.id,false);
                         return clasesFila;
                     }
                 }
@@ -286,7 +285,7 @@ window.addEventListener('load',()=>{
                 if(params.data!== undefined){
                     //console.log('cell was clicked', params.data);
                     rowId = params.data.id;
-                    seleccionTabla(rowId);
+                    seleccionTabla(rowId,true);
                     botonesModoNuevo(false);
                     guardarBtn.disabled=false;
                 }else{
@@ -373,6 +372,7 @@ window.addEventListener('load',()=>{
         cargarTablaModelos();
         async function cargarTablaModelos(){
             try{
+                //pinCarga('cargando');
                 // Hace una llamada fetch y trae el arreglo de datos para la tabla
                 const data = await fetch('/tablaAutos')
                 .then(response => response.json());
@@ -382,9 +382,12 @@ window.addEventListener('load',()=>{
                     let newRow = datosAFilaGrid(Modelos[i],0);
                     gridOptions.api.applyTransaction({ add: newRow });
                 }
-
+                //pinCarga('success');
             }catch(error){
                 console.log('Error al obtener el auto:', error);
+                toast(error.message, "toastColorError");
+                pinCarga('fallo');
+
             }
         }
 
@@ -401,21 +404,37 @@ window.addEventListener('load',()=>{
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ SELECCION TABLA AG-GRID
 
-        async function seleccionTabla(id) {
-            try{
-                const data = await fetch('/auto/'+id)
-                .then(response => response.json());
-
-                // carga los datos de data en los combos y textos de "Datos del Modelo"
-                await cargarDatosDesdeSeleccion(data);
-                validacionVaciar();
-                //Retorna el comboModelo
-                mostrarTextoModelo(true);
-                
-        }catch(error){
-            console.log('Error al obtener el auto:', error);
+          
+          
+        async function seleccionTabla(id,mouse) {
+                try{
+                    const datosModeloCard = document.querySelectorAll('.form-group input');
+                    if(mouse){
+                        pinCarga('cargando')
+                        console.log(datosModeloCard[0])
+                        datosModeloCard.forEach(input => {
+                            input.disabled=true;
+                        });
+                        console.log('bloqueado');
+                    }
+                    if(conectado()){
+                        const data = await fetch('/auto/'+id)
+                        .then(response => {
+                            if(!response.ok){
+                                throw new Error('Servidor - '+response.status+': '+response.statusText);
+                            }
+                            return response.json()
+                        });
+                        // carga los datos de data en los combos y textos de "Datos del Modelo"
+                        await cargarDatosDesdeSeleccion(data);
+                        validacionVaciar();
+                        if(mouse)pinCarga('successFast');
+                    }
+            }catch(error){
+                toast(error.message, "toastColorError");
+                pinCarga('fallo');
+            }
         }
-    }
 
 //--------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
 
@@ -571,18 +590,18 @@ window.addEventListener('load',()=>{
             const modoActual = nuevoBtn.textContent;
             if(bloquear && modoActual!='Agregar'){
                 //Bloqueado
-                comboMarca.disabled=false;
+                //comboMarca.disabled=false;
                 guardarNomAutoBtn.disabled=true;
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Agregar';
-                toast("Nuevo modelo Activado", "toastColorInfo");
+                toast("Ingrese el nuevo modelo a agregar", "toastColorInfo");
             }else if(!bloquear && modoActual!='Nuevo'){
                 //Desbloqueado
-                comboMarca.disabled=true
+                //comboMarca.disabled=true
                 guardarNomAutoBtn.disabled=false;
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Nuevo';
-                toast("Nuevo modelo Desactivado", "toastColorInfo");
+                //toast("Nuevo modelo Desactivado", "toastColorInfo");
             }
             
             
@@ -664,10 +683,13 @@ window.addEventListener('load',()=>{
         //------------------------------------------------------Modal Confirmar
 
         const btnConfirmar =document.getElementById('confirmar');
-        btnConfirmar.addEventListener('click',(e)=>{
+
+        btnConfirmar.addEventListener('click', (e)=>{
+            btnConfirmar.disabled=true;
+            
             //Ejecutar funcion
-            console.log(btnConfirmar.value);
             if(conectado()){
+                pinCarga('cargando');
                 //Nueva marca
                 if(btnConfirmar.value==0)nuevaMarca();
                 // Guardar cambios al modelo
@@ -675,6 +697,8 @@ window.addEventListener('load',()=>{
                 // Nuevo modelo
                 if(btnConfirmar.value==2)nuevoModelo();
             }
+
+            // Restablecer el estado de la función cuando se complete
         });
 
         //-------------------------------------------------------Modal Cerrar
@@ -716,7 +740,10 @@ window.addEventListener('load',()=>{
         const guardarAliasMarcaBtn = document.getElementById('btn-GuardarAlias');
 
         guardarAliasMarcaBtn.addEventListener('click', (e)=>{
+            // Evitamos el doble clic
+            guardarAliasMarcaBtn.disabled=true;
             //Alias
+            pinCarga('cargando');
             if(conectado() && validacionAlias()){
                 modificarAliasMarca();
             }else{
@@ -730,14 +757,19 @@ window.addEventListener('load',()=>{
 
 const guardarNomAutoBtn = document.getElementById('btn-GuardarNomAuto');
 
+
 guardarNomAutoBtn.addEventListener('click', (e)=>{
+    // Evitamos el doble clic
+    guardarNomAutoBtn.disabled=true;
     //Alias
     if(conectado() && validacionNomAuto()){
         modificarNomAuto();
     }else{
         //toast
         toast("Llene el campo alias", "toastColorError");
+        guardarNomAutoBtn.disabled=false;
     }
+
 });
 
 
@@ -798,10 +830,10 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
 
 
 
-        function modificarAliasMarca() {
+        async function modificarAliasMarca() {
             const data = obtenerDatos();
-            
-            fetch(`/marcaAlias/${data.id_marca}`,{
+
+            await fetch(`/marcaAlias/${data.id_marca}`,{
                 method: 'PUT',
                 body: JSON.stringify(data),
                 headers: {
@@ -810,33 +842,42 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
             })
             .then(response => {
                 if(!response.ok){
-                    toast(response.status, "toastColorError");
-                    throw new Error('modificarAliasMarca PUT fallo!');
+                    //Manda al catch y envia el message error
+                    throw new Error('Servidor - '+response.status+': '+response.statusText);
+                }else{
+                    toast("Alias de marca actualizado", "toastColorSuccess");
+                    validacionVaciar();
+                    pinCarga('success');
                 }
-                return response.json();
-            })
-            .then(res => {
-                toast("Alias de marca actualizado", "toastColorSuccess");
-                //cerrarModals();
+                
             }).catch(error =>{
-                toast("Error con el servidor", "toastColorError");
+                toast(error.message, "toastColorError");
+                pinCarga('fallo');
                 console.log(error);
             })
+            setTimeout(()=>{
+                guardarAliasMarcaBtn.disabled=false;
+            },1000);
         }
 
 //--------------------------------------------- MARCA REPETIDAS
 
         async function marcasRepetidas(nom_marca){
-            //const data = {
-            //                nom_marca: document.getElementById('inputModal').value.trim().toLowerCase()
-            //};
+            //No se usa pinCarga cargando, debido a que se realiza otro fetch(nueva marca) en consecuencia a este
             const res = await fetch(`/marcasRepetidas/${nom_marca}`)
-            .then(response => response.json())
+            .then(response => {
+                if(!response.ok){
+                    throw new Error('Servidor - '+response.status+': '+response.statusText);
+                }
+                // tampoco pinCarga success
+                return response.json()
+            })
             .catch(error =>{
-                toast("Error con el servidor: "+error, "toastColorError");
+                toast(error.message, "toastColorError");
+                pinCarga('fallo');
+                btnConfirmar.disabled=false;
                 return null;
             });
-            console.log('respuesta intermedia');
 
             return res.respuesta;
         }
@@ -851,27 +892,41 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
             if(await marcasRepetidas(data.nom_marca)){
                 //Si devuelve true significa que encontro una marca igual
                 toast("La marca ya existe!", "toastColorError");
+                pinCarga('fallo');
+                btnConfirmar.disabled=false;
             }else{
                 //No encontro una marca igual, procede a crearla
-                fetch('/marca',{
+                pinCarga('cargando');
+                await fetch('/marca',{
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers: {
                         'Content-type':'application/json' 
                     }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if(!response.ok){
+                        throw new Error('Servidor - '+response.status+': '+response.statusText);
+                    }
+                    return response.json()
+                })
                 .then(res =>{
                     data.id= res.id;
                     nuevaMarcaCombo(data);
                     toast("Marca agregado", "toastColorSuccess");
                     // Cerrar el cuadro modal
                     cerrarModal();
+                    pinCarga('success')
                 })
                 .catch(error => {
-                    toast("Error con el servidor", "toastColorError");
+                    toast(error.message, "toastColorError");
+                    pinCarga('fallo');
                     console.log('Error al agregar marca nueva');
                 });
+                setTimeout(()=>{
+                    btnConfirmar.disabled=false;
+                },300);
+                
             }
 
         }
@@ -879,96 +934,98 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
 
 //--------------------------------------------- MODELOS REPETIDOS
 
-async function modelosRepetidos(id, nom_auto){
+        async function modelosRepetidos(id, nom_auto){
+            //No se usa pinCarga cargando
+            const queryParams = new URLSearchParams({id: id, nom_auto: nom_auto});
 
-    const queryParams = new URLSearchParams({id: id, nom_auto: nom_auto});
+            const res = await fetch(`/autosRepetidos?${queryParams.toString()}`)
+            .then(response => {
+                if(!response.ok){
+                    throw new Error('Servidor - '+response.status+': '+response.statusText);
+                }
+                return response.json();
+            })
+            .catch(error =>{
+                toast(error.message, "toastColorError");
+                return null;
+            });
 
-    const res = await fetch(`/autosRepetidos?${queryParams.toString()}`)
-    .then(response => response.json())
-    .catch(error =>{
-        toast("Error con el servidor: "+error, "toastColorError");
-        return null;
-    });
-    console.log('respuesta intermedia');
-
-    return res.respuesta;
-}
+            return res.respuesta;
+        }
 
 //---------------------------------------------- MODIFICAR nom_auto
 
         async function modificarNomAuto(){
             const data = obtenerDatos();
-            if(await modelosRepetidos(data.id,data.nom_auto)){
+            if(false && await modelosRepetidos(data.id,data.nom_auto)){
                 //Si devuelve true significa que encontro una marca igual
                 toast("El modelo ya existe!", "toastColorError");
+                pinCarga('fallo');
             }else{
-                fetch(`/nomAuto/${data.id}`,{
+                pinCarga('cargando');
+                await fetch(`/nomAuto/${data.id}`,{
                     method: 'PUT',
                     body: JSON.stringify(data),
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 })
-                .then(response => {
+                .then(async response => {
                     if(!response.ok){
-                        toast(response.status, "toastColorError");
-                        throw new Error('modificarModelo PUT fallo!');
+                        throw new Error('Servidor - '+response.status+': '+response.statusText);
+                    }else{
+                        actualizarFilaAgGrid(data,2);
+                        await cambioComboMarca(true);
+                        seleccionComboModelo(data.id)
+                        toast("Nombre de modelo guardado", "toastColorSuccess");
+                        guardarBtn.disabled=true;
+                        cerrarModal();
+                        pinCarga('success');
                     }
-                    return response.json()
-                })
-                .then(async res =>{
-                    //const filaActualizada = datosAFilaGrid(data);
-                    actualizarFilaAgGrid(data,2);
-                    await cambioComboMarca(true);
-                    seleccionComboModelo(data.id)
-                    toast("Nombre de modelo guardado", "toastColorSuccess");
-                    guardarBtn.disabled=true;
-                    cerrarModal();
                 }).catch(error =>{
-                    console.log(error)
-                    toast("Error con el servidor", "toastColorError");
+                    toast(error.message, "toastColorError");
+                    pinCarga('fallo');
                 });
+                setTimeout(()=>{
+                    guardarNomAutoBtn.disabled=false;
+                },1000);
             }
             
-            console.log('entre');
-            
-            console.log('pase');
+
         }
 
 //---------------------------------------------- MODIFICAR modelo
 
-        function modificarModelo(){
+        async function modificarModelo(){
             const data = obtenerDatos();
-            
-            fetch(`/auto/${data.id}`,{
+            await fetch(`/auto/${data.id}`,{
                 method: 'PUT',
                 body: JSON.stringify(data),
                 headers: {
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => {
+            .then(async response => {
                 if(!response.ok){
                     toast(response.status, "toastColorError");
-                    throw new Error('modificarModelo PUT fallo!');
+                    throw new Error('Servidor - '+response.status+': '+response.statusText);
+                }else{
+                    //const filaActualizada = datosAFilaGrid(data);
+                    guardarBtn.disabled=true;
+                    cerrarModal();
+                    actualizarFilaAgGrid(data,1);
+                    await cambioComboMarca(true);
+                    seleccionComboModelo(data.id)
+                    toast("Modelo guardado", "toastColorSuccess");
+                    pinCarga('success');
                 }
-                return response.json()
-            })
-            .then(async res =>{
-                //const filaActualizada = datosAFilaGrid(data);
-                actualizarFilaAgGrid(data,1);
-                await cambioComboMarca(true);
-                seleccionComboModelo(data.id)
-                toast("Modelo guardado", "toastColorSuccess");
-                guardarBtn.disabled=true;
-                cerrarModal();
             }).catch(error =>{
-                console.log(error)
-                toast("Error con el servidor", "toastColorError");
+                toast(error.message, "toastColorError");
+                pinCarga('fallo');
             });
-            console.log('entre');
-            
-            console.log('pase');
+            setTimeout(()=>{
+                btnConfirmar.disabled=false;
+            },300);
         }
         
 
@@ -980,11 +1037,12 @@ async function modelosRepetidos(id, nom_auto){
         async function nuevoModelo(){
             const data = obtenerDatos();
 
-            if(await modelosRepetidos(0,data.nom_auto)){
+            if(false && await modelosRepetidos(0,data.nom_auto)){
                 //Si devuelve true significa que encontro una marca igual
                 toast("El modelo ya existe!", "toastColorError");
             }else{
-                fetch('/auto',{
+                pinCarga('cargando');
+                await fetch('/auto',{
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers:{
@@ -1000,15 +1058,19 @@ async function modelosRepetidos(id, nom_auto){
                 .then(async res =>{
                     data.id = res.id
                     await cambioComboMarca(true);
+                    botonesModoNuevo(false);
+                    cerrarModal();
                     nuevaFilaAgGrid(data)
                     toast("Modelo agregado", "toastColorSuccess");
-                    botonesModoNuevo(false);
+                    pinCarga('success');
                     rowId=res.id;
-                    cerrarModal();
                 }).catch(error =>{
-                    console.log(error)
                     toast("Error con el servidor", "toastColorError");
+                    pinCarga('fallo');
                 })
+                setTimeout(()=>{
+                    btnConfirmar.disabled=false;
+                },600);
             }
             
         }
@@ -1032,11 +1094,11 @@ async function modelosRepetidos(id, nom_auto){
             const rect = modalContent.getBoundingClientRect();
             // Se obtienen las coordenadas de posicion
             const modalContentTop = rect.top;
-            const modalContentLeft = rect.left+(modalContent.offsetWidth/2);
+            const modalContentRight = rect.right-modalContent.offsetWidth;
 
             // Se asignan la posicion al circulo
             circulo.style.top = modalContentTop + 'px';
-            circulo.style.left = modalContentLeft + 'px';
+            circulo.style.right = modalContentRight + 'px';
             // Se asigna la forma de ancho y altura
             circulo.style.height=modalContent.offsetHeight+"px";
             circulo.style.width=modalContent.offsetWidth+"px";
@@ -1062,6 +1124,7 @@ async function modelosRepetidos(id, nom_auto){
               } else {
                 // El navegador no está en línea, muestra un mensaje de alerta al usuario
                 toast("No hay conexión a Internet. Por favor, revisa tu conexión y vuelve a intentarlo.", "toastColorError");
+                pinCarga('fallo');
                 return false;
               }
         }
@@ -1081,7 +1144,20 @@ async function modelosRepetidos(id, nom_auto){
             console.log('paso final');
             console.log(respuesta?'El modelo ya existe!':'Nuevo modelo');
             */
-            modoNuevoModelo();
+            //modoNuevoModelo();
+
+             // Obtener la instancia de la tabla
+            var gridApi = gridOptions.api;
+
+            // Deshabilitar la selección de filas
+            //gridApi.setSuppressRowClickSelection(true);
+
+            // Obtener la instancia de la tabla
+
+
+             // Actualizar los datos de la tabla para eliminar el listener (escuchador) de onCellClicked
+            gridApi.setRowData(gridOptions.rowData);
+
 
         });
    

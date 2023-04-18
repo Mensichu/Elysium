@@ -124,11 +124,10 @@ const expresiones = {
         }
 
         function validacionNuevo(){
-            validacionComboMarca();
-            validacionNomAuto();
-            validacionDatos();
-            return validacionComboMarca() && 
-                validacionNomAuto() && validacionDatos()
+            const val1 = validacionComboMarca();
+            const val2 = validacionNomAuto();
+            const val3 = validacionDatos();
+            return val1 && val2 && val3;
         }
 
         function validacionAlias(){
