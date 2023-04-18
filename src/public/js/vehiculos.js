@@ -285,9 +285,10 @@ window.addEventListener('load',()=>{
                 if(params.data!== undefined){
                     //console.log('cell was clicked', params.data);
                     rowId = params.data.id;
-                    seleccionTabla(rowId,true);
                     botonesModoNuevo(false);
                     guardarBtn.disabled=false;
+                    seleccionTabla(rowId,true);
+
                 }else{
                     console.log('aja!')
                     guardarBtn.disabled=true;
@@ -408,14 +409,17 @@ window.addEventListener('load',()=>{
           
         async function seleccionTabla(id,mouse) {
                 try{
-                    const datosModeloCard = document.querySelectorAll('.form-group input');
+                    const inputCard = document.querySelectorAll('.form-group input');
+                    const buttonCard = document.querySelectorAll('.form-group button');
                     if(mouse){
                         pinCarga('cargando')
-                        console.log(datosModeloCard[0])
-                        datosModeloCard.forEach(input => {
+                        inputCard.forEach(input => {
                             input.disabled=true;
                         });
-                        console.log('bloqueado');
+                        buttonCard.forEach(button => {
+                            button.disabled=true;
+                        });
+                        comboMarca.disabled=true;
                     }
                     if(conectado()){
                         const data = await fetch('/auto/'+id)
@@ -428,7 +432,16 @@ window.addEventListener('load',()=>{
                         // carga los datos de data en los combos y textos de "Datos del Modelo"
                         await cargarDatosDesdeSeleccion(data);
                         validacionVaciar();
-                        if(mouse)pinCarga('successFast');
+                        if(mouse){
+                            pinCarga('successFast')
+                            inputCard.forEach(input => {
+                                input.disabled=false;
+                            });
+                            buttonCard.forEach(button => {
+                                button.disabled=false;
+                            });
+                            comboMarca.disabled=false;
+                        };
                     }
             }catch(error){
                 toast(error.message, "toastColorError");
