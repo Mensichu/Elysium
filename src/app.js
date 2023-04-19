@@ -1,13 +1,15 @@
 
 import express from 'express'
 import config from './config'
-import Toastify from 'toastify-js';
+
 
 const {engine} = require('express-handlebars');
 const morgan = require('morgan');
 
 import productsRoutes from './routes/routes';
-import autoRoutes from './routes/auto.routes';
+import autoRoutes from  './routes/auto.routes';
+import placaRoutes from './routes/placa.routes';
+
 
 
 const app = express();
@@ -36,6 +38,7 @@ app.use(express.urlencoded({extended: false}));//reciba desde from en html
 
 app.use(productsRoutes);
 app.use(autoRoutes);
+app.use(placaRoutes);
 
 // Public
 app.use(express.static(path.join(__dirname, 'public')));

@@ -1,0 +1,31 @@
+
+
+
+.showDelay{
+  visibility: hidden;
+  position: relative;
+  opacity: 0;
+  height: 0;
+  transition: visibility 0s,opacity 0.5s ease-in-out 0.1s;
+  
+}
+
+
+.showNow{
+  visibility: visible;
+  opacity: 1;
+}
+
+
+.orientacionDivs {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+
+.orientacionDivs .elementoOrientacion{
+    width: 100%;
+    padding-left: 2px;
+    padding-right: 2px;
+
+}

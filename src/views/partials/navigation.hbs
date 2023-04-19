@@ -1,16 +1,54 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Elysium 4.0</a>
+    <button id ="navBarExitBtn" class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse" id="navbarColor01" style="">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="/">Home
+            <span class="visually-hidden">(current)</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/agentes">Agentes</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Vehiculos</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="/vehiculos/placas">Placas</a>
+            <a class="dropdown-item" href="/vehiculos/modelos">Modelos</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Productos</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle " data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Ventas</a>
+          <div class="dropdown-menu " >
+            <a class="dropdown-item" href="#">Documentos</a>
+            <a class="dropdown-item" href="#">Fact. Electronica</a>
+            <a class="dropdown-item" href="#">Notas de credito</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Devoluciones</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Pedidos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Pagos</a>
+        </li>
+      </ul>
+      <form class="d-flex">
+        <input class="form-control me-sm-2" type="search" placeholder="Search">
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</nav>
 
-
-<div id="idNavigation">
-    <nav id="idNavPrincipal" class="navPrincipal">
-        <a id="idA1" class="item1" href="/agentes">Agentes</a>
-        <a id="idA1" class="item2" href="/vehiculos">Vehiculos</a>
-        <a id="idA1" class="item3" href="/productos">Productos</a>
-        <a id="idA1" class="item4" href="/ventas">Ventas</a>
-        <a id="idA1" class="item5" href="/pedidos">Pedidos</a>
-        <a id="idA1" class="item6" href="/pagos">Pagos</a>
-        <div class="animation start-item"></div>
-    </nav>
-</div>
 
 
 <script>

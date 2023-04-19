@@ -1,42 +1,75 @@
 window.addEventListener('load',()=>{
+    const liDropdown = document.querySelectorAll('.nav-item.dropdown');
+    liDropdown.forEach(li =>{
+        li.addEventListener('click', ()=>{
+            //Si contiene show esta desplegado
+            const desplegar = li.children[0].classList.contains('show');
+            desplegarDropdown(li, !desplegar);
+        });
 
-    const navPrincipal=document.querySelector('#idNavPrincipal');
-    let start_item="start-item1";
-    navPrincipal.addEventListener('click',(e)=>{
-        const itemSeleccionado = e.target;
-        //Removemos el ultimo valor de start-item
-        document.querySelector('.animation').classList.remove(start_item);
-        switch ((itemSeleccionado.classList.value).toString()){
-            case "item1":
-                start_item="start-item1";
-                break;
-            case "item2":
-                start_item="start-item2";
-                break;
-            case 'item3':
-                start_item="start-item3";
-                break;
-            case 'item4':
-                start_item="start-item4";
-                break;
-            case 'item5':
-                start_item="start-item5";
-                break;
-            case 'item6':
-                start_item="start-item6";
-                break;
-            default:
-                break;
-        }
-        //Actualizamos al nuevo valor de start-item escogido
-        document.querySelector('.animation').classList.add(start_item);
+        
+        
     });
 
+    const navBarExitBtn = document.getElementById('navBarExitBtn');
+    const navBarItems = document.getElementById('navbarColor01');
+    navBarExitBtn.addEventListener('click',e=>{
+        
+        const desplegar = navBarItems.classList.contains('show');
+
+        if(!desplegar){
+            navBarExitBtn.classList.remove('collapsed')
+            navBarExitBtn.setAttribute('aria-expanded','true');
+
+            navBarItems.classList.add('show')
+        }else{
+            navBarExitBtn.classList.add('collapsed')
+            navBarExitBtn.setAttribute('aria-expanded','false');
+
+            navBarItems.classList.remove('show')
+        }
+
+    })
 
     
 });
 
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CONECTADO
+
+function conectado(){
+    if (navigator.onLine) {
+        // El navegador está en línea, se puede enviar la solicitud al servidor
+        return true;
+      } else {
+        // El navegador no está en línea, muestra un mensaje de alerta al usuario
+        toast("No hay conexión a Internet. Por favor, revisa tu conexión y vuelve a intentarlo.", "toastColorError");
+        pinCarga('fallo');
+        return false;
+      }
+}
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ NAVBAR
+
+function desplegarDropdown(li,desplegar){
+
+    if(desplegar){
+        li.children[0].classList.add('show');
+        li.children[0].setAttribute('aria-expanded','true');
+        li.children[1].classList.add('show');
+        li.children[1].setAttribute('data-bs-popper','static');
+    }else{
+        li.children[0].classList.remove('show');
+        li.children[0].setAttribute('aria-expanded','false');
+        li.children[1].classList.remove('show');
+        li.children[1].removeAttribute('data-bs-popper');
+    }
+}
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ANIMACION CARGA
+
 const pin = document.getElementById('pin');
 
 const tiempoCarga = 2000;

@@ -1,66 +1,15 @@
 window.addEventListener('load',()=>{
     
+    
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA MODELOS
 
     //Solo se ejecuta cada vez que se recargue la pagina y sea Vehiculos
     const pagina = window.location.pathname;
 
-    if(pagina == '/vehiculos'){
-        console.log("Cargo vehiculos");
-        
-        //Agregamos que sea visible por css modelos con su clase showNow
-        document.querySelector('#contVehiculos1').classList.add('showNow');
-        //Agregamos al navegador principal que su referencia es Vehiculos
-        document.querySelector('.animation').classList.add("start-item2");
-        //Guardamos el elemento node submenu (Placas modelos)
-        const navSubMenu = document.querySelector('.subMenu');
-        //Inicializamos la variable seleccion al cargar la pagina
-        let seleccion="";
-        //Creamos el evento listener al hacer click en el submenu (Placas modelos)
-        navSubMenu.addEventListener('click',(e)=>{
-            //Evitamos que el submenu redireccione la pagina
-            e.preventDefault();
-            //Condicion 1: solo devuelve true cuando el submenu esta abierto
-            const cond1 = navSubMenu.classList.contains("_expand");//menu abierto
-            //Condicion 2: solo devuelve verdadero cuando se haga clic en un submenu: Placas o modelos
-            //Que son elementos de etiqueta <a>
-            const cond2 = e.target.tagName == 'A';
-            //Se agrega o quita la clase _exapand que despliega o repliega el submenu
-            if(!cond1)navSubMenu.classList.toggle("_expand");
-            //Se pregunta si el menu esta abierto y se hizo clic en un submenu
-            if(cond1 && cond2){
-                //Se agrega o quita la clase _exapand que despliega o repliega el submenu
-                navSubMenu.classList.toggle("_expand");
-                //Remueve la clase activo del submenu que este seleccionado
-                document.querySelector(".active").classList.remove("active");
-                //Se agrega la clase activo al elemento del submenu que se selecciono en este clic
-                e.target.classList.add('active');
-            };
-            //Variable temporal para comparar con la nueva seleccion y se comprueba
-            //si se a seleccionado un submenu diferente
-            const temp = seleccion;
-            seleccion= e.target.textContent;
-            //Preguna si se selecciono un submenu diferente del anterior
-            const cond3= temp!=seleccion;
-            //Se actualiza el textoSeleccionado a la seleccion actual solo si
-            //se hizo clic en una etiqueta <a>
-            document.querySelector('.textoSeleccionado').textContent= cond2?seleccion:"";
-            //Se pregunta si se hizo una seleccion diferente del anterior y si el submenu
-            //esta abierto
-            if(cond3 && cond1){
-                if(seleccion=='Placas'){
-                    
-                }else if(seleccion=='Modelos'){
-                    
-                }
-                //Se altera la clase showNow para alternar en una transicion entre Placas o Modelos
-                document.querySelector('#contVehiculos1').classList.toggle('showNow');
-                document.querySelector('#contVehiculos2').classList.toggle('showNow');
-            }
-
-
-        });
+    if(pagina == '/vehiculos/modelos'){
+        document.querySelector('#fondo').classList.add('showNow')
+ 
 
         
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBOBOX
@@ -105,12 +54,11 @@ window.addEventListener('load',()=>{
             }catch(error){
                 console.log('Error al obtener comboMarca:', error);
             }
-            // Hace una llamada AJAX a la ruta '/productsa' para obtener la lista de marcas de vehículos
         
         }
         
 
-//------------------------------------------------------------------------------  Combo Modelo: clic
+//------------------------------------------------------------------------------  Combo Marca: clic
 
         //Funcion solo cuando hubo un cambio en el comboMarca
         let comboMarcaSelecc= 0;
@@ -122,9 +70,23 @@ window.addEventListener('load',()=>{
         });
 
 
-//------------------------------------------------------------------------------ Combo Modelo: Cambio-Forzar Cargar datos
+//------------------------------------------------------------------------------  Combo Modelo: clic
         const comboModelo = document.getElementById('comboModelo');
-        comboModelo.disabled=true;
+
+        comboModelo.addEventListener('click',(e)=>{
+            //Solo ejecuta si esta conectado a internet
+            if(conectado()){
+                const nom_auto= document.getElementById("Datos-Modelo");
+                nom_auto.value = comboModelo.options[comboModelo.selectedIndex].text.trim()
+            }
+            //console.log("Hiciste click en el combo marca!");
+            
+        });
+
+
+//------------------------------------------------------------------------------ Combo Modelo: Cambio-Forzar Cargar datos
+        
+        //comboModelo.disabled=true;
         async function cambioComboMarca(forzar){
             if(forzar || comboMarcaSelecc!=comboMarca.value){
                 console.log('forzar: '+forzar);
@@ -147,6 +109,7 @@ window.addEventListener('load',()=>{
                             //Creamos el elemento temporal
                             const fragmento = document.createDocumentFragment();
                             for(i=0;i<modelos.length;i++){
+                                console.log(modelos[i]);
                                 //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
                                 const item = document.createElement("OPTION");
                                 item.innerHTML = modelos[i].nom_auto.toUpperCase();
@@ -193,8 +156,8 @@ window.addEventListener('load',()=>{
                         field: "marca", sort: 'asc',floatingFilter:true, 
                         width:130},
                 {headerName: "Modelo", 
-                        field: "modelo", sort: 'asc',floatingFilter:true, 
-                        minWidth: 150,flex: 150,
+                        field: "modelo", sort: 'asc',floatingFilter:true,
+                        minWidth: 150,flex: 'auto',
                         //type: 'miEstilo',
                         //editable: true
                         
@@ -454,11 +417,14 @@ window.addEventListener('load',()=>{
     async function cargarDatosDesdeSeleccion(data){
         // almaceno la respuesta ajax en la variable modelo
         var modelo = data;
-        
+        console.log(modelo)
         await seleccionComboMarca(modelo.id_marca);
         //Una vez seleccionado el comboMarca y cargado el comboModelo
         //se selecciona el modelo mediante el id
-        seleccionComboModelo(modelo.id);
+        //seleccionComboModelo(modelo.id);
+        //se selecciona el modelo mediante el nom_auto
+        //En la db esta todo en minusculas, pero en el front end esta en mayuscula
+        seleccionComboModeloNombre(modelo.nom_auto.toUpperCase())
         //Cargamos el resto de datos
         document.getElementById("Datos-Modelo").value=modelo.nom_auto.toUpperCase();
         document.getElementById("Datos-Alias").value=modelo.Marca.alias.toUpperCase();
@@ -504,6 +470,23 @@ window.addEventListener('load',()=>{
         }
     }
 
+//-----------------------------------------------------Seteamos el comboModelo desde su nom_auto
+
+function seleccionComboModeloNombre(nom_auto){
+    //Se busca el .value(id del modelo) que corresponda al id del auto que recibe
+    for(i=0;i<comboModelo.options.length;i++){
+        //console.log('comboModelo '+i+': '+comboModelo.options[i].value)
+        console.log('"'+comboModelo.options[i].textContent+'"')
+        console.log(nom_auto);
+        if(comboModelo.options[i].textContent == nom_auto){
+            //console.log(comboModelo.children[i].innerHTML)
+            comboModelo.selectedIndex=i;
+            break;
+            
+        }
+    }
+}
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ MOSTRAR MARCA ALIAS
 
     const aliasMarca = document.getElementById('formTextAlias');
@@ -528,7 +511,7 @@ window.addEventListener('load',()=>{
         e.preventDefault(); // prevenir el menú contextual predeterminado del navegador
         console.log(e.target.tagName);
         if(e.target.tagName === 'INPUT'){
-            mostrarTextoModelo(true);
+            mostrarTextoModelo(false);
         }
     });
 
@@ -603,17 +586,21 @@ window.addEventListener('load',()=>{
             const modoActual = nuevoBtn.textContent;
             if(bloquear && modoActual!='Agregar'){
                 //Bloqueado
-                //comboMarca.disabled=false;
+                mostrarTextoModelo(true);
                 guardarNomAutoBtn.disabled=true;
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Agregar';
+                nuevoBtn.classList.add('btn-success');
+                nuevoBtn.classList.remove('btn-outline-success');
                 toast("Ingrese el nuevo modelo a agregar", "toastColorInfo");
             }else if(!bloquear && modoActual!='Nuevo'){
                 //Desbloqueado
-                //comboMarca.disabled=true
+                mostrarTextoModelo(false);
                 guardarNomAutoBtn.disabled=false;
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Nuevo';
+                nuevoBtn.classList.remove('btn-success');
+                nuevoBtn.classList.add('btn-outline-success');
                 //toast("Nuevo modelo Desactivado", "toastColorInfo");
             }
             
@@ -635,7 +622,7 @@ window.addEventListener('load',()=>{
 
 
         function vaciarDatosModelo(){
-            document.getElementById("Datos-Modelo").value='';
+            //document.getElementById("Datos-Modelo").value='';
             document.getElementById("Datos-Alias").value='';
             document.getElementById("Datos-Año").value='';
             document.getElementById("Datos-Cilindraje").value='';
@@ -947,9 +934,9 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
 
 //--------------------------------------------- MODELOS REPETIDOS
 
-        async function modelosRepetidos(id, nom_auto){
+        async function modelosRepetidos(id, nom_auto, cilindraje, ano){
             //No se usa pinCarga cargando
-            const queryParams = new URLSearchParams({id: id, nom_auto: nom_auto});
+            const queryParams = new URLSearchParams({id:id, nom_auto:nom_auto, cilindraje:cilindraje, ano:ano});
 
             const res = await fetch(`/autosRepetidos?${queryParams.toString()}`)
             .then(response => {
@@ -970,8 +957,8 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
 
         async function modificarNomAuto(){
             const data = obtenerDatos();
-            if(false && await modelosRepetidos(data.id,data.nom_auto)){
-                //Si devuelve true significa que encontro una marca igual
+            if(await modelosRepetidos(data.id,data.nom_auto,data.cilindraje,data.ano)){
+                //Si devuelve true significa que encontro una modelo año cil igual
                 toast("El modelo ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{
@@ -989,7 +976,8 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
                     }else{
                         actualizarFilaAgGrid(data,2);
                         await cambioComboMarca(true);
-                        seleccionComboModelo(data.id)
+                        //seleccionComboModelo(data.id)
+                        seleccionComboModeloNombre(data.nom_auto);
                         toast("Nombre de modelo guardado", "toastColorSuccess");
                         guardarBtn.disabled=true;
                         cerrarModal();
@@ -1011,31 +999,38 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
 
         async function modificarModelo(){
             const data = obtenerDatos();
-            await fetch(`/auto/${data.id}`,{
-                method: 'PUT',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(async response => {
-                if(!response.ok){
-                    toast(response.status, "toastColorError");
-                    throw new Error('Servidor - '+response.status+': '+response.statusText);
-                }else{
-                    //const filaActualizada = datosAFilaGrid(data);
-                    guardarBtn.disabled=true;
-                    cerrarModal();
-                    actualizarFilaAgGrid(data,1);
-                    await cambioComboMarca(true);
-                    seleccionComboModelo(data.id)
-                    toast("Modelo guardado", "toastColorSuccess");
-                    pinCarga('success');
-                }
-            }).catch(error =>{
-                toast(error.message, "toastColorError");
+            if(await modelosRepetidos(data.id,data.nom_auto,data.cilindraje,data.ano)){
+                //Si devuelve true significa que encontro una modelo año cil igual
+                toast("El modelo ya existe!", "toastColorError");
                 pinCarga('fallo');
-            });
+            }else{
+                await fetch(`/auto/${data.id}`,{
+                    method: 'PUT',
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(async response => {
+                    if(!response.ok){
+                        toast(response.status, "toastColorError");
+                        throw new Error('Servidor - '+response.status+': '+response.statusText);
+                    }else{
+                        //const filaActualizada = datosAFilaGrid(data);
+                        guardarBtn.disabled=true;
+                        cerrarModal();
+                        actualizarFilaAgGrid(data,1);
+                        await cambioComboMarca(true);
+                        //seleccionComboModelo(data.id)
+                        seleccionComboModeloNombre(data.nom_auto);
+                        toast("Modelo guardado", "toastColorSuccess");
+                        pinCarga('success');
+                    }
+                }).catch(error =>{
+                    toast(error.message, "toastColorError");
+                    pinCarga('fallo');
+                });
+            }
             setTimeout(()=>{
                 btnConfirmar.disabled=false;
             },300);
@@ -1050,9 +1045,10 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
         async function nuevoModelo(){
             const data = obtenerDatos();
 
-            if(false && await modelosRepetidos(0,data.nom_auto)){
-                //Si devuelve true significa que encontro una marca igual
+            if(await modelosRepetidos(0,data.nom_auto,data.cilindraje,data.ano)){
+                //Si devuelve true significa que encontro una modelo año cil igual
                 toast("El modelo ya existe!", "toastColorError");
+                pinCarga('fallo');
             }else{
                 pinCarga('cargando');
                 await fetch('/auto',{
@@ -1081,10 +1077,11 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
                     toast("Error con el servidor", "toastColorError");
                     pinCarga('fallo');
                 })
-                setTimeout(()=>{
-                    btnConfirmar.disabled=false;
-                },600);
+                
             }
+            setTimeout(()=>{
+                btnConfirmar.disabled=false;
+            },600);
             
         }
 
@@ -1125,22 +1122,6 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
         }
 
         
-
-
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CONECTADO
-
-        function conectado(){
-            if (navigator.onLine) {
-                // El navegador está en línea, se puede enviar la solicitud al servidor
-                return true;
-              } else {
-                // El navegador no está en línea, muestra un mensaje de alerta al usuario
-                toast("No hay conexión a Internet. Por favor, revisa tu conexión y vuelve a intentarlo.", "toastColorError");
-                pinCarga('fallo');
-                return false;
-              }
-        }
 
 
 

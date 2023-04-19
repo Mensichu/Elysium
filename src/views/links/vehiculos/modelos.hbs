@@ -1,4 +1,9 @@
-<div id="fondo" stylea="padding: 10px; border:2px black solid">
+
+
+<link rel="stylesheet" href="/css/styleCombo.css">
+<link rel="stylesheet" href="/css/auto.css">
+    
+<div id="fondo" class="showDelay mt-2" stylea="padding: 10px; border:2px black solid">
     <div class="container">
         <div class="row ">
             <div class="col-12 col-md-4" >
@@ -12,7 +17,7 @@
                                     <select class="form-select " id="comboMarca" >
                                         <option value="0">No aplica</option>
                                     </select>
-                                    <button class="btn btn-outline-info" type="button" id="btn-Agregar" style="z-index: 0;">Agregar</button>
+                                    <button class="btn btn-info" type="button" id="btn-Agregar" style="z-index: 0;">Agregar</button>
                                 </div>
                             </div>
                             
@@ -21,13 +26,13 @@
                                     <label class="form-label mt-2" for="inputValid">Alias(Marca):</label>
                                     <div class="input-group">
                                         <input type="text" id="Datos-Alias" class="form-control form-input" name="Alias" placeholder="Alias" minlength="1"maxlength="60">
-                                        <button class="btn btn-outline-info " type="button" id="btn-GuardarAlias" style="z-index: 0;">Guardar</button>
+                                        <button class="btn btn-info " type="button" id="btn-GuardarAlias" style="z-index: 0;">Guardar</button>
                                     </div>
                                     <div class="invalid-feedback">Alias incorrecto!</div>
                                 </fieldset>
                                 
                             </div>
-                            <div id="formComboModelo" class="form-group" title="clic derecho para editar" style="display: none;">
+                            <div id="formComboModelo" class="form-group" title="clic derecho para editar" >
                                 <label for="exampleSelect1" class="form-label mt-2">Modelo:</label>
                                 <div class="input-group">
                                     <select class="form-select" id="comboModelo">
@@ -35,12 +40,12 @@
                                     </select>
                                 </div>
                             </div>
-                            <div id="formTextModelo" class="form-group" title="clic derecho para regresar" >
+                            <div id="formTextModelo" class="form-group" title="clic derecho para regresar" style="display: none;">
                                 <fieldset>
                                     <label class="form-label mt-2" for="inputValid">Modelo (editable):</label>
                                     <div class="input-group">
                                         <input type="text" id="Datos-Modelo" class="form-control form-input" name="Modelo" placeholder="Modelo" maxlength="60">
-                                        <button class="btn btn-outline-info " type="button" id="btn-GuardarNomAuto" style="z-index: 0;">Guardar</button>
+                                        <button class="btn btn-info " type="button" id="btn-GuardarNomAuto" style="z-index: 0;">Guardar</button>
                                     </div>
                                     <div class="invalid-feedback">Modelo incorrecto!</div>
                                 </fieldset>
@@ -104,7 +109,7 @@
                             <div class="form-group" style="padding-top: 20px;">                        
                                     <div class="orientacionDivsBotones" >
                                         
-                                        <button class="btn btn-success  btnHover2" style="margin-left: 2px;" id="btn-Nuevo">Nuevo</button>
+                                        <button class="btn btn-outline-success  btnHover2" style="margin-left: 2px;" id="btn-Nuevo">Nuevo</button>
                                     </div>
                             </div>
                         
@@ -132,7 +137,7 @@
                 </div>
             
             </div>
-            <button id="btnPrueba" stylea="display:none">Prueba</button>
+            <button id="btnPrueba" style="display:none">Prueba</button>
 
         </div>
     </div>
@@ -161,3 +166,6 @@
 
 <div id="circulo" class="circuloOrig"></div>
 <div id="pin" class="wait"></div>
+
+
+<script src="../js/vehiculos.js"></script>

@@ -1,6 +1,7 @@
 import {DataTypes} from 'sequelize'
 import {sequelize} from '../database/database'
-
+//Importamos tablas dependientes de Auto
+import {tablaPlaca} from './tablaPlaca'
 
 export const tablaAuto = sequelize.define('Auto',{
     id:{
@@ -43,4 +44,15 @@ export const tablaAuto = sequelize.define('Auto',{
 },{
     //habilita la creacion createAt updateAt
     timestamps: true
+})
+
+
+tablaAuto.hasMany(tablaPlaca,{
+    foreignKey: 'id_auto',
+    sourceKey: 'id'
+})
+
+tablaPlaca.belongsTo(tablaAuto,{
+    foreignKey: 'id_auto',
+    targetId: 'id'
 })

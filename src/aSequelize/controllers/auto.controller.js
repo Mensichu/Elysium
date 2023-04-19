@@ -186,6 +186,35 @@ export const getAutos = async (req,res) =>{
     }
 }
 
+import Sequelize from 'sequelize';
+
+export const getComboAutosUnico = async (req,res) =>{
+    const {id} = req.params
+    try{
+        const autos = await tablaAuto.findAll({
+            where:{
+                id_marca: id,
+                estado:true
+            },
+            include:{
+                model: tablaMarca,
+                attributes: ['alias']
+            },
+            attributes: [
+                [Sequelize.fn('MIN', Sequelize.col('Auto.id')), 'id'],
+                'nom_auto',
+                [Sequelize.col('Marca.alias'), 'alias']
+            ],
+            group: ['nom_auto', 'Marca.id', 'Marca.alias'],
+            order: [['nom_auto','ASC']]
+        });
+        res.json(autos);
+    }catch(error){
+        //500 es un error que indica q es error del servidor
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 export const getComboAutos = async (req,res) =>{
     const {id} = req.params
     try{
@@ -345,13 +374,15 @@ export const deleteAuto = async (req,res)=>{
 const { Op } = require("sequelize");
 
 export const getAutosRepetidos = async (req, res)=>{
-    const {id, nom_auto} = req.query;
+    const {id, nom_auto,cilindraje,ano} = req.query;
     console.log(id)
     console.log(nom_auto)
     try{
         const autoEncontrado = await tablaAuto.findAll({
             where:{
                 nom_auto:nom_auto,
+                cilindraje:cilindraje,
+                ano:ano,
                 id: {
                     [Op.not]: id
                   }

@@ -1,0 +1,134 @@
+
+<link rel="stylesheet" href="/css/placa.css">
+
+
+<div id="fondo" class="showDelay mt-2" stylea="padding: 10px; border:2px black solid">
+    <div class="container">
+        <div class="row ">
+            <div class="col-12 col-md-4" >
+                <div class="card text-white ">
+                    <div class="card-header">Datos del Auto</div>
+                    <div id="datosModeloCard" class="card-body datosModeloBody">
+                        <form id="formulario" class="formDatosPlaca" ></form>
+                            <div class="form-group" >
+                                <fieldset>
+                                    <label class="form-label mt-2" for="inputValid">Placa:</label>
+                                    <input type="text" id="Datos-Placa" class="form-control form-input" name="Placa" placeholder="Placa:" minlength="1"maxlength="10">
+                                    <div class="invalid-feedback">Placa incorrecto!</div>
+                                </fieldset>
+                            </div>
+
+                            <div class="form-group">
+                                <label id="labelMarca" for="exampleSelect1" class="form-label">Marca:</label>
+                                <div class="input-group">
+                                    <select class="form-select " id="comboMarca" >
+                                        <option value="0">No aplica</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div id="formComboModelo" class="form-group" >
+                                <label for="exampleSelect1" class="form-label mt-2">Modelo:</label>
+                                <div class="input-group">
+                                    <select class="form-select" id="comboModelo">
+                                        <option value="0">No aplica</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" >
+                                <fieldset>
+                                    <label class="form-label mt-2" for="inputValid">Clave:</label>
+                                    <input type="text" id="Datos-Clave" class="form-control form-input" name="Clave" placeholder="Clave" minlength="1"maxlength="10">
+                                    <div class="invalid-feedback">Formato incorrecto!</div>
+                                </fieldset>
+                                
+                            </div>
+                            
+                            
+
+                            <label class="form-label mt-2" for="inputValid">Color principal y secundario:</label>
+                            <div class="form-group orientacionDivs">
+                                <div class="elementoOrientacion">
+                                    <fieldset>
+                                        <input type="color" id="Datos-Color1" class="form-control form-control-color" style="width:100%;" value="#303030" name="Color">
+                                    </fieldset>
+                                </div>
+                                <div class="elementoOrientacion">
+                                    <fieldset>
+                                        <input type="color" id="Datos-Color2" class="form-control form-control-color" style="width:100%;" value="#303030" name="Color">
+                                    </fieldset>
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group" style="padding-top: 10px; text-align: center;">
+                                <button class="btn btn-info  btnHover1" style="width:100%;" id="btn-Guardar">Guardar cambios</button>
+                            </div>
+
+                            <div class="form-group" style="padding-top: 20px; text-align: center;">
+                                    <div class="orientacionDivsBotones" >
+                                        
+                                        <button class="btn btn-outline-success  btnHover2" style="margin-left: 2px; width:100%" id="btn-Nuevo">Nuevo</button>
+                                    </div>
+                            </div>
+                        </form>
+                            
+                        
+                    </div>
+            
+                </div>
+            </div>
+
+            <!-------------------------------TABLAS------------------------------------>
+            <!------------------------------------------------------------------------->
+            <div class="col-12 col-md-8">
+                <div class="card text-white ">
+                    <div class="card-header">Tabla de Autos</div>
+                        <div class="card-body tablaModeloBody">
+                            <div id="idTabla" class="tabla-con-scroll" >
+                                <div class="diseñoTablaGrid" style="height:100%">
+                                        <div id="myGrid" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+                    
+                    </div>
+                </div>
+            
+            </div>
+            <button id="btnPrueba" style="display:none">Prueba</button>
+
+        </div>
+    </div>
+
+
+    <div id="myModal" class="modal">
+        <div class="card border-light mb-3 modal-content">
+            <div id="'modalHeader" class="card-header d-flex justify-content-between align-items-center">
+                <h5 id="tituloHeader">Nuevo</h5>
+                <button id="cancelar1" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="modalBody" class="card-body justify-content-center align-items-center text-align-center">
+                <!--input o texto p-->
+                <div id="divBotones" class="d-flex justify-content-center">
+                    <button value="" class="btn btn-info modal-button" id="confirmar">Nueva Marca</button>
+                    <button class="btn btn-info modal-button" id="cancelar">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- ANIMACION DE BOTON                                                       -->
+
+<div id="circulo" class="circuloOrig"></div>
+<div id="pin" class="wait"></div>
+
+
+<script src="../js/placas.js"></script>

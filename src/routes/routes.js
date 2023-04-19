@@ -10,7 +10,7 @@ const router = Router();
 
 router.get('/', (req,res)=>{
     //res.sendFile(path.resolve(__dirname,'../public/index.html'));
-    res.render('links/add');
+    res.render('links/main');
 
 });
 
@@ -18,13 +18,13 @@ router.get('/agentes', (req,res)=>{
     res.render('links/agentes');
 });
 
-router.get('/vehiculos', (req,res)=>{
-    res.render('links/vehiculos');
+router.get('/vehiculos/modelos', (req,res)=>{
+    res.render('links/vehiculos/modelos');
     //console.log(req.nav);
 });
 
 router.get('/vehiculos/placas', (req,res)=>{
-    res.render('links/placas');
+    res.render('links/vehiculos/placas');
     //console.log(req.nav);
 });
 
