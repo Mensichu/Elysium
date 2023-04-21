@@ -123,6 +123,46 @@ function termino(){
     pin.classList.remove('fail');
 }
 
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ANIMACION MODAL
+
+
+
+const circulo = document.getElementById('circulo');
+
+
+function ejecutarAnimacion(){
+    circulo.style.transition = 'all 0.2s ease-out';
+    //Se agrega la animacion 
+    circulo.classList.add('circuloAnim');
+    //Se obteiene los datos de posicion y forma
+    const modalContent = document.querySelectorAll('.modal-content')[0];
+    // Obtener las coordenadas absolutas del modal-content
+    const rect = modalContent.getBoundingClientRect();
+    // Se obtienen las coordenadas de posicion
+    const modalContentTop = rect.top;
+    const modalContentRight = rect.right-modalContent.offsetWidth;
+
+    // Se asignan la posicion al circulo
+    circulo.style.top = modalContentTop + 'px';
+    circulo.style.right = modalContentRight + 'px';
+    // Se asigna la forma de ancho y altura
+    circulo.style.height=modalContent.offsetHeight+"px";
+    circulo.style.width=modalContent.offsetWidth+"px";
+    
+    //console.log("Este es la altura del modal actual: "+myModalHeight);
+    setTimeout(() => {
+        //Muestra el modal una vez construido y la animacion llegue a la posicion correcta
+        const modal = document.getElementById('myModal');
+        modal.classList.add('show');
+    }, 200); /* Esperar a que termine la animación */
+    
+}
+
+
+
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ANIMACION TOAST 
 
 function toast(mensaje,colorClass){

@@ -9,7 +9,7 @@ window.addEventListener('load',()=>{
 
         document.querySelector('#fondo').classList.add('showNow');
 
-
+        let rowId = null;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO MARCAS
 
         const comboMarca = document.getElementById('comboMarca');
@@ -65,12 +65,11 @@ window.addEventListener('load',()=>{
 
 
 //------------------------------------------------------------------------------ Combo Modelo: Cambio-Forzar Cargar datos
-
-        //comboModelo.disabled=true;
+        const comboModelo = document.getElementById('comboModelo');
         async function cambioComboMarca(forzar){
             if(forzar || comboMarcaSelecc!=comboMarca.value){
                 try{
-                        const data = await fetch('/comboAutos/'+comboMarca.value)
+                        const data = await fetch('/comboAutosInfo/'+comboMarca.value)
                         .then(response => response.json());
                         
                         //Vaciamos el combo primero
@@ -88,7 +87,7 @@ window.addEventListener('load',()=>{
                             for(i=0;i<modelos.length;i++){
                                 //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
                                 const item = document.createElement("OPTION");
-                                item.innerHTML = modelos[i].nom_auto.toUpperCase();
+                                item.innerHTML = (modelos[i].nom_auto+' | Y: '+modelos[i].ano+' | C: '+modelos[i].cilindraje.toFixed(1)).toUpperCase();
                                 item.value =modelos[i].id;
                                 fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
                             }
@@ -122,15 +121,21 @@ window.addEventListener('load',()=>{
                         field: "id", hide: true},
                 {headerName: "Placa", 
                         field: "placa", sort: 'asc',floatingFilter:true,
-                        minWidth: 150,flex: 'auto'
+                        width: 130
                     },
                 {headerName: "Marca",
                         field: "marca", sort: 'asc',floatingFilter:true, 
                         width:130},
-                {headerName: "Auto", 
-                        field: "auto", sort: 'asc',floatingFilter:true,
+                {headerName: "Modelo", 
+                        field: "modelo", sort: 'asc',floatingFilter:true,
                         minWidth: 150,flex: 'auto'
-                    }
+                    },
+                {headerName: "Año", 
+                        field: "año", filter: 'agNumberColumnFilter', flex: 110,
+                        minWidth: 75, maxWidth: 115},
+                {headerName: "Cilindraje", 
+                        field: "cilindraje", flex: 110,
+                        minWidth: 75,maxWidth: 120}
 
             ],
 
@@ -148,26 +153,25 @@ window.addEventListener('load',()=>{
             getRowClass: (params) => {
                 if(params.data!== undefined){
                     if(rowId === params.data.id){
-                        //console.log('rowId:  '+rowId);
-                        //console.log('params.data.id:  '+params.data.id);
+
                         params.node.setSelected(true);
-                        //seleccionTabla(params.data.id,false);
+                        seleccionTabla(params.data.id,false);
                         return clasesFila;
                     }
                 }
                 return '';
-            }
-            ,
+            },
+
             onModelUpdated: (event) => {
                 if(true || rowId!==null){
                     console.log('-----------------------------------------CHINGONNKNKN');
-                    console.log(event.data)
+                    //console.log(event)
                     //const selectedNodes = gridOptions.api.getSelectedNodes();
                     //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
                     clasesFila='cambioColor';
                     gridOptions.api.redrawRows();
-                    //botonesModoNuevo(false);
-                    //guardarBtn.disabled=true;
+                    botonesModoNuevo(false);
+                    guardarBtn.disabled=true;
                 }
             },
             onCellValueChanged: (event) => {
@@ -195,14 +199,13 @@ window.addEventListener('load',()=>{
             onCellClicked: params => {
                 if(params.data!== undefined){
                     //console.log('cell was clicked', params.data);
-                    //rowId = params.data.id;
-                    //botonesModoNuevo(false);
-                    //guardarBtn.disabled=false;
-                    //seleccionTabla(rowId,true);
+                    rowId = params.data.id;
+                    botonesModoNuevo(false);
+                    guardarBtn.disabled=false;
+                    seleccionTabla(rowId,true);
 
                 }else{
-                    console.log('aja!')
-                    //guardarBtn.disabled=true;
+                    guardarBtn.disabled=true;
                 }
             }
         };
@@ -214,122 +217,604 @@ window.addEventListener('load',()=>{
 
         const gridApi = gridOptions.api;
 
-
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID: ACTUALIZACION Y NUEVA FILA
 
+
+//---------------------------------------------------------------------Convierte los datos en una fila para AG-GRID
+function datosAFilaGrid(data,n) {
+    //n es el tipo de fila
+    //0: todos los datos
+    //1: todos los datos menos marca y modelo
+    //2: solo nom_auto
+    if (gridOptions.api) {
+        //var newRow = [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
+        //combustible: data.combustible? 'DIESEL.':'GAS.' }];
+        switch(n){
+            case 0:
+                return [{ id: data.id, 
+                            placa: data.nom_placa.toUpperCase(), 
+                            marca: data.Auto.Marca.nom_marca.toUpperCase(), 
+                            modelo: data.Auto.nom_auto.toUpperCase(), 
+                            año: data.Auto.ano, 
+                            cilindraje: data.Auto.cilindraje.toFixed(1)}];
+            case 1:
+                return [{ id: data.id, año: data.ano, cilindraje: data.cilindraje.toFixed(1), 
+                    combustible: data.combustible? 'DIESEL.':'GAS.' }];
+            break;
+            case 2:
+                return [{ modelo: data.nom_auto.toUpperCase() }];
+            break;
+
+        }
+        return null;
+    }
+}
+
+
+//---------------------------------------------------------------------Actualiza la fila a la tabla AG-GRID
+function actualizarFilaAgGrid(data,n) {
+    const filaActualizada = datosAFilaGrid(data,n); //n es el tipo de fila: 1 o 2
+    //Actualiza la fila
+    const selectedNodes = gridOptions.api.getSelectedNodes();
+    if (selectedNodes.length > 0) {
+        const selectedNode = selectedNodes[0];
+        const newData = Object.assign({}, selectedNode.data, filaActualizada[0]);
+        selectedNode.setData(newData);
+        //Se encargan de activar la animacion
+        clasesFila = 'cambioColor';
+        gridOptions.api.redrawRows();
+        // Lo enfoca
+        gridOptions.api.ensureNodeVisible(selectedNode);
+
+    }
+
+}
+  
+//---------------------------------------------------------------------Agrega una nueva fila a la tabla AG-GRID
+function nuevaFilaAgGrid(data) {
+    const filaNueva = datosAFilaGrid(data,0); //n es el tipo de fila: 0
+    const res = gridOptions.api.applyTransaction({ add: filaNueva });
+    if (res.add) {
+        const addedRow = res.add[0];
+        rowId = addedRow.rowId;
+        //Selecciona la fila nueva
+        gridOptions.api.deselectAll();
+        addedRow.setSelected(true);
+        //Enfoca la nueva fila
+        gridOptions.api.ensureNodeVisible(addedRow);
+    }
+}
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
+
+        cargarTablaPlacas();
+        async function cargarTablaPlacas(){
+            try{
+                //pinCarga('cargando');
+                // Hace una llamada fetch y trae el arreglo de datos para la tabla
+                const data = await fetch('/tablaPlacas')
+                .then(response => response.json());
+                const Placas = data;
+                //mediante un for vamos cargando fila por fila
+                for(i=0;i<Placas.length;i++){
+                    let newRow = datosAFilaGrid(Placas[i],0);
+                    gridOptions.api.applyTransaction({ add: newRow });
+                }
+                //pinCarga('success');
+            }catch(error){
+                console.log('Error al obtener el auto:', error);
+                toast(error.message, "toastColorError");
+                pinCarga('fallo');
+
+            }
+        }
+
+
+        function getSelectedRowId() {
+            const selectedRows = gridOptions.api.getSelectedRows();
+            if (selectedRows.length > 0) {
+                return selectedRows[0].id;
+            }
+            return null;
+        }
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ SELECCION TABLA AG-GRID
+
+                
+                
+        async function seleccionTabla(id,mouse) {
+            try{
+                const inputCard = document.querySelectorAll('.form-group input');
+                const buttonCard = document.querySelectorAll('.form-group button');
+                if(mouse){
+                    pinCarga('cargando')
+                    inputCard.forEach(input => {
+                        input.disabled=true;
+                    });
+                    buttonCard.forEach(button => {
+                        button.disabled=true;
+                    });
+                    comboMarca.disabled=true;
+                }
+                if(conectado()){
+                    const data = await fetch('/placa/'+id)
+                    .then(response => {
+                        if(!response.ok){
+                            throw new Error('Servidor - '+response.status+': '+response.statusText);
+                        }
+                        return response.json()
+                    });
+                    // carga los datos de data en los combos y textos de "Datos del Modelo"
+                    await cargarDatosDesdeSeleccion(data);
+                    validacionVaciar();
+                    if(mouse){
+                        pinCarga('successFast')
+                        inputCard.forEach(input => {
+                            input.disabled=false;
+                        });
+                        buttonCard.forEach(button => {
+                            button.disabled=false;
+                        });
+                        comboMarca.disabled=false;
+                    };
+                }
+            }catch(error){
+                toast(error.message, "toastColorError");
+                pinCarga('fallo');
+            }
+        }
+
+        //--------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
+
+        async function cargarDatosDesdeSeleccion(data){
+            var placa = data;
+            await seleccionComboMarca(placa.Auto.id_marca);
+            seleccionComboModelo(placa.id_auto);
+            //Una vez seleccionado el comboMarca y cargado el comboModelo
+            //se selecciona el modelo mediante el id
+            //seleccionComboModelo(modelo.id);
+            //se selecciona el modelo mediante el nom_auto
+            //En la db esta todo en minusculas, pero en el front end esta en mayuscula
+            
+            //Cargamos el resto de datos
+            document.getElementById("Datos-Placa").value=placa.nom_placa.toUpperCase();
+            
+            document.querySelector("#Datos-Color1").value = placa.color1;
+            document.querySelector("#Datos-Color2").value = placa.color2;
+            
+            let clave = placa.clave;
+            let obs_placa = placa.obs_placa;
+            
+            ocultarInputClave(clave==='0');
+            ocultarInputObs(obs_placa===null);
+
+            document.getElementById("Datos-Clave").value=(clave==='0'?'':clave);
+            document.getElementById("Datos-Obs").value=  (obs_placa===null?'':obs_placa);
+        }
+
+
+
+
+        //-----------------------------------------------------Seteamos el comboMarca desde su Id
+        async function seleccionComboMarca(id_marca){
+            //ComboMarca es un elemento tipo select que almacena varios elementos tipo option
+            //Buscamos en el comboMarca .value(id de cada marca) el que corresponda al id_marca del auto seleccionado
+            for(i=0;i<comboMarca.options.length;i++){
+                if(comboMarca.options[i].value == id_marca){
+                    //una vez encontrado mostramos en el comboMarca dicha marca
+                    comboMarca.selectedIndex=i;
+                    //al actualizar el combo marca, cargamos los modelos de dicha marca
+                    await cambioComboMarca(false);//Esto actualiza el combomodelo
+                    break;
+                }
+            }
+        }
+
+        //-----------------------------------------------------Seteamos el comboModelo desde su Id
+
+        function seleccionComboModelo(id_auto){
+            //Se busca el .value(id del modelo) que corresponda al id del auto que recibe
+            for(i=0;i<comboModelo.options.length;i++){
+                if(comboModelo.options[i].value == id_auto){
+                    comboModelo.selectedIndex=i;
+                    break;
+                    
+                }
+            }
+        }
 
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ OBTENER DATOS
 
-    function obtenerDatos(){
-        const comboMarca = document.getElementById('comboMarca');
-        const idSeleccionado = getSelectedRowId();
-        const data = {
-            id: (idSeleccionado!==null)?idSeleccionado:0,// si es que el idSeleccionado no existe
-            id_marca: document.getElementById('comboMarca').value,
-            Marca: {nom_marca: comboMarca.options[comboMarca.selectedIndex].text.trim().toLowerCase()},
-            nom_auto: document.getElementById('Datos-Modelo').value.trim().toLowerCase(),
-            alias: document.getElementById("Datos-Alias").value.trim().toLowerCase(),
-            ano: document.getElementById("Datos-Año").value,
-            cilindraje: document.getElementById("Datos-Cilindraje").value,
-            consumo_motor: document.getElementById("Datos-CMotor").value,
-            consumo_caja: document.getElementById("Datos-CCaja").value,
-            combustible: document.getElementById('btnradio2').checked
-        };
-        console.log(data)
-        return data;
-    }
+        function obtenerDatos(){
+            const noClave = document.getElementById('Datos-NoClave').checked
+            const noObs = document.getElementById('Datos-NoObs').checked
+            const idSeleccionado = getSelectedRowId();
+            const data = {
+                id: (idSeleccionado!==null)?idSeleccionado:0,// si es que el idSeleccionado no existe
+                id_marca: document.getElementById('comboMarca').value,
+                id_auto: document.getElementById('comboModelo').value,
+                nom_placa: document.getElementById('Datos-Placa').value.trim().toLowerCase(),
+                clave: noClave?0:document.getElementById('Datos-Clave').value.trim().toLowerCase(),
+                color1: document.querySelector("#Datos-Color1").value,
+                color2: document.querySelector("#Datos-Color2").value,
+                obs_placa: noObs?null:document.getElementById('Datos-Obs').value.trim().toLowerCase(),
 
-    function botonesModoNuevo(bloquear){
-        const modoActual = nuevoBtn.textContent;
-        if(bloquear && modoActual!='Agregar'){
-            //Bloqueado
-            //mostrarTextoModelo(true);
-            //guardarNomAutoBtn.disabled=true;
-            guardarBtn.disabled=true;
-            nuevoBtn.textContent = 'Agregar';
-            nuevoBtn.classList.add('btn-success');
-            nuevoBtn.classList.remove('btn-outline-success');
-            toast("Ingrese el nuevo modelo a agregar", "toastColorInfo");
-        }else if(!bloquear && modoActual!='Nuevo'){
-            //Desbloqueado
-            mostrarTextoModelo(false);
-            guardarNomAutoBtn.disabled=false;
-            guardarBtn.disabled=true;
-            nuevoBtn.textContent = 'Nuevo';
-            nuevoBtn.classList.remove('btn-success');
-            nuevoBtn.classList.add('btn-outline-success');
-            //toast("Nuevo modelo Desactivado", "toastColorInfo");
+            };
+            return data;
         }
-        
-        
-    }
 
-
-    function modoNuevoModelo(){
-
-        if(nuevoBtn.textContent === 'Nuevo'){
-            vaciarDatosModelo()
-            botonesModoNuevo(true);
-            return false;
-        }else{
-            return true;
-
+        function botonesModoNuevo(bloquear){
+            const modoActual = nuevoBtn.textContent;
+            if(bloquear && modoActual!='Agregar'){
+                //Bloqueado
+                //mostrarTextoModelo(true);
+                //guardarNomAutoBtn.disabled=true;
+                guardarBtn.disabled=true;
+                nuevoBtn.textContent = 'Agregar';
+                nuevoBtn.classList.add('btn-success');
+                nuevoBtn.classList.remove('btn-outline-success');
+                toast("Ingrese el nuevo modelo a agregar", "toastColorInfo");
+            }else if(!bloquear && modoActual!='Nuevo'){
+                //Desbloqueado
+                //mostrarTextoModelo(false);
+                guardarBtn.disabled=true;
+                nuevoBtn.textContent = 'Nuevo';
+                nuevoBtn.classList.remove('btn-success');
+                nuevoBtn.classList.add('btn-outline-success');
+                //toast("Nuevo modelo Desactivado", "toastColorInfo");
+            }
+            
+            
         }
-    }
 
-    function vaciarDatosModelo(){
-        //document.getElementById("Datos-Modelo").value='';
-        document.getElementById("Datos-Placa").value='';
-        document.getElementById("Datos-Clave").value='';
-    }
 
+        function modoNuevoModelo(){
+
+            if(nuevoBtn.textContent === 'Nuevo'){
+                vaciarDatosModelo()
+                botonesModoNuevo(true);
+                return false;
+            }else{
+                return true;
+
+            }
+        }
+
+        function vaciarDatosModelo(){
+            document.getElementById("Datos-Placa").value='';
+            document.getElementById("Datos-Clave").value='';
+            document.getElementById("Datos-Obs").value='';
+            ocultarInputClave(true);
+            ocultarInputObs(true);
+        }
+
+
+
+        function ocultarInputClave(ocultar){
+            noTieneClave.checked=ocultar;
+            if(ocultar){
+                document.querySelector("#formClave").style.display='none';
+                document.querySelector("#noTieneClaveLabel").textContent='No tiene clave';
+            }else{
+                document.querySelector("#formClave").style.display='block';
+                document.querySelector("#noTieneClaveLabel").textContent='Tiene clave';
+            }
+        }
+
+        function ocultarInputObs(ocultar){
+            noTieneObs.checked=ocultar;
+            if(ocultar){
+                document.querySelector("#formObs").style.display='none';
+                document.querySelector("#noTieneObsLabel").textContent='No tiene observaciones';
+            }else{
+                document.querySelector("#formObs").style.display='block';
+                document.querySelector("#noTieneObsLabel").textContent='Tiene observaciones';
+            }
+        }
+
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ MODAL
+
+//-----------------------------------------------------------Construccion modal
+
+        function construirModal(numeroModal){
+            const titulo = ['test','Modificar','Nuevo'];
+
+            //Vaciar Modal
+            vaciarModal();
+            
+            //H5: TITLE
+            const h5Title = document.getElementById('tituloHeader');
+            h5Title.textContent=titulo[numeroModal];
+            //DIV: CardBody
+            const modalBody = document.getElementById('modalBody');
+            //INPUT: TEXT o elemento P
+            if(numeroModal == 0){
+                const inputText = document.createElement('INPUT');
+                inputText.type='text';
+                inputText.id='inputModal';
+                inputText.classList.add('modal-text');
+                inputText.placeholder='Ingrese la nueva marca';
+                inputText.maxlength='20';
+                modalBody.insertBefore(inputText,modalBody.firstChild);
+            }else{
+                const textoP = document.createElement('P');
+                textoP.classList.add('card-title');
+                if(numeroModal == 1)textoP.textContent='Guardar cambios a placa existente';
+                if(numeroModal == 2)textoP.textContent='Guardar como una nueva placa';
+                modalBody.insertBefore(textoP,modalBody.firstChild);
+            }
+            //BUTTON 1
+            const boton1 = document.getElementById('confirmar');
+            boton1.value= numeroModal;
+            if(numeroModal == 0)boton1.textContent='test';
+            if(numeroModal == 1)boton1.textContent='Guardar';
+            if(numeroModal == 2)boton1.textContent='Nuevo';
+            
+            console.log('termine de construir el modal');
+            
+        }
+
+        function vaciarModal(){
+            const modalBody = document.getElementById('modalBody');
+            modalBody.firstChild.remove();
+        }
+
+
+
+        //------------------------------------------------------Modal Confirmar
+
+        const btnConfirmar =document.getElementById('confirmar');
+
+        btnConfirmar.addEventListener('click', (e)=>{
+            btnConfirmar.disabled=true;
+            
+            //Ejecutar funcion
+            if(conectado()){
+                pinCarga('cargando');
+
+                //Nueva marca
+                if(btnConfirmar.value==0)nuevaMarca();
+                // Guardar cambios al modelo
+                if(btnConfirmar.value==1)modificarPlaca();
+                // Nuevo modelo
+                if(btnConfirmar.value==2)nuevaPlaca();
+
+            }
+
+            // Restablecer el estado de la función cuando se complete
+        });
+
+        //-------------------------------------------------------Modal Cerrar
+
+        const modal = document.getElementById('myModal');
+
+        function cerrarModal(){
+            modal.classList.remove('show');
+            circulo.style = '';
+            circulo.classList.remove('circuloAnim');
+        }
+        //Tres tipos de cancelar mediante el boton cancelar de cada modal, la X en el modal, y al hacer clic en la pantalla.
+        // Cancelar X
+        const btnCancelar1 = document.getElementById('cancelar1');
+        btnCancelar1.addEventListener('click', (e)=>{
+            cerrarModal();
+        });
+        // Cancelar boton
+        const btnCancelar = document.getElementById('cancelar');
+        btnCancelar.addEventListener('click', (e)=>{
+            cerrarModal();
+        });
+        // Cancelar fondo
+        modal.addEventListener('click', (e)=>{
+            //console.log(e.target.parentNode)
+            if(e.target.parentNode.id=="fondo" ||
+                e.target.parentNode.id=="contVehiculos1" ||
+                e.target.parentNode.tagName === 'BODY' ){
+                    cerrarModal();
+                }
+        });
 
 
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
 
+//-------------------------BTN No tiene clave
+        const noTieneClave = document.querySelector("#Datos-NoClave");
+        noTieneClave.addEventListener('change',()=>{
+            ocultarInputClave(noTieneClave.checked);
+            
+        });
+
+//-------------------------BTN No tiene observaciones
+        const noTieneObs = document.querySelector("#Datos-NoObs");
+        noTieneObs.addEventListener('change',()=>{
+            ocultarInputObs(noTieneObs.checked);
+        });
+
+
+//-------------------------BTN modificar Color1
+        const colorPicker1 = document.querySelector("#Datos-Color1");
+        colorPicker1.addEventListener('change',()=>{
+            const colorPicker2 = document.querySelector("#Datos-Color2");
+            colorPicker2.value = colorPicker1.value;
+        });
 
 
 
 //-------------------------BTN modificar Modelo
 
-const guardarBtn = document.getElementById("btn-Guardar");
+        const guardarBtn = document.getElementById("btn-Guardar");
 
-guardarBtn.disabled=true;
-guardarBtn.addEventListener('click',(e)=>{
-    e.preventDefault();
-    //console.log('guardar: '+rowId);
-    if(true || rowId!== null){
-        if(validacionGuardar()){
-            //Construimos aqui el modal
-            construirModal(1);
-            //Una vez que tenemos las dimensiones construidas, lanzamos la animacion y mostramos
-            ejecutarAnimacion();
-        }
-    }else{
-        toast("Vuelva a seleccionar la fila", "toastColorError");
-    }
-    
-    
-});
+        guardarBtn.disabled=true;
+        guardarBtn.addEventListener('click',(e)=>{
+            e.preventDefault();
+            if(rowId!== null){
+                if(validacionGuardar()){
+                    //Construimos aqui el modal
+                    construirModal(1);
+                    //Una vez que tenemos las dimensiones construidas, lanzamos la animacion y mostramos
+                    ejecutarAnimacion();
+                }
+            }else{
+                toast("Vuelva a seleccionar la fila", "toastColorError");
+            }
+            
+            
+        });
 
 //-------------------------BTN nuevo Modelo
 
-const nuevoBtn = document.getElementById("btn-Nuevo");
+        const nuevoBtn = document.getElementById("btn-Nuevo");
 
-nuevoBtn.addEventListener('click',(e)=>{
-    e.preventDefault();
-    if( (modoNuevoModelo() && true) ){
-        //Construimos aqui el modal
-        //construirModal(2);
-        //Una vez que tenemos las dimensiones construidas, lanzamos la animacion y mostramos
-        //ejecutarAnimacion();
-    }
-});
+        nuevoBtn.addEventListener('click',(e)=>{
+            e.preventDefault();
+            if( (modoNuevoModelo() && validacionNuevo()) ){
 
+                //Construimos aqui el modal
+                construirModal(2);
+                //Una vez que tenemos las dimensiones construidas, lanzamos la animacion y mostramos
+                ejecutarAnimacion();
+            }
+        });
+
+
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FUNCIONES PRINCIPALES
+
+
+
+
+//--------------------------------------------- PLACAS REPETIDOS
+
+        async function placasRepetidas(id, nom_placa){
+            //No se usa pinCarga cargando
+            const queryParams = new URLSearchParams({id:id, nom_placa:nom_placa});
+
+            const res = await fetch(`/placasRepetidas?${queryParams.toString()}`)
+            .then(response => {
+                if(!response.ok){
+                    throw new Error('Servidor - '+response.status+': '+response.statusText);
+                }
+                return response.json();
+            })
+            .catch(error =>{
+                toast(error.message, "toastColorError");
+                return null;
+            });
+
+            return res.respuesta;
+        }
+
+
+        async function nuevaPlaca(){
+            const data = obtenerDatos();
+
+            if(await placasRepetidas(0,data.nom_placa)){
+                //Si devuelve true significa que encontro una modelo año cil igual
+                toast("La Placa ya existe!", "toastColorError");
+                pinCarga('fallo');
+            }else{
+                pinCarga('cargando');
+                await fetch('/placa',{
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers:{
+                        'Content-Type':'application/json'
+                    }
+                })
+                .then(response =>{
+                    if(!response.ok){
+                        toast(response.status, "toastColorError");
+                        throw new Error('Servidor - '+response.status+': '+response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(async res =>{
+                    data.id = res.id
+                    //await cambioComboMarca(true);
+                    botonesModoNuevo(false);
+                    cerrarModal();
+                    nuevaFilaAgGrid(res)
+                    toast("Modelo agregado", "toastColorSuccess");
+                    pinCarga('success');
+                    rowId=res.id;
+                }).catch(error =>{
+                    toast(error.message, "toastColorError");
+                    pinCarga('fallo');
+                })
+                
+            }
+            setTimeout(()=>{
+                btnConfirmar.disabled=false;
+            },600);
+            
+        }
+
+
+
+
+        var btnPrueba = document.querySelector('#btnPrueba');
+        btnPrueba.addEventListener('click', function(e) {
+            e.preventDefault();
+            obtenerDatos();
+
+            
+
+        });
+
+
+        //---------------------------------------------- MODIFICAR PLACA
+
+        async function modificarPlaca(){
+            const data = obtenerDatos();
+
+            if(await placasRepetidas(data.id,data.nom_placa)){
+                //Si devuelve true significa que encontro una placa igual
+                toast("La placa ya existe!", "toastColorError");
+                pinCarga('fallo');
+            }else{
+                await fetch(`/placa/${data.id}`,{
+                    method: 'PUT',
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(async response => {
+                    if(!response.ok){
+                        toast(response.status, "toastColorError");
+                        throw new Error('Servidor - '+response.status+': '+response.statusText);
+                    }else{
+                        //const filaActualizada = datosAFilaGrid(data);
+                        
+                        guardarBtn.disabled=true;
+                        cerrarModal();
+                        const res = await response.json();
+                        actualizarFilaAgGrid(res,0);
+                        await cambioComboMarca(true);
+                        //seleccionComboModelo(data.id)
+                        //seleccionComboModeloNombre(data.nom_auto);
+                        toast("Placa guardada", "toastColorSuccess");
+                        pinCarga('success');
+                    }
+                }).catch(error =>{
+                    toast(error.message, "toastColorError");
+                    pinCarga('fallo');
+                });
+            }
+            setTimeout(()=>{
+                btnConfirmar.disabled=false;
+            },300);
+        }
 
 
 
@@ -341,3 +826,7 @@ nuevoBtn.addEventListener('click',(e)=>{
 
 
 });
+
+
+
+

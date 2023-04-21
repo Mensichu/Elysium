@@ -79,7 +79,6 @@ window.addEventListener('load',()=>{
                 const nom_auto= document.getElementById("Datos-Modelo");
                 nom_auto.value = comboModelo.options[comboModelo.selectedIndex].text.trim()
             }
-            //console.log("Hiciste click en el combo marca!");
             
         });
 
@@ -89,8 +88,9 @@ window.addEventListener('load',()=>{
         //comboModelo.disabled=true;
         async function cambioComboMarca(forzar){
             if(forzar || comboMarcaSelecc!=comboMarca.value){
-                console.log('forzar: '+forzar);
-                console.log('comboMarca: '+comboMarca.value);
+                comboMarca.disabled=true;
+                comboModelo.disabled=true;
+                if(!forzar)pinCarga('cargando')
                 try{
                         const data = await fetch('/comboAutos/'+comboMarca.value)
                         .then(response => response.json());
@@ -109,7 +109,6 @@ window.addEventListener('load',()=>{
                             //Creamos el elemento temporal
                             const fragmento = document.createDocumentFragment();
                             for(i=0;i<modelos.length;i++){
-                                console.log(modelos[i]);
                                 //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
                                 const item = document.createElement("OPTION");
                                 item.innerHTML = modelos[i].nom_auto.toUpperCase();
@@ -125,12 +124,15 @@ window.addEventListener('load',()=>{
                             const textoComboMarca = comboMarca.options[indice].text;
                             document.getElementById("Datos-Alias").value=textoComboMarca.toUpperCase();
                         }
-
+                        if(!forzar)pinCarga('success')
                         comboMarcaSelecc= comboMarca.value;
                 
                 }catch(error){
                     console.log('Error al obtener comboModelo:', error);
+                    if(!forzar)pinCarga('fallo');
                 }
+                comboMarca.disabled=false;
+                comboModelo.disabled=false;
             }else{
                 console.log('no cambio de marca,no hay necesidad de actualizar el combo modelo')
             }
@@ -200,8 +202,8 @@ window.addEventListener('load',()=>{
             getRowClass: (params) => {
                 if(params.data!== undefined){
                     if(rowId === params.data.id){
-                        console.log('rowId:  '+rowId);
-                        console.log('params.data.id:  '+params.data.id);
+                        //console.log('rowId:  '+rowId);
+                        //console.log('params.data.id:  '+params.data.id);
                         params.node.setSelected(true);
                         seleccionTabla(params.data.id,false);
                         return clasesFila;
@@ -213,7 +215,7 @@ window.addEventListener('load',()=>{
             onModelUpdated: (event) => {
                 if(rowId!==null){
                     console.log('-----------------------------------------CHINGONNKNKN');
-                    console.log(event.data)
+                    //console.log(event.data)
                     //const selectedNodes = gridOptions.api.getSelectedNodes();
                     //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
                     clasesFila='cambioColor';
@@ -253,7 +255,6 @@ window.addEventListener('load',()=>{
                     seleccionTabla(rowId,true);
 
                 }else{
-                    console.log('aja!')
                     guardarBtn.disabled=true;
                 }
             }
@@ -281,7 +282,7 @@ window.addEventListener('load',()=>{
                 //combustible: data.combustible? 'DIESEL.':'GAS.' }];
                 switch(n){
                     case 0:
-                        return [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
+                        return [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje.toFixed(1), 
                             combustible: data.combustible? 'DIESEL.':'GAS.' }];
                     case 1:
                         return [{ id: data.id, año: data.ano, cilindraje: data.cilindraje, 
@@ -360,7 +361,7 @@ window.addEventListener('load',()=>{
         function getSelectedRowId() {
             const selectedRows = gridOptions.api.getSelectedRows();
             if (selectedRows.length > 0) {
-                console.log(selectedRows[0]);
+                //console.log(selectedRows[0]);
                 return selectedRows[0].id;
             }
             return null;
@@ -417,7 +418,6 @@ window.addEventListener('load',()=>{
     async function cargarDatosDesdeSeleccion(data){
         // almaceno la respuesta ajax en la variable modelo
         var modelo = data;
-        console.log(modelo)
         await seleccionComboMarca(modelo.id_marca);
         //Una vez seleccionado el comboMarca y cargado el comboModelo
         //se selecciona el modelo mediante el id
@@ -429,7 +429,7 @@ window.addEventListener('load',()=>{
         document.getElementById("Datos-Modelo").value=modelo.nom_auto.toUpperCase();
         document.getElementById("Datos-Alias").value=modelo.Marca.alias.toUpperCase();
         document.getElementById("Datos-Año").value=modelo.ano;
-        document.getElementById("Datos-Cilindraje").value=modelo.cilindraje;
+        document.getElementById("Datos-Cilindraje").value=modelo.cilindraje.toFixed(1);
         //Selecciona si es a Gas o Diesel
         var gasSeleccion = document.getElementById('btnradio1');
         var dieselSeleccion = document.getElementById('btnradio2');
@@ -476,8 +476,6 @@ function seleccionComboModeloNombre(nom_auto){
     //Se busca el .value(id del modelo) que corresponda al id del auto que recibe
     for(i=0;i<comboModelo.options.length;i++){
         //console.log('comboModelo '+i+': '+comboModelo.options[i].value)
-        console.log('"'+comboModelo.options[i].textContent+'"')
-        console.log(nom_auto);
         if(comboModelo.options[i].textContent == nom_auto){
             //console.log(comboModelo.children[i].innerHTML)
             comboModelo.selectedIndex=i;
@@ -565,6 +563,7 @@ function seleccionComboModeloNombre(nom_auto){
     function obtenerDatos(){
         const comboMarca = document.getElementById('comboMarca');
         const idSeleccionado = getSelectedRowId();
+        const cilCorregido = corregirFlotante(document.getElementById("Datos-Cilindraje").value)
         const data = {
             id: (idSeleccionado!==null)?idSeleccionado:0,// si es que el idSeleccionado no existe
             id_marca: document.getElementById('comboMarca').value,
@@ -572,7 +571,7 @@ function seleccionComboModeloNombre(nom_auto){
             nom_auto: document.getElementById('Datos-Modelo').value.trim().toLowerCase(),
             alias: document.getElementById("Datos-Alias").value.trim().toLowerCase(),
             ano: document.getElementById("Datos-Año").value,
-            cilindraje: document.getElementById("Datos-Cilindraje").value,
+            cilindraje: cilCorregido,
             consumo_motor: document.getElementById("Datos-CMotor").value,
             consumo_caja: document.getElementById("Datos-CCaja").value,
             combustible: document.getElementById('btnradio2').checked
@@ -580,6 +579,20 @@ function seleccionComboModeloNombre(nom_auto){
           console.log(data)
           return data;
     }
+
+
+    function corregirFlotante(floatString){
+        try{
+            const numero = parseFloat(floatString);
+            const numCorregido = numero.toFixed(1);
+            return numCorregido
+        }catch(error){
+
+            console.log(error.Error);
+        }
+        return floatString;
+    }
+
 
 //
         function botonesModoNuevo(bloquear){
@@ -622,6 +635,7 @@ function seleccionComboModeloNombre(nom_auto){
 
 
         function vaciarDatosModelo(){
+            //Se quita si la personas agregara un modelo igual pero año y cilindraje diferente
             //document.getElementById("Datos-Modelo").value='';
             document.getElementById("Datos-Alias").value='';
             document.getElementById("Datos-Año").value='';
@@ -723,7 +737,7 @@ function seleccionComboModeloNombre(nom_auto){
         });
         // Cancelar fondo
         modal.addEventListener('click', (e)=>{
-            console.log(e.target.parentNode)
+            //console.log(e.target.parentNode)
             if(e.target.parentNode.id=="fondo" ||
                 e.target.parentNode.id=="contVehiculos1" ||
                 e.target.parentNode.tagName === 'BODY' ){
@@ -793,7 +807,6 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
         guardarBtn.disabled=true;
         guardarBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            console.log('guardar: '+rowId);
             if(rowId!== null){
                 if(validacionGuardar()){
                     //Construimos aqui el modal
@@ -1087,41 +1100,6 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
 
 
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ANIMACION MODAL
-
-
-
-        const circulo = document.getElementById('circulo');
-
-
-        function ejecutarAnimacion(){
-            circulo.style.transition = 'all 0.2s ease-out';
-            //Se agrega la animacion 
-            circulo.classList.add('circuloAnim');
-            //Se obteiene los datos de posicion y forma
-            const modalContent = document.querySelectorAll('.modal-content')[0];
-            // Obtener las coordenadas absolutas del modal-content
-            const rect = modalContent.getBoundingClientRect();
-            // Se obtienen las coordenadas de posicion
-            const modalContentTop = rect.top;
-            const modalContentRight = rect.right-modalContent.offsetWidth;
-
-            // Se asignan la posicion al circulo
-            circulo.style.top = modalContentTop + 'px';
-            circulo.style.right = modalContentRight + 'px';
-            // Se asigna la forma de ancho y altura
-            circulo.style.height=modalContent.offsetHeight+"px";
-            circulo.style.width=modalContent.offsetWidth+"px";
-            
-            //console.log("Este es la altura del modal actual: "+myModalHeight);
-            setTimeout(() => {
-                //Muestra el modal una vez construido y la animacion llegue a la posicion correcta
-                modal.classList.add('show');
-            }, 200); /* Esperar a que termine la animación */
-            
-        }
-
-        
 
 
 
@@ -1150,7 +1128,9 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
 
 
              // Actualizar los datos de la tabla para eliminar el listener (escuchador) de onCellClicked
-            gridApi.setRowData(gridOptions.rowData);
+            //gridApi.setRowData(gridOptions.rowData);
+
+            corregirFlotante('2');
 
 
         });

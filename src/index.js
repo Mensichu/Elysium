@@ -4,12 +4,12 @@ import {sequelize} from './aSequelize/database/database'
 
 //import './aSequelize/models/tablaMarca'
 //import './aSequelize/models/tablaAuto'
-import './aSequelize/models/tablaPlaca'
+//import './aSequelize/models/tablaPlaca'
 
-async function main(){
+function main(){
     try{
-        await sequelize.sync({force:false});
-        await sequelize.authenticate();
+        //await sequelize.sync({force:false});
+        //await sequelize.authenticate();
         console.log('Connection has been established successfully.');
         app.listen(app.get('port'));
         console.log('server on port: '+app.get('port'));

@@ -8,11 +8,16 @@ export const tablaPlaca = sequelize.define('Placa',{
         primaryKey:true,
         autoIncrement: true
     },
-    placa:{
+    nom_placa:{
         type: DataTypes.STRING(10),
         allowNull: false
     },
-    color:{
+    color1:{
+        type: DataTypes.STRING(10),
+        allowNull: false
+
+    },
+    color2:{
         type: DataTypes.STRING(10),
         allowNull: false
 
@@ -23,8 +28,8 @@ export const tablaPlaca = sequelize.define('Placa',{
 
     },
     obs_placa:{
-        type: DataTypes.STRING(50),
-        allowNull: false
+        type: DataTypes.STRING(100),
+        allowNull: true
 
     },
     estado:{
