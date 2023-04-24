@@ -1,6 +1,6 @@
 import {DataTypes} from 'sequelize'
 import {sequelize} from '../database/database'
-
+import {tablaColor} from './tablaColor'
 
 export const tablaPlaca = sequelize.define('Placa',{
     id:{
@@ -13,13 +13,21 @@ export const tablaPlaca = sequelize.define('Placa',{
         allowNull: false
     },
     color1:{
-        type: DataTypes.STRING(10),
-        allowNull: false
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references:{
+            model: tablaColor,
+            key: 'id'
+        }
 
     },
     color2:{
-        type: DataTypes.STRING(10),
-        allowNull: false
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references:{
+            model: tablaColor,
+            key: 'id'
+        }
 
     },
     clave:{

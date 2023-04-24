@@ -1,6 +1,9 @@
 import {tablaMarca} from '../models/tablaMarca';
 import {tablaAuto} from '../models/tablaAuto';
 import { tablaPlaca } from '../models/tablaPlaca';
+import { tablaColor } from '../models/tablaColor';
+
+import { tablaPlacaColores } from '../models/tablaPlacaColores';
 
 
 
@@ -13,11 +16,18 @@ export const getPlacaById = async (req,res)=>{
             attributes:{
                 exclude:['estado','createdAt','updatedAt']
             },
-            include:{
-                model:tablaAuto,
-                attributes:['id_marca'],
-            }
-        })
+            include:[
+                {
+                    model:tablaAuto,
+                    attributes:['id_marca']
+                },
+                {
+                    model: tablaColor,
+                    as: 'colores',
+                    attributes: ['id','hex_color']
+                }
+        ]
+        });
         if (placa!==null){
             res.json(placa);
         }else{
@@ -52,7 +62,7 @@ export const getComboAutosInfo = async (req,res) =>{
                 estado:true
             },
             
-            attributes:['id','nom_auto','ano','cilindraje'],
+            attributes:['id','nom_auto','ano','cilindraje','combustible'],
             order: [['nom_auto','ASC']]
         });
         res.json(autos);
@@ -71,14 +81,16 @@ export const getTablaPlacas = async (req,res) =>{
             attributes:['id','nom_placa'],
             include:{
                 model: tablaAuto,
-                attributes: ['nom_auto','ano','cilindraje'],
+                attributes: ['nom_auto','ano','cilindraje','combustible'],
                 include:{
                     model: tablaMarca,
-                    attributes: ['nom_marca']
+                    attributes: ['alias'],
+                    //No sirve el order
+                    order: [['alias', 'ASC']] // Ordenar por la columna "alias" de tablaMarca
                 }
             },
             
-            order:[['nom_placa','ASC'],[tablaAuto,'nom_auto','ASC']]
+            //order:[['nom_placa','ASC'],[tablaAuto,'nom_auto','ASC']]
         });
         res.json(placas);
     }catch(error){
@@ -97,7 +109,7 @@ async function placaConAutoYMarca (idPlaca){
             attributes: ['nom_auto', 'ano', 'cilindraje'],
             include: {
                 model: tablaMarca,
-                attributes: ['nom_marca']
+                attributes: ['nom_marca','alias']
             }
             }
         ]
@@ -120,6 +132,7 @@ export const createPlaca = async (req,res) =>{
             id_auto
             },
         );
+        placa.setColores([color1,color2]);//Actualiza la relacion
 
         const datosfinales = await placaConAutoYMarca(placa.id);
         res.json(datosfinales);
@@ -148,7 +161,7 @@ export const updatePlaca = async (req,res)=>{
             placa.id_auto=id_auto
 
             await placa.save();
-
+            placa.setColores([color1,color2]);//Actualiza la relacion
             const datosfinales = await placaConAutoYMarca(placa.id);
             res.json(datosfinales);
         }else{

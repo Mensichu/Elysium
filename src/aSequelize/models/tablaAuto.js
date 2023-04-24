@@ -19,7 +19,7 @@ export const tablaAuto = sequelize.define('Auto',{
 
     },
     cilindraje:{
-        type: DataTypes.FLOAT(2,1),
+        type: DataTypes.FLOAT,
         allowNull: false
 
     },

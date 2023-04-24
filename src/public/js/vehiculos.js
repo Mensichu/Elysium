@@ -52,7 +52,7 @@ window.addEventListener('load',()=>{
                 }
         
             }catch(error){
-                console.log('Error al obtener comboMarca:', error);
+                console.log(error.message);
             }
         
         }
@@ -156,7 +156,9 @@ window.addEventListener('load',()=>{
                         field: "id", hide: true},
                 {headerName: "Marca",
                         field: "marca", sort: 'asc',floatingFilter:true, 
-                        width:130},
+                        width:130,
+                        
+                    },
                 {headerName: "Modelo", 
                         field: "modelo", sort: 'asc',floatingFilter:true,
                         minWidth: 150,flex: 'auto',
@@ -257,6 +259,9 @@ window.addEventListener('load',()=>{
                 }else{
                     guardarBtn.disabled=true;
                 }
+            },
+            onGridReady: function(params) {
+                params.api.sizeColumnsToFit();
             }
         };
 
@@ -277,20 +282,24 @@ window.addEventListener('load',()=>{
             //0: todos los datos
             //1: todos los datos menos marca y modelo
             //2: solo nom_auto
+            console.log('DatosAFilaGrid');
+            console.log(data.cilindraje);
             if (gridOptions.api) {
                 //var newRow = [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
                 //combustible: data.combustible? 'DIESEL.':'GAS.' }];
                 switch(n){
                     case 0:
-                        return [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje.toFixed(1), 
+                        return [{ id: data.id, 
+                                    marca: data.Marca.nom_marca.toUpperCase(), 
+                                    modelo: data.nom_auto.toUpperCase(), 
+                                    año: data.ano, 
+                                    cilindraje: parseFloat(data.cilindraje).toFixed(1), 
                             combustible: data.combustible? 'DIESEL.':'GAS.' }];
                     case 1:
-                        return [{ id: data.id, año: data.ano, cilindraje: data.cilindraje, 
+                        return [{ id: data.id, año: data.ano, cilindraje: parseFloat(data.cilindraje).toFixed(1), 
                             combustible: data.combustible? 'DIESEL.':'GAS.' }];
-                    break;
                     case 2:
                         return [{ modelo: data.nom_auto.toUpperCase() }];
-                    break;
 
                 }
                 return null;
@@ -409,6 +418,7 @@ window.addEventListener('load',()=>{
                     }
             }catch(error){
                 toast(error.message, "toastColorError");
+                console.log(error.message);
                 pinCarga('fallo');
             }
         }
@@ -418,6 +428,9 @@ window.addEventListener('load',()=>{
     async function cargarDatosDesdeSeleccion(data){
         // almaceno la respuesta ajax en la variable modelo
         var modelo = data;
+        console.log((modelo.cilindraje.toFixed(1)).replace(",", "."))
+        console.log((modelo.cilindraje.toFixed(1)))
+        console.log((modelo.cilindraje))
         await seleccionComboMarca(modelo.id_marca);
         //Una vez seleccionado el comboMarca y cargado el comboModelo
         //se selecciona el modelo mediante el id
@@ -429,7 +442,7 @@ window.addEventListener('load',()=>{
         document.getElementById("Datos-Modelo").value=modelo.nom_auto.toUpperCase();
         document.getElementById("Datos-Alias").value=modelo.Marca.alias.toUpperCase();
         document.getElementById("Datos-Año").value=modelo.ano;
-        document.getElementById("Datos-Cilindraje").value=modelo.cilindraje.toFixed(1);
+        document.getElementById("Datos-Cilindraje").value=(modelo.cilindraje.toFixed(1)).replace(",", ".");
         //Selecciona si es a Gas o Diesel
         var gasSeleccion = document.getElementById('btnradio1');
         var dieselSeleccion = document.getElementById('btnradio2');
@@ -597,12 +610,14 @@ function seleccionComboModeloNombre(nom_auto){
 //
         function botonesModoNuevo(bloquear){
             const modoActual = nuevoBtn.textContent;
+            const bg_new = document.getElementById('datosModeloCard')
             if(bloquear && modoActual!='Agregar'){
                 //Bloqueado
                 mostrarTextoModelo(true);
                 guardarNomAutoBtn.disabled=true;
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Agregar';
+                bg_new.classList.add('bg_new');
                 nuevoBtn.classList.add('btn-success');
                 nuevoBtn.classList.remove('btn-outline-success');
                 toast("Ingrese el nuevo modelo a agregar", "toastColorInfo");
@@ -612,6 +627,7 @@ function seleccionComboModeloNombre(nom_auto){
                 guardarNomAutoBtn.disabled=false;
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Nuevo';
+                bg_new.classList.remove('bg_new');
                 nuevoBtn.classList.remove('btn-success');
                 nuevoBtn.classList.add('btn-outline-success');
                 //toast("Nuevo modelo Desactivado", "toastColorInfo");
@@ -866,7 +882,7 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
             }).catch(error =>{
                 toast(error.message, "toastColorError");
                 pinCarga('fallo');
-                console.log(error);
+                console.log(error.message);
             })
             setTimeout(()=>{
                 guardarAliasMarcaBtn.disabled=false;
@@ -887,6 +903,7 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
             })
             .catch(error =>{
                 toast(error.message, "toastColorError");
+                console.log(error.message);
                 pinCarga('fallo');
                 btnConfirmar.disabled=false;
                 return null;
@@ -933,8 +950,8 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
                 })
                 .catch(error => {
                     toast(error.message, "toastColorError");
+                    console.log(error.message);
                     pinCarga('fallo');
-                    console.log('Error al agregar marca nueva');
                 });
                 setTimeout(()=>{
                     btnConfirmar.disabled=false;
@@ -947,9 +964,9 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
 
 //--------------------------------------------- MODELOS REPETIDOS
 
-        async function modelosRepetidos(id, nom_auto, cilindraje, ano){
+        async function modelosRepetidos(id,nom_auto,cilindraje,ano, combustible){
             //No se usa pinCarga cargando
-            const queryParams = new URLSearchParams({id:id, nom_auto:nom_auto, cilindraje:cilindraje, ano:ano});
+            const queryParams = new URLSearchParams({id:id, nom_auto:nom_auto, cilindraje:cilindraje, ano:ano, combustible:combustible});
 
             const res = await fetch(`/autosRepetidos?${queryParams.toString()}`)
             .then(response => {
@@ -960,6 +977,7 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
             })
             .catch(error =>{
                 toast(error.message, "toastColorError");
+                console.log(error.message);
                 return null;
             });
 
@@ -970,7 +988,7 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
 
         async function modificarNomAuto(){
             const data = obtenerDatos();
-            if(await modelosRepetidos(data.id,data.nom_auto,data.cilindraje,data.ano)){
+            if(await modelosRepetidos(data.id,data.nom_auto,data.cilindraje,data.ano,data.combustible)){
                 //Si devuelve true significa que encontro una modelo año cil igual
                 toast("El modelo ya existe!", "toastColorError");
                 pinCarga('fallo');
@@ -998,6 +1016,7 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
                     }
                 }).catch(error =>{
                     toast(error.message, "toastColorError");
+                    console.log(error.message);
                     pinCarga('fallo');
                 });
                 setTimeout(()=>{
@@ -1012,7 +1031,7 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
 
         async function modificarModelo(){
             const data = obtenerDatos();
-            if(await modelosRepetidos(data.id,data.nom_auto,data.cilindraje,data.ano)){
+            if(await modelosRepetidos(data.id,data.nom_auto,data.cilindraje,data.ano,data.combustible)){
                 //Si devuelve true significa que encontro una modelo año cil igual
                 toast("El modelo ya existe!", "toastColorError");
                 pinCarga('fallo');
@@ -1041,6 +1060,7 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
                     }
                 }).catch(error =>{
                     toast(error.message, "toastColorError");
+                    console.log(error.message);
                     pinCarga('fallo');
                 });
             }
@@ -1057,8 +1077,8 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
 
         async function nuevoModelo(){
             const data = obtenerDatos();
-
-            if(await modelosRepetidos(0,data.nom_auto,data.cilindraje,data.ano)){
+            data.cilindraje
+            if(await modelosRepetidos(0,data.nom_auto,data.cilindraje,data.ano,data.combustible)){
                 //Si devuelve true significa que encontro una modelo año cil igual
                 toast("El modelo ya existe!", "toastColorError");
                 pinCarga('fallo');
@@ -1073,7 +1093,8 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
                 })
                 .then(response =>{
                     if(!response.ok){
-                        throw new Error('nuevoModelo POST fallo!');
+                        toast(response.status, "toastColorError");
+                        throw new Error('Servidor - '+response.status+': '+response.statusText);
                     }
                     return response.json();
                 })
@@ -1087,7 +1108,7 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
                     pinCarga('success');
                     rowId=res.id;
                 }).catch(error =>{
-                    toast("Error con el servidor", "toastColorError");
+                    toast(error.message, "toastColorError");
                     pinCarga('fallo');
                 })
                 

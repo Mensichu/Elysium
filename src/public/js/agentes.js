@@ -5,7 +5,6 @@ window.addEventListener('load',()=>{
     const pagina = window.location.pathname;
     if(pagina == '/agentes'){
         console.log("Cargo agentes");
-        document.querySelector('.animation').classList.add("start-item1");    
     }
 });
 

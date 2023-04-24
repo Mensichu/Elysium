@@ -10,12 +10,89 @@ window.addEventListener('load',()=>{
         document.querySelector('#fondo').classList.add('showNow');
 
         let rowId = null;
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO COLOR
+
+        const comboColor1 = document.getElementById('comboColor1');
+        const comboColor2 = document.getElementById('comboColor2');
+        cargarComboColor();
+        //Combo Marca
+        async function cargarComboColor(){
+            try{
+                
+                let color = await fetch('/comboColor')
+                .then(response => response.json());
+
+    
+                console.log("Numero de colores en el combo color: "+color.length); // Imprime la lista de marcas de vehículos en la consola
+                //Creamos el elemento temporal
+                const fragmento = document.createDocumentFragment();
+                for(i=0;i<color.length;i++){
+                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
+                    const item = document.createElement("OPTION");
+                    //item.innerHTML = color[i].nom_color.toUpperCase();
+                    item.innerHTML = '';
+                    item.value =color[i].id;
+                    item.style.background= color[i].hex_color;
+                    fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+                }
+                const fragmento2 = document.createDocumentFragment();
+                for(i=0;i<color.length;i++){
+                    const item = document.createElement("OPTION");
+                    //item.innerHTML = color[i].nom_color.toUpperCase();
+                    item.innerHTML = '';
+                    item.value =color[i].id;
+                    item.style.background= color[i].hex_color;
+                    fragmento2.appendChild(item);
+                }
+    
+                //Vaciamos el combo primero
+                for(i=comboColor1.options.length-1;i>=0;i--){
+                    comboColor1.remove(i);
+                    comboColor2.remove(i);
+                }
+                for(i=comboColor2.options.length-1;i>=0;i--){
+                    comboColor2.remove(i);
+                }
+
+                //Se agrega al combobox comboMarca
+                comboColor1.appendChild(fragmento);
+                comboColor2.appendChild(fragmento2);
+               
+        
+            }catch(error){
+                console.log('Error al obtener comboColor:', error);
+            }
+        }
+
+
+        comboColor1.addEventListener('click',(e)=>{
+            const rgb = comboColor1.options[comboColor1.selectedIndex].style.background;
+            const hex = rgbToHex(rgb);
+            document.querySelector("#Datos-Color1").value = hex;
+        });
+
+        comboColor2.addEventListener('click',(e)=>{
+            const rgb = comboColor2.options[comboColor2.selectedIndex].style.background;
+            const hex = rgbToHex(rgb);
+            document.querySelector("#Datos-Color2").value = hex;
+        });
+
+        function rgbToHex(backgroundColor){
+            // Convertir de rgb a hex
+            if (backgroundColor.indexOf("rgb") != -1) {
+                backgroundColor = backgroundColor.match(/\d+/g);
+                backgroundColor = "#" + ((1 << 24) + (parseInt(backgroundColor[0]) << 16) + (parseInt(backgroundColor[1]) << 8) + parseInt(backgroundColor[2])).toString(16).slice(1);
+                return backgroundColor
+            }
+        }
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO MARCAS
 
         const comboMarca = document.getElementById('comboMarca');
-        cargarComboMarca(0);
+        cargarComboMarca();
         //Combo Marca
-        async function cargarComboMarca(id){
+        async function cargarComboMarca(){
             try{
                 
                 let marcas = await fetch('/comboMarcas')
@@ -42,10 +119,7 @@ window.addEventListener('load',()=>{
     
                 //Se agrega al combobox comboMarca
                 comboMarca.appendChild(fragmento);
-                if(id!=0){
-                    const index = comboMarca.querySelector(`option[value='${id}']`).index;
-                    comboMarca.selectedIndex=index;
-                }
+                
         
             }catch(error){
                 console.log('Error al obtener comboMarca:', error);
@@ -87,7 +161,8 @@ window.addEventListener('load',()=>{
                             for(i=0;i<modelos.length;i++){
                                 //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
                                 const item = document.createElement("OPTION");
-                                item.innerHTML = (modelos[i].nom_auto+' | Y: '+modelos[i].ano+' | C: '+modelos[i].cilindraje.toFixed(1)).toUpperCase();
+                                item.innerHTML = (modelos[i].nom_auto+' | Y: '+modelos[i].ano+' | C: '+modelos[i].cilindraje.toFixed(1)).toUpperCase()
+                                + ' | '+ (modelos[i].combustible? 'TD':'TM');
                                 item.value =modelos[i].id;
                                 fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
                             }
@@ -120,14 +195,14 @@ window.addEventListener('load',()=>{
                 {headerName: "Id", 
                         field: "id", hide: true},
                 {headerName: "Placa", 
-                        field: "placa", sort: 'asc',floatingFilter:true,
-                        width: 130
+                        field: "placa", floatingFilter:true,
+                        width: 120
                     },
                 {headerName: "Marca",
-                        field: "marca", sort: 'asc',floatingFilter:true, 
-                        width:130},
+                        field: "marca",sort: 'asc', floatingFilter:true, 
+                        maxWidth: 100,flex: 'auto'},
                 {headerName: "Modelo", 
-                        field: "modelo", sort: 'asc',floatingFilter:true,
+                        field: "modelo", floatingFilter:true,
                         minWidth: 150,flex: 'auto'
                     },
                 {headerName: "Año", 
@@ -135,7 +210,10 @@ window.addEventListener('load',()=>{
                         minWidth: 75, maxWidth: 115},
                 {headerName: "Cilindraje", 
                         field: "cilindraje", flex: 110,
-                        minWidth: 75,maxWidth: 120}
+                        minWidth: 75,maxWidth: 120},
+                {headerName: "Combustible", 
+                        field: "combustible", flex: 140,
+                        minWidth: 100,maxWidth: 140}
 
             ],
 
@@ -226,19 +304,24 @@ function datosAFilaGrid(data,n) {
     //0: todos los datos
     //1: todos los datos menos marca y modelo
     //2: solo nom_auto
+    console.log('datosAFilaGrid')
+    console.log(data);
+    console.log(parseFloat(data.Auto.cilindraje));
     if (gridOptions.api) {
         //var newRow = [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
         //combustible: data.combustible? 'DIESEL.':'GAS.' }];
         switch(n){
             case 0:
-                return [{ id: data.id, 
+                console.log('pase por aqui')
+                return [{ id: data.id,
                             placa: data.nom_placa.toUpperCase(), 
-                            marca: data.Auto.Marca.nom_marca.toUpperCase(), 
+                            marca: data.Auto.Marca.alias.toUpperCase(), 
                             modelo: data.Auto.nom_auto.toUpperCase(), 
                             año: data.Auto.ano, 
-                            cilindraje: data.Auto.cilindraje.toFixed(1)}];
+                            cilindraje: parseFloat(data.Auto.cilindraje).toFixed(1),
+                            combustible: data.Auto.combustible? 'DIESEL.':'GAS.'}];
             case 1:
-                return [{ id: data.id, año: data.ano, cilindraje: data.cilindraje.toFixed(1), 
+                return [{ id: data.id, año: data.ano, cilindraje: parseFloat(data.Auto.cilindraje).toFixed(1), 
                     combustible: data.combustible? 'DIESEL.':'GAS.' }];
             break;
             case 2:
@@ -367,10 +450,11 @@ function nuevaFilaAgGrid(data) {
             }
         }
 
-        //--------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
+//------------------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
 
         async function cargarDatosDesdeSeleccion(data){
             var placa = data;
+            console.log(data);
             await seleccionComboMarca(placa.Auto.id_marca);
             seleccionComboModelo(placa.id_auto);
             //Una vez seleccionado el comboMarca y cargado el comboModelo
@@ -382,8 +466,26 @@ function nuevaFilaAgGrid(data) {
             //Cargamos el resto de datos
             document.getElementById("Datos-Placa").value=placa.nom_placa.toUpperCase();
             
-            document.querySelector("#Datos-Color1").value = placa.color1;
-            document.querySelector("#Datos-Color2").value = placa.color2;
+            console.log(placa.colores.length);
+            if(placa.colores.length>1){
+                document.querySelector("#Datos-Color1").value = placa.colores[0].hex_color;
+                document.querySelector("#Datos-Color2").value = placa.colores[1].hex_color;
+            }else{
+                document.querySelector("#Datos-Color1").value = placa.colores[0].hex_color;
+                document.querySelector("#Datos-Color2").value = placa.colores[0].hex_color;
+            }
+            
+            
+            
+            setTimeout(()=>{
+                document.querySelector("#Datos-Color1").setAttribute('disabled','true');
+                document.querySelector("#Datos-Color2").setAttribute('disabled','true');
+            },300);
+
+            
+            seleccionComboColor1(placa.color1);
+            seleccionComboColor2(placa.color2);
+
             
             let clave = placa.clave;
             let obs_placa = placa.obs_placa;
@@ -427,6 +529,30 @@ function nuevaFilaAgGrid(data) {
         }
 
 
+        function seleccionComboColor1(id_color1){
+            console.log('El id del color1 es: '+id_color1)
+            for(i=0;i<comboColor1.options.length;i++){
+                if(comboColor1.options[i].value == id_color1){
+                    comboColor1.selectedIndex=i;
+                    console.log('Encontre');
+                    break;
+                    
+                }
+            }
+        }
+
+        function seleccionComboColor2(id_color2){
+            for(i=0;i<comboColor2.options.length;i++){
+                if(comboColor2.options[i].value == id_color2){
+                    comboColor2.selectedIndex=i;
+                    console.log('Encontre');
+                    break;
+                    
+                }
+            }
+        }
+
+
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ OBTENER DATOS
 
@@ -440,22 +566,25 @@ function nuevaFilaAgGrid(data) {
                 id_auto: document.getElementById('comboModelo').value,
                 nom_placa: document.getElementById('Datos-Placa').value.trim().toLowerCase(),
                 clave: noClave?0:document.getElementById('Datos-Clave').value.trim().toLowerCase(),
-                color1: document.querySelector("#Datos-Color1").value,
-                color2: document.querySelector("#Datos-Color2").value,
+                color1: document.getElementById('comboColor1').value,
+                color2: document.getElementById('comboColor2').value,
                 obs_placa: noObs?null:document.getElementById('Datos-Obs').value.trim().toLowerCase(),
 
             };
+            
             return data;
         }
 
         function botonesModoNuevo(bloquear){
             const modoActual = nuevoBtn.textContent;
+            const bg_new = document.getElementById('datosModeloCard')
             if(bloquear && modoActual!='Agregar'){
                 //Bloqueado
                 //mostrarTextoModelo(true);
                 //guardarNomAutoBtn.disabled=true;
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Agregar';
+                bg_new.classList.add('bg_new');
                 nuevoBtn.classList.add('btn-success');
                 nuevoBtn.classList.remove('btn-outline-success');
                 toast("Ingrese el nuevo modelo a agregar", "toastColorInfo");
@@ -464,6 +593,7 @@ function nuevaFilaAgGrid(data) {
                 //mostrarTextoModelo(false);
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Nuevo';
+                bg_new.classList.remove('bg_new');
                 nuevoBtn.classList.remove('btn-success');
                 nuevoBtn.classList.add('btn-outline-success');
                 //toast("Nuevo modelo Desactivado", "toastColorInfo");
@@ -534,7 +664,16 @@ function nuevaFilaAgGrid(data) {
             //DIV: CardBody
             const modalBody = document.getElementById('modalBody');
             //INPUT: TEXT o elemento P
-            if(numeroModal == 0){
+            if(numeroModal==10){
+                const colorPicker = document.createElement('input');
+                colorPicker.type="color"
+                colorPicker.id="Datos-Color1"
+                colorPicker.classList.add('form-control');
+                colorPicker.classList.add('form-control-color');
+                colorPicker.classList.add('form-input');
+                colorPicker.name="Color"
+                modalBody.insertBefore(colorPicker,modalBody.firstChild);
+            }else if(numeroModal == 0){
                 const inputText = document.createElement('INPUT');
                 inputText.type='text';
                 inputText.id='inputModal';
@@ -548,6 +687,15 @@ function nuevaFilaAgGrid(data) {
                 if(numeroModal == 1)textoP.textContent='Guardar cambios a placa existente';
                 if(numeroModal == 2)textoP.textContent='Guardar como una nueva placa';
                 modalBody.insertBefore(textoP,modalBody.firstChild);
+            }
+
+            if(numeroModal==10){
+                const colorPicker = document.createElement('input');
+                colorPicker.type="color"
+                colorPicker.id="Datos-Color1"
+                colorPicker.classList.add('form-control');
+                colorPicker.classList.add('form-control-color');
+                colorPicker.classList.add('form-input');
             }
             //BUTTON 1
             const boton1 = document.getElementById('confirmar');
@@ -625,6 +773,28 @@ function nuevaFilaAgGrid(data) {
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
 
+
+//-------------------------BTN NVerificar
+const btnVerificar = document.querySelector("#btn-Verificar");
+btnVerificar.addEventListener('click',async ()=>{
+    const data = obtenerDatos();
+    pinCarga('cargando');
+    console.log(data.id);
+    console.log(data.nom_placa);
+    //Al querer verificar si la placa existe para agregar uno nuevo
+    //Esta no omite el id actual, y busca todos
+    if(await placasRepetidas(0,data.nom_placa)){
+        //Si devuelve true significa que encontro una modelo año cil igual
+        toast("La Placa ya existe!", "toastColorError");
+        pinCarga('fallo');
+    }else{
+        toast("Placa disponible", "toastColorSuccess");
+        pinCarga('Success');
+    }
+    
+});
+
+
 //-------------------------BTN No tiene clave
         const noTieneClave = document.querySelector("#Datos-NoClave");
         noTieneClave.addEventListener('change',()=>{
@@ -644,6 +814,9 @@ function nuevaFilaAgGrid(data) {
         colorPicker1.addEventListener('change',()=>{
             const colorPicker2 = document.querySelector("#Datos-Color2");
             colorPicker2.value = colorPicker1.value;
+            console.log('ajaa')
+            document.querySelector("#Datos-Color1").setAttribute('disabled','true');
+            document.querySelector("#Datos-Color2").setAttribute('disabled','true');
         });
 
 
@@ -765,7 +938,10 @@ function nuevaFilaAgGrid(data) {
         var btnPrueba = document.querySelector('#btnPrueba');
         btnPrueba.addEventListener('click', function(e) {
             e.preventDefault();
-            obtenerDatos();
+            //obtenerDatos();
+
+            document.querySelector("#Datos-Color1").setAttribute('disabled','true');
+            document.querySelector("#Datos-Color2").setAttribute('disabled','true');
 
             
 

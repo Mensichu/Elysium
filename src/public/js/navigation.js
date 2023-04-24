@@ -31,6 +31,31 @@ window.addEventListener('load',()=>{
 
     })
 
+    navRemoveActive();
+    function navRemoveActive(){
+        const activos = document.querySelectorAll('.nav-link');
+        activos.forEach(activo =>{
+            //Esto evita conflicto con el Nav Tabs
+            console.log(activo.id)
+            if(activo.id!='excepcion')activo.classList.remove('active');
+        });
+    }
+    navAddActive();
+    function navAddActive(){
+        navRemoveActive();
+        const activos = document.querySelectorAll('.nav-link');        
+        const pagina = window.location.pathname;
+        console.log(pagina);
+        if(pagina==('/'))activos[0].classList.add('active');
+        if(pagina.includes('/agentes'))activos[1].classList.add('active');
+        if(pagina.includes('/vehiculos'))activos[2].classList.add('active');
+        if(pagina.includes('/Productos'))activos[3].classList.add('active');
+        if(pagina.includes('/Ventas'))activos[4].classList.add('active');
+        if(pagina.includes('/Pedidos'))activos[5].classList.add('active');
+        if(pagina.includes('/Pagos'))activos[6].classList.add('active');
+        
+
+    }
     
 });
 

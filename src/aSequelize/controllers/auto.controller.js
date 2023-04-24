@@ -374,7 +374,7 @@ export const deleteAuto = async (req,res)=>{
 const { Op } = require("sequelize");
 
 export const getAutosRepetidos = async (req, res)=>{
-    const {id, nom_auto,cilindraje,ano} = req.query;
+    const {id, nom_auto,cilindraje,ano,combustible} = req.query;
     console.log(id)
     console.log(nom_auto)
     try{
@@ -383,6 +383,7 @@ export const getAutosRepetidos = async (req, res)=>{
                 nom_auto:nom_auto,
                 cilindraje:cilindraje,
                 ano:ano,
+                combustible:combustible,
                 id: {
                     [Op.not]: id
                   }

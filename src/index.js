@@ -4,9 +4,11 @@ import {sequelize} from './aSequelize/database/database'
 
 //import './aSequelize/models/tablaMarca'
 //import './aSequelize/models/tablaAuto'
-//import './aSequelize/models/tablaPlaca'
+import './aSequelize/models/tablaPlaca'
+import './aSequelize/models/tablaColor'
+import './aSequelize/models/tablaPlacaColores'
 
-function main(){
+async function main(){
     try{
         //await sequelize.sync({force:false});
         //await sequelize.authenticate();
