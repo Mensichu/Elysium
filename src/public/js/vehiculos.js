@@ -1132,27 +1132,8 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
         var btnPrueba = document.querySelector('#btnPrueba');
         btnPrueba.addEventListener('click', async function(e) {
             e.preventDefault();
-            /*
-            console.log('paso inicial');
-            const respuesta = await modelosRepetidos(1,'sail');
-            console.log('paso final');
-            console.log(respuesta?'El modelo ya existe!':'Nuevo modelo');
-            */
-            //modoNuevoModelo();
 
-             // Obtener la instancia de la tabla
-            var gridApi = gridOptions.api;
-
-            // Deshabilitar la selección de filas
-            //gridApi.setSuppressRowClickSelection(true);
-
-            // Obtener la instancia de la tabla
-
-
-             // Actualizar los datos de la tabla para eliminar el listener (escuchador) de onCellClicked
-            //gridApi.setRowData(gridOptions.rowData);
-
-            corregirFlotante('2');
+            //corregirFlotante('2');
 
 
         });

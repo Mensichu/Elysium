@@ -10,7 +10,7 @@ import {sequelize} from './aSequelize/database/database'
 //import './aSequelize/models/Sri/tablaTipoDeIdentificacion'
 //import './aSequelize/models/tablaCliente'
 
-async function main(){
+function main(){
     try{
         //await sequelize.sync({force:false});
         //await sequelize.authenticate();

@@ -17,14 +17,14 @@ export const tablaCliente = sequelize.define('Client',{
         allowNull: true
     },
     apellidos_empresa:{
-        type: DataTypes.STRING(50),
+        type: DataTypes.STRING(200),
         allowNull: false
     },
     nombres:{
-        type: DataTypes.STRING(50),
+        type: DataTypes.STRING(200),
         allowNull: true
     },
-    sexo:{
+    genero:{
         type: DataTypes.BOOLEAN,
         defaultValue:false
     },
@@ -40,16 +40,16 @@ export const tablaCliente = sequelize.define('Client',{
         type: DataTypes.STRING(30),
         allowNull: true
     },
-    correo:{
-        type: DataTypes.STRING(30),
+    direccion:{
+        type: DataTypes.STRING(100),
         allowNull: true
     },
-    direccion:{
-        type: DataTypes.STRING(50),
+    correo:{
+        type: DataTypes.STRING(100),
         allowNull: true
     },
     obs_cliente:{
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(200),
         allowNull: true
     },
     estado:{

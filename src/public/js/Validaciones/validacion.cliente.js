@@ -1,17 +1,15 @@
 const expresiones = {
     
-    nombres: /^[a-zA-Z0-9À-ÿ\s]{1,50}$/, // Letras y espacios, pueden llevar acentos.
-    apellidos: /^[a-zA-Z0-9À-ÿ\s\.\-\_\'\"]{1,50}$/, // Letras y espacios, pueden llevar acentos.
+    nombres: /^[a-zA-Z0-9À-ÿ\s]{1,200}$/, // Letras y espacios, pueden llevar acentos.
+    apellidos: /^[a-zA-Z0-9À-ÿ\s\.\-\_\'\"]{1,200}$/, // Letras y espacios, pueden llevar acentos.
     password: /^.{4,12}$/, // 4 a 12 digitos.
     correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-    direccion: /^[a-zA-Z0-9À-ÿ\s\.\,\-\_\:]{1,50}$/, // Letras y espacios, pueden llevar acentos.
+    direccion: /^[a-zA-Z0-9À-ÿ\s\.\,\-\_\:]{1,100}$/, // Letras y espacios, pueden llevar acentos.
     telefono: /^[a-zA-Z0-9À-ÿ\s]{1,30}$/, // Letras y espacios, pueden llevar acentos.
     
 
     identificacion: /^[0-9]{10,15}$/, // Letras, numeros 
-    color: /^[a-zA-Z0-9\#]{1,10}$/, // Letras, numeros, Numeral
-    clave: /^[a-zA-Z0-9]{1,10}$/, // Letras, numeros
-    observacion: /^[a-zA-Z0-9\ \.\-\n]{1,100}$/, // Letras, numeros 
+    observacion: /^[a-zA-Z0-9\ \.\-\n]{1,200}$/, // Letras, numeros 
     //observacion: /^(?:[a-zA-Z0-9.-]{1,50})?$/, // Letras, numeros 
 
 
@@ -60,11 +58,12 @@ const expresiones = {
                     return noEmpresa?true:validarCampo(elemento,expresiones.nombres);
 
                 case 'Direccion':
-                    
-                    return validarCampo(elemento,expresiones.direccion);
+                    const tieneDireccion = !document.querySelector("#tieneDireccion").checked;
+                    return tieneDireccion?true:validarCampo(elemento,expresiones.direccion);
 
                 case 'Correo':
-                    return validarCampo(elemento,expresiones.correo);
+                    const tieneCorreo = !document.querySelector("#tieneCorreo").checked;
+                    return tieneCorreo?true:validarCampo(elemento,expresiones.correo);
 
                 case 'Telefono1':
                     const tieneTelef1 = !document.querySelector("#tieneTelefono1").checked;
@@ -100,14 +99,14 @@ const expresiones = {
                 }
                 //Apellidos
                 if(elemento.name== 'Apellidos'){
-                    if (elemento.value.length > 50) {
-                        elemento.value = elemento.value.slice(0, 50);
+                    if (elemento.value.length > 200) {
+                        elemento.value = elemento.value.slice(0, 200);
                     }
                 }
                 //Nombres
                 if(elemento.name== 'Nombres'){
-                    if (elemento.value.length > 50) {
-                        elemento.value = elemento.value.slice(0, 50);
+                    if (elemento.value.length > 200) {
+                        elemento.value = elemento.value.slice(0, 200);
                     }
                 }
                 //Telefonos
@@ -118,20 +117,20 @@ const expresiones = {
                 }
                 //Correo
                 if(elemento.name== 'Correo'){
-                    if (elemento.value.length > 50) {
-                        elemento.value = elemento.value.slice(0, 30);
+                    if (elemento.value.length > 100) {
+                        elemento.value = elemento.value.slice(0, 100);
                     }
                 }
                 //Direccion
                 if(elemento.name== 'Direccion'){
-                    if (elemento.value.length > 50) {
-                        elemento.value = elemento.value.slice(0, 50);
+                    if (elemento.value.length > 100) {
+                        elemento.value = elemento.value.slice(0, 100);
                     }
                 }
                 //Observacion
                 if(elemento.name=='Observacion'){
                     if (elemento.value.length > 100) {
-                        elemento.value = elemento.value.slice(0, 100);
+                        elemento.value = elemento.value.slice(0, 200);
                     }
                 }
                 validarElemento(elemento,true);

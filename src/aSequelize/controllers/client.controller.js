@@ -5,13 +5,13 @@ import {tablaTipoDeIdentificacion} from '../models/Sri/tablaTipoDeIdentificacion
 
 export const createClient = async (req,res) =>{
     try{
-        const {identificacion,tipo,nombres,apellidos_empresa,sexo,
+        const {identificacion,tipo,nombres,apellidos_empresa,genero,
                 telefono1,telefono2,telefono3,
                 direccion,correo,obs_cliente} = req.body;
 
         const cliente = await tablaCliente.create(
             {
-                identificacion,tipo,nombres,apellidos_empresa,sexo,
+                identificacion,tipo,nombres,apellidos_empresa,genero,
                 telefono1,telefono2,telefono3,
                 direccion,correo,obs_cliente
             }
@@ -81,7 +81,7 @@ export const getTablaClients = async (req,res) =>{
     try{
         const clients = await tablaCliente.findAll({
             where:{estado:true},
-            attributes:['id','apellidos_empresa','nombres','identificacion'],
+            attributes:['id','apellidos_empresa','nombres','identificacion','genero'],
             include:[
                 {
                     model: tablaTipoDeIdentificacion,
@@ -109,6 +109,36 @@ export const getComboTipos = async (req,res) =>{
         res.json(tipos);
     }catch(error){
         //500 es un error que indica q es error del servidor
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+
+
+const { Op } = require("sequelize");
+
+export const getClientsRepetidos = async (req, res)=>{
+    const {id, identificacion} = req.query;
+    console.log(id)
+    console.log(identificacion)
+    try{
+        const identificacionEncontrada = await tablaCliente.findAll({
+            where:{
+                identificacion: {
+                    [Op.eq]: identificacion,
+                    [Op.not]: "0000000000"
+                },
+                id: {
+                    [Op.not]: id
+                  }
+            }
+        });
+        if(identificacionEncontrada!==null && identificacionEncontrada.length>0){
+            res.json( {respuesta:true} );//True significa que encontro
+        }else{
+            res.json( {respuesta:false} );
+        }
+    }catch(error){
         return res.status(500).json({ message: error.message });
     }
 }

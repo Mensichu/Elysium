@@ -679,31 +679,12 @@ function nuevaFilaAgGrid(data) {
             h5Title.textContent=titulo[numeroModal];
             //DIV: CardBody
             const modalBody = document.getElementById('modalBody');
-            //INPUT: TEXT o elemento P
-            if(numeroModal==10){
-                const colorPicker = document.createElement('input');
-                colorPicker.type="color"
-                colorPicker.id="Datos-Color1"
-                colorPicker.classList.add('form-control');
-                colorPicker.classList.add('form-control-color');
-                colorPicker.classList.add('form-input');
-                colorPicker.name="Color"
-                modalBody.insertBefore(colorPicker,modalBody.firstChild);
-            }else if(numeroModal == 0){
-                const inputText = document.createElement('INPUT');
-                inputText.type='text';
-                inputText.id='inputModal';
-                inputText.classList.add('modal-text');
-                inputText.placeholder='Ingrese la nueva marca';
-                inputText.maxlength='20';
-                modalBody.insertBefore(inputText,modalBody.firstChild);
-            }else{
-                const textoP = document.createElement('P');
-                textoP.classList.add('card-title');
-                if(numeroModal == 1)textoP.textContent='Guardar cambios a placa existente';
-                if(numeroModal == 2)textoP.textContent='Guardar como una nueva placa';
-                modalBody.insertBefore(textoP,modalBody.firstChild);
-            }
+            //INPUT: elemento P
+            const textoP = document.createElement('P');
+            textoP.classList.add('card-title');
+            if(numeroModal == 1)textoP.textContent='Guardar cambios a placa existente';
+            if(numeroModal == 2)textoP.textContent='Guardar como una nueva placa';
+            modalBody.insertBefore(textoP,modalBody.firstChild);
 
             if(numeroModal==10){
                 const colorPicker = document.createElement('input');
@@ -936,7 +917,6 @@ btnVerificar.addEventListener('click',async ()=>{
             },600);
             
         }
-
 
 
 

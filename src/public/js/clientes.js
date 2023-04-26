@@ -38,13 +38,25 @@ let rowId = null;
 
                 //Se agrega al combobox comboMarca
                 comboTipo.appendChild(fragmento);
-                
+                comboTipo.selectedIndex=1;
 
             }catch(error){
                 console.log('Error al obtener comboTipo:', error);
             }
         }
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CAMBIA CEDULA A RUC
+
+        const identificacionInput = document.getElementById('Datos-Identificacion');
+        identificacionInput.addEventListener('input',(event)=>{
+            if(comboTipo.selectedIndex == 1 && identificacionInput.value.length >10){
+                comboTipo.selectedIndex=0;
+            }
+            if(comboTipo.selectedIndex == 0 && identificacionInput.value.length <11){
+                comboTipo.selectedIndex=1;
+            }
+
+        });
 
 
 
@@ -71,9 +83,9 @@ let rowId = null;
                         field: "nombre", floatingFilter:true,
                         flex: 1, minWidth: 150
                     },
-                {headerName: "Sexo", 
-                        field: "sexo", 
-                        minWidth: 20, maxWidth: 90}
+                {headerName: "Genero", 
+                        field: "genero", 
+                        minWidth: 20, maxWidth: 110}
 
             ],
 
@@ -166,7 +178,7 @@ let rowId = null;
 
 
         //---------------------------------------------------------------------Convierte los datos en una fila para AG-GRID
-        function datosAFilaGrid(data) {
+        function datosAFilaGrid(data,n) {
             console.log('datosAFilaGrid')
             console.log(data);
             //console.log(parseFloat(data.Auto.cilindraje));
@@ -178,10 +190,11 @@ let rowId = null;
                     comboTipo.selectedIndex=i;
                 */
                 return [{ id: data.id,
-                            tipo: comboTipo.options[comboTipo.selectedIndex].textContent.toUpperCase(),//data.TipoDeIdentificacion.tipo.toUpperCase(), 
+                            tipo: n==0? data.TipoDeIdentificacion.tipo.toUpperCase()
+                            :comboTipo.options[comboTipo.selectedIndex].textContent.toUpperCase(),//data.TipoDeIdentificacion.tipo.toUpperCase(), 
                             identidad: data.identificacion.toUpperCase(), 
                             nombre: data.apellidos_empresa.toUpperCase()+(data.nombres!=null?' '+data.nombres.toUpperCase():''), 
-                            sexo: data.sexo? 'M':'H'}];
+                            genero: data.nombres!=null?(data.genero? 'M':'H'):'E'}];
             
 
             }
@@ -190,7 +203,7 @@ let rowId = null;
 
         //---------------------------------------------------------------------Actualiza la fila a la tabla AG-GRID
         function actualizarFilaAgGrid(data) {
-            const filaActualizada = datosAFilaGrid(data); //n es el tipo de fila: 1 o 2
+            const filaActualizada = datosAFilaGrid(data,1); //n es el tipo de fila: 1 o 2
             //Actualiza la fila
             const selectedNodes = gridOptions.api.getSelectedNodes();
             if (selectedNodes.length > 0) {
@@ -209,7 +222,7 @@ let rowId = null;
 
         //---------------------------------------------------------------------Agrega una nueva fila a la tabla AG-GRID
         function nuevaFilaAgGrid(data) {
-            const filaNueva = datosAFilaGrid(data); //n es el tipo de fila: 0
+            const filaNueva = datosAFilaGrid(data,1); //n es el tipo de fila: 0
             const res = gridOptions.api.applyTransaction({ add: filaNueva });
             if (res.add) {
                 const addedRow = res.add[0];
@@ -307,7 +320,7 @@ let rowId = null;
 
         async function cargarDatosDesdeSeleccion(data){
             var client = data;
-            console.log(data);
+            //console.log(data);
             seleccionComboTipo(client.tipo);
             //En la db esta todo en minusculas, pero en el front end esta en mayuscula
             
@@ -319,31 +332,36 @@ let rowId = null;
                 ocultarPersona(false);
                 document.getElementById("Datos-Nombres").value=client.nombres.toUpperCase();
                 //Selecciona si es H o M
-                document.getElementById("btnradio1").checked= !client.sexo;
-                document.getElementById("btnradio2").checked=  client.sexo;
+                document.getElementById("btnradio1").checked= !client.genero;
+                document.getElementById("btnradio2").checked=  client.genero;
             }else{
                 ocultarPersona(true);
                 document.getElementById("Datos-Nombres").value='';
             }
             
             //Direccion y correo electronico
-            document.getElementById("Datos-Direccion").value=client.direccion.toUpperCase();
-            document.getElementById("Datos-Correo").value=client.correo.toUpperCase();
-
-            
-            const obs_placa = client.obs_cliente;
+            const direccion = client.direccion;
+            const correo = client.correo;
+            //Telefonos
             const telefono1 = client.telefono1;
             const telefono2 = client.telefono2;
             const telefono3 = client.telefono3;
+            const obs_placa = client.obs_cliente;
 
+            mostrarDireccion(direccion!==null);
+            mostrarCorreo(correo!==null);
             mostrarInputTelefono1(telefono1!==null);
             mostrarInputTelefono2(telefono2!==null);
             mostrarInputTelefono3(telefono3!==null);
             ocultarInputObs(obs_placa===null);
 
+            document.getElementById("Datos-Direccion").value=(direccion===null?'':direccion.toUpperCase());
+            document.getElementById("Datos-Correo").value=(correo===null?'':correo.toLowerCase());
+
             document.getElementById("Datos-Telefono1").value=(telefono1===null?'':telefono1);
             document.getElementById("Datos-Telefono2").value=(telefono2===null?'':telefono2);
             document.getElementById("Datos-Telefono3").value=(telefono3===null?'':telefono3);
+
             document.getElementById("Datos-Obs").value=  (obs_placa===null?'':obs_placa);
         }
 
@@ -369,6 +387,9 @@ let rowId = null;
 
         function obtenerDatos(){
             const empresaCheck= checkEmpresa.checked;
+            const direccionCheck= checkDireccion.checked;
+            const correoCheck= checkCorreo.checked;
+
             const telefono1Check= checkTelefono1.checked;
             const telefono2Check= checkTelefono2.checked;
             const telefono3Check= checkTelefono3.checked;
@@ -381,16 +402,16 @@ let rowId = null;
                 tipo: comboTipo.value,
                 apellidos_empresa: document.getElementById('Datos-Apellidos').value.trim().toLowerCase(),
                 nombres: empresaCheck?null:document.getElementById('Datos-Nombres').value.trim().toLowerCase(),
-                sexo: document.getElementById('btnradio2').checked,
+                genero: empresaCheck?false:document.getElementById('btnradio2').checked,
                 
+                direccion: direccionCheck?document.getElementById('Datos-Direccion').value.trim().toLowerCase():null,
+                correo: correoCheck?document.getElementById('Datos-Correo').value.trim().toLowerCase():null,
+
                 telefono1: telefono1Check?document.getElementById('Datos-Telefono1').value.trim().toLowerCase():null,
                 telefono2: telefono2Check?document.getElementById('Datos-Telefono2').value.trim().toLowerCase():null,
                 telefono3: telefono3Check?document.getElementById('Datos-Telefono3').value.trim().toLowerCase():null,
 
                 obs_cliente: noObs?null:document.getElementById('Datos-Obs').value.trim().toLowerCase(),
-
-                direccion: document.getElementById('Datos-Direccion').value.trim().toLowerCase(),
-                correo: document.getElementById('Datos-Correo').value.trim().toLowerCase(),
 
             };
             
@@ -449,6 +470,8 @@ let rowId = null;
             document.getElementById("Datos-Telefono3").value='';
             document.getElementById("Datos-Obs").value='';
             ocultarPersona(true);
+            mostrarDireccion(false);
+            mostrarCorreo(false);
             mostrarInputTelefono1(false);
             mostrarInputTelefono2(false);
             mostrarInputTelefono3(false);
@@ -463,25 +486,56 @@ let rowId = null;
             if(ocultar){
                 document.querySelector("#formPersona").style.display='none';
                 document.querySelector("#noTieneApellidoLabel").textContent='Empresa';
-                //document.querySelector("#empresaApellidoLabel").textContent='Empresa';
+                document.querySelector("#apellidosLabel").style.display='none';
                 document.querySelector("#Datos-Apellidos").placeholder='Empresa';
             }else{
                 document.querySelector("#formPersona").style.display='block';
                 document.querySelector("#noTieneApellidoLabel").textContent='Persona';
-                //document.querySelector("#empresaApellidoLabel").textContent='Apellido';
+                document.querySelector("#apellidosLabel").style.display='block';
                 document.querySelector("#Datos-Apellidos").placeholder='Apellidos';
             }
         }
         
 
-        //-------------------------BTN No tiene clave
+        //-------------------------BTN Es EMRPESA
         const checkEmpresa = document.getElementById('Datos-NoEmpresa');
         checkEmpresa.addEventListener('change',()=>{
             ocultarPersona(checkEmpresa.checked);
             
         });
 
-        
+
+        //----------------------------------------------------------------------DIRECCION
+        const checkDireccion = document.getElementById('tieneDireccion');
+        checkDireccion.addEventListener('change',()=>{
+            mostrarDireccion(checkDireccion.checked);
+        });
+        function mostrarDireccion(mostrar){
+            checkDireccion.checked=mostrar;
+            if(mostrar){
+                document.querySelector("#formDireccion").style.display='block';
+            }else{
+                document.querySelector("#formDireccion").style.display='none';
+            }
+        }
+
+
+        //----------------------------------------------------------------------CORREO
+        const checkCorreo = document.getElementById('tieneCorreo');
+        checkCorreo.addEventListener('change',()=>{
+            mostrarCorreo(checkCorreo.checked);
+        });
+        function mostrarCorreo(mostrar){
+            checkCorreo.checked=mostrar;
+            if(mostrar){
+                document.querySelector("#formCorreo").style.display='block';
+            }else{
+                document.querySelector("#formCorreo").style.display='none';
+            }
+        }
+
+
+
         //----------------------------------------------------------------------TELEFONOS
         const checkTelefono1 = document.getElementById('tieneTelefono1');
         checkTelefono1.addEventListener('change',()=>{
@@ -559,27 +613,16 @@ let rowId = null;
             h5Title.textContent=titulo[numeroModal];
             //DIV: CardBody
             const modalBody = document.getElementById('modalBody');
-            //INPUT: TEXT o elemento P
-            if(numeroModal == 0){
-                const inputText = document.createElement('INPUT');
-                inputText.type='text';
-                inputText.id='inputModal';
-                inputText.classList.add('modal-text');
-                inputText.placeholder='Ingrese la nueva marca';
-                inputText.maxlength='20';
-                modalBody.insertBefore(inputText,modalBody.firstChild);
-            }else{
-                const textoP = document.createElement('P');
-                textoP.classList.add('card-title');
-                if(numeroModal == 1)textoP.textContent='Guardar cambios a placa existente';
-                if(numeroModal == 2)textoP.textContent='Guardar como una nueva placa';
-                modalBody.insertBefore(textoP,modalBody.firstChild);
-            }
+            //INPUT: elemento P
+            const textoP = document.createElement('P');
+            textoP.classList.add('card-title');
+            if(numeroModal == 1)textoP.textContent='Guardar cambios a cliente existente';
+            if(numeroModal == 2)textoP.textContent='Guardar como nuevo cliente';
+            modalBody.insertBefore(textoP,modalBody.firstChild);
 
             //BUTTON 1
             const boton1 = document.getElementById('confirmar');
             boton1.value= numeroModal;
-            if(numeroModal == 0)boton1.textContent='test';
             if(numeroModal == 1)boton1.textContent='Guardar';
             if(numeroModal == 2)boton1.textContent='Nuevo';
             
@@ -605,8 +648,6 @@ let rowId = null;
             if(conectado()){
                 pinCarga('cargando');
 
-                //Nueva marca
-                if(btnConfirmar.value==0)nuevaMarca();
                 // Guardar cambios al modelo
                 if(btnConfirmar.value==1)modificarCliente();
                 // Nuevo modelo
@@ -651,43 +692,31 @@ let rowId = null;
         
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
 
-/*
-//-------------------------BTN NVerificar
-const btnVerificar = document.querySelector("#btn-Verificar");
-btnVerificar.addEventListener('click',async ()=>{
-    const data = obtenerDatos();
-    pinCarga('cargando');
-    console.log(data.id);
-    console.log(data.nom_placa);
-    //Al querer verificar si la placa existe para agregar uno nuevo
-    //Esta no omite el id actual, y busca todos
-    if(await placasRepetidas(0,data.nom_placa)){
-        //Si devuelve true significa que encontro una modelo año cil igual
-        toast("La Placa ya existe!", "toastColorError");
-        pinCarga('fallo');
-    }else{
-        toast("Placa disponible", "toastColorSuccess");
-        pinCarga('success');
-    }
-    
-});
 
 
-//-------------------------BTN No tiene clave
-        const noTieneClave = document.querySelector("#Datos-NoClave");
-        noTieneClave.addEventListener('change',()=>{
-            ocultarInputClave(noTieneClave.checked);
+        identificacionInput.addEventListener('keyup', async (event)=>{
             
+            if(identificacionInput.value.length>9){
+                if (event.code === "Enter" || event.which === 13) {
+                    // Código a ejecutar al presionar Enter
+                    const data = obtenerDatos();
+                    pinCarga('cargando');
+                    //Al querer verificar si el cliente existe para agregar uno nuevo
+                    //Esta omite el id actual, y busca todos menos los '0000000000'
+                    if(await clientesRepetidos(0,data.identificacion)){
+                        //Si devuelve true significa que encontro una modelo año cil igual
+                        toast("El cliente ya existe!", "toastColorError");
+                        pinCarga('fallo');
+                    }else{
+                        toast("Identificacion disponible", "toastColorSuccess");
+                        pinCarga('success');
+                    }
+                }
+            }
         });
 
-//-------------------------BTN No tiene observaciones
-        const noTieneObs = document.querySelector("#Datos-NoObs");
-        noTieneObs.addEventListener('change',()=>{
-            ocultarInputObs(noTieneObs.checked);
-        });
 
 
-*/
 //-------------------------BTN modificar Modelo
 
         const guardarBtn = document.getElementById("btn-Guardar");
@@ -734,11 +763,11 @@ btnVerificar.addEventListener('click',async ()=>{
 
         //--------------------------------------------- PLACAS REPETIDOS
 
-        async function placasRepetidas(id, nom_placa){
+        async function clientesRepetidos(id, identificacion){
             //No se usa pinCarga cargando
-            const queryParams = new URLSearchParams({id:id, nom_placa:nom_placa});
+            const queryParams = new URLSearchParams({id:id, identificacion:identificacion});
 
-            const res = await fetch(`/placasRepetidas?${queryParams.toString()}`)
+            const res = await fetch(`/clientsRepetidos?${queryParams.toString()}`)
             .then(response => {
                 if(!response.ok){
                     throw new Error('Servidor - '+response.status+': '+response.statusText);
@@ -757,9 +786,9 @@ btnVerificar.addEventListener('click',async ()=>{
         async function nuevoCliente(){
             const data = obtenerDatos();
 
-            if(false && await placasRepetidas(0,data.nom_placa)){
-                //Si devuelve true significa que encontro una modelo año cil igual
-                toast("La Placa ya existe!", "toastColorError");
+            if(await clientesRepetidos(0,data.identificacion)){
+                //Si devuelve true significa que encontro una identificacion
+                toast("El cliente ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{
                 pinCarga('cargando');
@@ -804,9 +833,9 @@ btnVerificar.addEventListener('click',async ()=>{
         async function modificarCliente(){
             const data = obtenerDatos();
 
-            if(false && await placasRepetidas(data.id,data.nom_placa)){
+            if(await clientesRepetidos(data.id,data.identificacion)){
                 //Si devuelve true significa que encontro una placa igual
-                toast("La placa ya existe!", "toastColorError");
+                toast("El cliente ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{
                 await fetch(`/client/${data.id}`,{
@@ -845,10 +874,9 @@ btnVerificar.addEventListener('click',async ()=>{
         var btnPrueba = document.querySelector('#btnPrueba');
         btnPrueba.addEventListener('click', async function(e) {
             e.preventDefault();
-            
-            console.log(JSON.stringify(obtenerDatos()));
-            const data = obtenerDatos();
-            nuevaFilaAgGrid(data)
+            const texto = document.getElementById('Datos-Identificacion').value
+            console.log(texto);
+            console.log(await clientesRepetidos(0, texto));
 
         });
 
