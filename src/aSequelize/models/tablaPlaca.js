@@ -1,6 +1,6 @@
 import {DataTypes} from 'sequelize'
 import {sequelize} from '../database/database'
-import {tablaColor} from './tablaColor'
+import {tablaColor} from './Auto/tablaColor'
 
 export const tablaPlaca = sequelize.define('Placa',{
     id:{

@@ -1,7 +1,7 @@
 import {DataTypes} from 'sequelize'
-import {sequelize} from '../database/database'
+import {sequelize} from '../../database/database'
 //Importamos tablas dependientes de Marca
-import {tablaPlaca} from './tablaPlaca'
+import {tablaPlaca} from '../tablaPlaca'
 import {tablaColor} from './tablaColor'
 
 export const tablaPlacaColores = sequelize.define('Placa_Colores',{

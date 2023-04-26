@@ -1,5 +1,4 @@
-
-import { tablaColor } from '../models/tablaColor';
+import { tablaColor } from '../../models/Auto/tablaColor';
 
 
 export const getComboColor = async (req,res) =>{

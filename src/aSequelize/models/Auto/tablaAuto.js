@@ -1,7 +1,7 @@
 import {DataTypes} from 'sequelize'
-import {sequelize} from '../database/database'
+import {sequelize} from '../../database/database'
 //Importamos tablas dependientes de Auto
-import {tablaPlaca} from './tablaPlaca'
+import {tablaPlaca} from '../tablaPlaca'
 
 export const tablaAuto = sequelize.define('Auto',{
     id:{

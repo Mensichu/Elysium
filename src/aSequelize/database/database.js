@@ -6,6 +6,7 @@ export const sequelize = new Sequelize(
     process.env.passwordIgnore,
     {
     host: process.env.serverIgnore,
-    dialect: process.env.dialectIgnore
+    dialect: process.env.dialectIgnore,
+    timezone: process.env.timezone
     }
 );

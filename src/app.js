@@ -10,6 +10,7 @@ import productsRoutes from './routes/routes';
 import autoRoutes from  './routes/auto.routes';
 import placaRoutes from './routes/placa.routes';
 import colorRoutes from './routes/color.routes';
+import clientRoutes from './routes/client.routes';
 
 
 
@@ -36,11 +37,12 @@ app.set('view engine','.hbs')
 app.use(express.json());//Para que reciba datos Json
 app.use(express.urlencoded({extended: false}));//reciba desde from en html
 
-
+// Routes
 app.use(productsRoutes);
 app.use(autoRoutes);
 app.use(placaRoutes);
 app.use(colorRoutes);
+app.use(clientRoutes);
 
 // Public
 app.use(express.static(path.join(__dirname, 'public')));

@@ -14,8 +14,8 @@ router.get('/', (req,res)=>{
 
 });
 
-router.get('/agentes', (req,res)=>{
-    res.render('links/agentes');
+router.get('/clientes', (req,res)=>{
+    res.render('links/clientes');
 });
 
 router.get('/vehiculos/modelos', (req,res)=>{

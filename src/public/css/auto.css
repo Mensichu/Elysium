@@ -4,33 +4,6 @@
 }
 
 
-/*
-
-.table-info-selected {
-    background-color: blue;
-  }
-*/
-
-
-/*
-.showDelay2{
-    visibility: hidden;
-    position: relative;
-    opacity: 0;
-    height: 0;
-    transition: visibility 0s,opacity 0.5s ease-in-out 0.1s;
-    
-}
-
-*/
-
-/*
-.showNow2{
-    visibility: visible;
-    opacity: 1;
-}
-*/
-
 .datosModeloBody{
     height: auto;
     

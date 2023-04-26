@@ -8,7 +8,7 @@ const router = Router();
 //router.get('/marcas',);
 
 
-router.get('/placas',getPlacas);
+//router.get('/placas',getPlacas); no se usa aparentemente
 
 router.get('/comboAutosInfo/:id',getComboAutosInfo)
 

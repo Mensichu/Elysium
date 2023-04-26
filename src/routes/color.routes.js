@@ -1,5 +1,5 @@
 import {Router} from 'express'
-import {getComboColor, createColor} from '../aSequelize/controllers/color.controller'
+import {getComboColor, createColor} from '../aSequelize/controllers/auto.controller/color.controller'
 
 const router = Router();
 

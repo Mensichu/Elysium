@@ -1,9 +1,9 @@
-import {tablaMarca} from '../models/tablaMarca';
-import {tablaAuto} from '../models/tablaAuto';
+import {tablaMarca} from '../models/Auto/tablaMarca';
+import {tablaAuto} from '../models/Auto/tablaAuto';
+import { tablaColor } from '../models/Auto/tablaColor';
 import { tablaPlaca } from '../models/tablaPlaca';
-import { tablaColor } from '../models/tablaColor';
 
-import { tablaPlacaColores } from '../models/tablaPlacaColores';
+import { tablaPlacaColores } from '../models/Auto/tablaPlacaColores';
 
 
 
@@ -40,7 +40,7 @@ export const getPlacaById = async (req,res)=>{
 }
 
 
-
+/*
 
 export const getPlacas = async (req,res) =>{
     try{
@@ -51,7 +51,7 @@ export const getPlacas = async (req,res) =>{
     }
 
 }
-
+*/
 
 export const getComboAutosInfo = async (req,res) =>{
     const {id} = req.params
@@ -132,7 +132,11 @@ export const createPlaca = async (req,res) =>{
             id_auto
             },
         );
-        placa.setColores([color1,color2]);//Actualiza la relacion
+        if(color1===color2){
+            placa.setColores([color1]);//Actualiza la relacion
+        }else{
+            placa.setColores([color1,color2]);//Actualiza la relacion
+        }
 
         const datosfinales = await placaConAutoYMarca(placa.id);
         res.json(datosfinales);
@@ -159,11 +163,20 @@ export const updatePlaca = async (req,res)=>{
             placa.clave=    clave,
             placa.obs_placa=obs_placa,
             placa.id_auto=id_auto
-
+            console.log('paseeee  1');
             await placa.save();
-            placa.setColores([color1,color2]);//Actualiza la relacion
+            console.log('paseeee  2');
+            if(color1===color2){
+                placa.setColores([color1]);//Actualiza la relacion
+            }else{
+                placa.setColores([color1,color2]);//Actualiza la relacion
+            }
+            
+            console.log('paseeee  3');
             const datosfinales = await placaConAutoYMarca(placa.id);
+            console.log('paseeee  4');
             res.json(datosfinales);
+            console.log('paseeee  5');
         }else{
             res.status(404).json({message: 'placa not found'});
         }

@@ -1,0 +1,275 @@
+<link rel="stylesheet" href="/css/global.css">
+<link rel="stylesheet" href="/css/client.css">
+
+
+
+<div id="fondo" class="showDelay mt-4" stylea="padding: 10px; border:2px black solid">
+    <div class="container">
+        <div class="row ">
+            <div class="col-12 col-md-4" >
+                <div class="card text-white ">
+                    <div class="card-header ">Datos del Cliente</div>
+                    <div id="datosModeloCard" class="card-body datosModeloBody">
+                        <form id="formulario" class="formDatosPlaca" ></form>
+
+                            <div class="form-group">
+                                <label class="form-label mt-2 text-warning" for="inputValid">Ruc/Cédula:</label>
+                                <div class=" input-group">
+                                    <select class="form-select " id="comboTipo" style="width: 20%">
+                                        <option value="0">No aplica</option>
+                                    </select>
+                                    <input type="text" id="Datos-Identificacion" class="form-control form-input" name="Identificacion" 
+                                        placeholder="Identificacion" minlength="1"maxlength="20" style="width: auto">
+                                </div>
+                                    <div class="invalid-feedback">Id incorrecto!</div>
+                            </div>
+
+                            
+                            <label id="empresaApellidoLabel" class="form-label mt-3 text-warning" for="inputValid">Datos de cliente</label>
+                            <div class="form-group formGroupBorder " >
+                                <div class="input-group ">
+                                        <div class="form-check form-switch mt-2">
+                                            <input class="form-check-input" type="checkbox" id="Datos-NoEmpresa" checked="">
+                                            <label id="noTieneApellidoLabel" class="form-check-label" for="flexSwitchCheckDefault">Empresa</label>
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" id="Datos-Apellidos" class="form-control form-input" name="Apellidos" placeholder="Empresa" minlength="1"maxlength="50">
+                                    </div>
+                                    <div class="invalid-feedback">Texto incorrecto!</div>
+                                </div>
+
+                                <div id="formPersona" class="form-group" style="display: none;">
+                                    <div class="form-group">
+                                        <label class="form-label mt-2" for="inputValid">Nombres:</label>
+                                        <div class="input-group">
+                                            <input type="text" id="Datos-Nombres" class="form-control form-input" name="Nombres" placeholder="Nombres" minlength="1"maxlength="50">
+                                        </div>
+                                        <div class="invalid-feedback">Nombres incorrecto!</div>
+                                    </div>
+
+                                    <div class="form-group row" >
+                                        <label class="form-label mt-2" for="inputValid">Sexo:</label>
+                                        <div class="form-group btn-group" role="group" aria-label="Basic radio toggle button group">
+                                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked="">
+                                            <label class="btn btn-outline-warning" for="btnradio1">Hombre.</label>
+                                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" >
+                                            <label class="btn btn-outline-warning" for="btnradio2">Mujer</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- CORREO y TELEFONOS -->
+                            <label id="empresaApellidoLabel" class="form-label mt-3 text-warning" for="inputValid">Datos de contacto</label>
+                            <div class="form-group formGroupBorder">
+                                <div class="form-group">
+                                    <label for="calle">Dirección:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control form-input" name="Direccion" id="Datos-Direccion" placeholder="Ingresa la calle" minlength="1"maxlength="50">
+                                    </div>
+                                    <div class="invalid-feedback">Direccion incorrecta!</div>    
+                                </div>
+                                
+
+                                <div class="form-group mt-2">
+                                    <label for="correo" class="form-label ">Correo electronico:</label>
+                                    <div class="input-group ">
+                                        <input type="email" class="form-control form-input" name="Correo" id="Datos-Correo" aria-describedby="emailHelp" placeholder="Enter email" minlength="1"maxlength="30">
+                                    </div>
+                                    <div class="invalid-feedback">Correo incorrecto!</div>
+                                </div>
+                                <label for="" class="form-label mt-3 ">Telefonos:</label>
+
+                                <div class="form-group ">
+                                    <div class="">
+                                        <div class="input-group">
+                                                <div class="form-check form-switch ">
+                                                    <input class="form-check-input" type="checkbox" id="tieneTelefono1" >
+                                                    <label id="tieneTelefono1Label"class="form-check-label" for="flexSwitchCheckDefault">Telefono 1</label>
+                                                </div>
+                                        </div>
+
+                                        <div id="formTelefono1" class="form-group mt-2" style="display: none;">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <input type="text" id="Datos-Telefono1" class="form-control form-input" name="Telefono1" placeholder="Celular" minlength="1"maxlength="30">
+                                                </div>
+                                                <div class="invalid-feedback">Telefono incorrecto!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-2">
+                                        <div class="input-group">
+                                                <div class="form-check form-switch mt-2">
+                                                    <input class="form-check-input" type="checkbox" id="tieneTelefono2" >
+                                                    <label id="tieneTelefono2Label"class="form-check-label" for="flexSwitchCheckDefault">Telefono 2</label>
+                                                </div>
+                                        </div>
+
+                                        <div id="formTelefono2" class="form-group mt-2" style="display: none;">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <input type="text" id="Datos-Telefono2" class="form-control form-input" name="Telefono2" placeholder="Oficina" minlength="1"maxlength="30">
+                                                </div>
+                                                <div class="invalid-feedback">Telefono incorrecto!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-2">
+                                        <div class="input-group">
+                                                <div class="form-check form-switch mt-2">
+                                                    <input class="form-check-input" type="checkbox" id="tieneTelefono3" >
+                                                    <label id="tieneTelefono3Label"class="form-check-label" for="flexSwitchCheckDefault">Telefono 3</label>
+                                                </div>
+                                        </div>
+
+                                        <div id="formTelefono3" class="form-group mt-2" style="display: none;">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <input type="text" id="Datos-Telefono3" class="form-control form-input" name="Telefono3" placeholder="Casa" minlength="1"maxlength="30">
+                                                </div>
+                                                <div class="invalid-feedback">Telefono incorrecto!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
+                                
+                            </div>
+
+                            <label for="exampleInputEmail1" class="form-label mt-2 text-warning">Observación</label>
+                            <div class="form-group formGroupBorder">
+                                <div class="input-group">
+                                        <div class="form-check form-switch mt-2">
+                                            <input class="form-check-input" type="checkbox" id="Datos-NoObs" checked="">
+                                            <label id="noTieneObsLabel"class="form-check-label" for="flexSwitchCheckDefault">No tiene observaciones</label>
+                                        </div>
+                                </div>
+
+                                <div id="formObs" class="input-group" style="display: none;">
+                                    <fieldset>
+                                        <textarea class="form-control form-input" id="Datos-Obs" rows="5" cols="50" placeholder="Observaciones..." name="Observacion" minlength="1" maxlength="100"></textarea>
+                                        <div class="invalid-feedback">Formato incorrecto!</div>
+                                    </fieldset>                                        
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="padding-top: 10px; text-align: center;">
+                                <button class="btn btn-warning  btnHover1" style="width:100%;" id="btn-Guardar">Guardar cambios</button>
+                            </div>
+
+                            <div class="form-group" style="padding-top: 20px; text-align: center;">
+                                <button class="btn btn-outline-success  btnHover2" style="margin-left: 2px; width:100%" id="btn-Nuevo">Nuevo</button>
+                            </div>
+
+                        </form>
+                            
+                        
+                    </div>
+            
+                </div>
+            </div>
+
+            <!-------------------------------TABLAS------------------------------------>
+            <!------------------------------------------------------------------------->
+            <div class="col-12 col-md-8">
+                <div class="card text-white ">
+                    <div class="card-header">Tabla de Clientes</div>
+                        <div class="card-body tablaModeloBody">
+                            <div id="idTabla" class="tabla-con-scroll" >
+                                <div class="diseñoTablaGrid" style="height:100%">
+                                        <div id="myGrid" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+                    
+                    </div>
+                </div>
+                
+            </div>
+
+
+            <div class="card text-white mt-2">
+                <div class="card-header">Documentos del cliente</div>
+                    <div class="card-body tablaModeloBody2">
+                        <div id="idTabla2" class="tabla-con-scroll2" >
+                            <div class="diseñoTablaGrid2" style="height:100%">
+                                    <div id="myGrid2" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                
+                </div>
+            </div>
+            <button id="btnPrueba" stylea="display:none">Prueba</button>
+
+        </div>
+    
+    
+    
+        <div class="firma" style="display: none;">
+            <figure>
+                <figcaption class="blockquote-footer">
+            Developed by <cite title="Source Title">Alex Carangui</cite>
+            </figcaption>
+            </figure>   
+            
+        </div>
+
+
+    </div>
+
+
+    <div id="myModal" class="modal">
+        <div class="card border-light mb-3 modal-content">
+            <div id="'modalHeader" class="card-header d-flex justify-content-between align-items-center">
+                <h5 id="tituloHeader">Nuevo</h5>
+                <button id="cancelar1" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="modalBody" class="card-body justify-content-center align-items-center text-align-center">
+                <!--input o texto p-->
+                <div id="divBotones" class="d-flex justify-content-center">
+                    <button value="" class="btn btn-info modal-button" id="confirmar">Nueva Marca</button>
+                    <button class="btn btn-info modal-button" id="cancelar">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+
+
+</div>
+
+<!-- ANIMACION DE BOTON                                                       -->
+
+<div id="circulo" class="circuloOrig"></div>
+<div id="pin" class="wait"></div>
+
+
+
+<script src="../js/clientes.js"></script>
+<script src="../js/Validaciones/validacion.cliente.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+

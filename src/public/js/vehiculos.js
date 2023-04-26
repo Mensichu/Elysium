@@ -642,6 +642,7 @@ function seleccionComboModeloNombre(nom_auto){
             if(nuevoBtn.textContent === 'Nuevo'){
                 vaciarDatosModelo()
                 botonesModoNuevo(true);
+                validacionVaciar();
                 return false;
             }else{
                 return true;

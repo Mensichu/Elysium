@@ -1,195 +1,54 @@
+
+//Agentes
 window.addEventListener('load',()=>{
-
-    //Solo se ejecuta cada vez que se recargue la pagina y sea Placa
+    //Solo se ejecuta cada vez que se recargue la pagina y sea Agentes
     const pagina = window.location.pathname;
-
-    if(pagina == '/vehiculos/placas'){
-
+    if(pagina == '/clientes'){
+        console.log("Cargo clientes");
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA PLACAS
 
-        document.querySelector('#fondo').classList.add('showNow');
+document.querySelector('#fondo').classList.add('showNow');
 
-        let rowId = null;
+let rowId = null;
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO COLOR
-
-        const comboColor1 = document.getElementById('comboColor1');
-        const comboColor2 = document.getElementById('comboColor2');
-        cargarComboColor();
-
-        async function cargarComboColor(){
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO TIPO
+        const comboTipo = document.getElementById('comboTipo');
+        cargarComboTipo();
+        //Combo Tipo
+        async function cargarComboTipo(){
             try{
-                
-                let color = await fetch('/comboColor')
+                let tipos = await fetch('/comboTipos')
                 .then(response => response.json());
 
-    
-                console.log("Numero de colores en el combo color: "+color.length); // Imprime la lista de marcas de vehículos en la consola
+                console.log("Numero de tipos en el combo tipo: "+tipos.length); 
                 //Creamos el elemento temporal
                 const fragmento = document.createDocumentFragment();
-                for(i=0;i<color.length;i++){
-                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
+                for(i=0;i<tipos.length;i++){
+                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de tipos
                     const item = document.createElement("OPTION");
-                    //item.innerHTML = color[i].nom_color.toUpperCase();
-                    item.innerHTML = '';//color[i].nom_color;
-                    item.value =color[i].id;
-                    item.style.background= color[i].hex_color;
+                    item.textContent = tipos[i].tipo.toUpperCase();
+                    item.value =tipos[i].id;
                     fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
                 }
-                const fragmento2 = document.createDocumentFragment();
-                for(i=0;i<color.length;i++){
-                    const item = document.createElement("OPTION");
-                    //item.innerHTML = color[i].nom_color.toUpperCase();
-                    item.innerHTML = '';//color[i].id+'-'+color[i].nom_color;
-                    item.value =color[i].id;
-                    item.style.background= color[i].hex_color;
-                    fragmento2.appendChild(item);
-                }
-    
+
                 //Vaciamos el combo primero
-                for(i=comboColor1.options.length-1;i>=0;i--){
-                    comboColor1.remove(i);
-                    comboColor2.remove(i);
-                }
-                for(i=comboColor2.options.length-1;i>=0;i--){
-                    comboColor2.remove(i);
+                for(i=comboTipo.options.length-1;i>=0;i--){
+                    comboTipo.remove(i);
                 }
 
                 //Se agrega al combobox comboMarca
-                comboColor1.appendChild(fragmento);
-                comboColor2.appendChild(fragmento2);
-               
-        
+                comboTipo.appendChild(fragmento);
+                
+
             }catch(error){
-                console.log('Error al obtener comboColor:', error);
+                console.log('Error al obtener comboTipo:', error);
             }
         }
 
 
-        comboColor1.addEventListener('change',(e)=>{
-            console.log('cambieCC1')
-            const rgb = comboColor1.options[comboColor1.selectedIndex].style.background;
-            const hex = rgbToHex(rgb);
-            document.querySelector("#Datos-Color1").value = hex;
-            //Al cambiar el color 1, copia al color 2
-            document.querySelector("#Datos-Color2").value = hex;
-            const idColor = comboColor1.options[comboColor1.selectedIndex].value;
-            seleccionComboColor2(idColor);
-        });
-
-        comboColor2.addEventListener('change',(e)=>{
-            const rgb = comboColor2.options[comboColor2.selectedIndex].style.background;
-            const hex = rgbToHex(rgb);
-            document.querySelector("#Datos-Color2").value = hex;
-        });
-
-        function rgbToHex(backgroundColor){
-            // Convertir de rgb a hex
-            if (backgroundColor.indexOf("rgb") != -1) {
-                backgroundColor = backgroundColor.match(/\d+/g);
-                backgroundColor = "#" + ((1 << 24) + (parseInt(backgroundColor[0]) << 16) + (parseInt(backgroundColor[1]) << 8) + parseInt(backgroundColor[2])).toString(16).slice(1);
-                return backgroundColor
-            }
-        }
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO MARCAS
-
-        const comboMarca = document.getElementById('comboMarca');
-        cargarComboMarca();
-        //Combo Marca
-        async function cargarComboMarca(){
-            try{
-                
-                let marcas = await fetch('/comboMarcas')
-                .then(response => response.json());
-
-                // Almacena la lista de marcas de vehículos en un objeto en el archivo 'vehiculos.js'
-                //var marcas = data;
-    
-                console.log("Numero de marcas en el combo marca: "+marcas.length); // Imprime la lista de marcas de vehículos en la consola
-                //Creamos el elemento temporal
-                const fragmento = document.createDocumentFragment();
-                for(i=0;i<marcas.length;i++){
-                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
-                    const item = document.createElement("OPTION");
-                    item.innerHTML = marcas[i].nom_marca.toUpperCase();
-                    item.value =marcas[i].id;
-                    fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
-                }
-    
-                //Vaciamos el combo primero
-                for(i=comboMarca.options.length-1;i>=0;i--){
-                    comboMarca.remove(i);
-                }
-    
-                //Se agrega al combobox comboMarca
-                comboMarca.appendChild(fragmento);
-                
-        
-            }catch(error){
-                console.log('Error al obtener comboMarca:', error);
-            }
-        }
-
-       
-
-//------------------------------------------------------------------------------  Combo Marca: clic
-
-        //Funcion solo cuando hubo un cambio en el comboMarca
-        let comboMarcaSelecc= 0;
-        comboMarca.addEventListener('click',(e)=>{
-            //Solo ejecuta si esta conectado a internet
-            if(conectado())cambioComboMarca(false);
-        });
 
 
-//------------------------------------------------------------------------------ Combo Modelo: Cambio-Forzar Cargar datos
-        const comboModelo = document.getElementById('comboModelo');
-        async function cambioComboMarca(forzar){
-            if(forzar || comboMarcaSelecc!=comboMarca.value){
-                try{
-                        const data = await fetch('/comboAutosInfo/'+comboMarca.value)
-                        .then(response => response.json());
-                        
-                        //Vaciamos el combo primero
-                        for(i=comboModelo.options.length-1;i>=0;i--){
-                            comboModelo.remove(i);
-                        }
-
-                        // Almacena la lista de Modelos en un objeto en el archivo 'vehiculos.js'
-                        var modelos = data;
-                        //En el caso de que sea una nueva marca sin modelos
-                        if(modelos.length!== 0){
-                            
-                            //Creamos el elemento temporal
-                            const fragmento = document.createDocumentFragment();
-                            for(i=0;i<modelos.length;i++){
-                                //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
-                                const item = document.createElement("OPTION");
-                                item.innerHTML = (modelos[i].nom_auto+' | Y: '+modelos[i].ano+' | C: '+modelos[i].cilindraje.toFixed(1)).toUpperCase()
-                                + ' | '+ (modelos[i].combustible? 'TD':'TM');
-                                item.value =modelos[i].id;
-                                fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
-                            }
-                            
-                            //Se agrega al combobox comboModelo
-                            comboModelo.appendChild(fragmento);
-                        }
-
-                        comboMarcaSelecc= comboMarca.value;
-                
-                }catch(error){
-                    console.log('Error al obtener comboModelo:', error);
-                }
-            }else{
-                console.log('no cambio de marca,no hay necesidad de actualizar el combo modelo')
-            }
-
-        }
-
-        
-        
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID
+        //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID
         let clasesFila='';
 
         // configurar la instancia de ag-Grid
@@ -198,27 +57,23 @@ window.addEventListener('load',()=>{
             // each entry here represents one column
             columnDefs: [
                 {headerName: "Id", 
-                        field: "id", hide: true},
-                {headerName: "Placa", 
-                        field: "placa", floatingFilter:true,
-                        width: 120
+                        field: "id", hide: true
                     },
-                {headerName: "Marca",
-                        field: "marca",sort: 'asc', floatingFilter:true, 
-                        maxWidth: 100,flex: 'auto'},
-                {headerName: "Modelo", 
-                        field: "modelo", floatingFilter:true,
-                        minWidth: 150,flex: 'auto'
+                {headerName: "Tipo", 
+                        field: "tipo",
+                        minWidth: 30,maxWidth:100
                     },
-                {headerName: "Año", 
-                        field: "año", filter: 'agNumberColumnFilter', flex: 110,
-                        minWidth: 75, maxWidth: 115},
-                {headerName: "Cilindraje", 
-                        field: "cilindraje", flex: 110,
-                        minWidth: 75,maxWidth: 120},
-                {headerName: "Combustible", 
-                        field: "combustible", flex: 140,
-                        minWidth: 100,maxWidth: 140}
+                {headerName: "Identidad",
+                        field: "identidad",sort: 'asc', floatingFilter:true, 
+                        width: 150
+                    },
+                {headerName: "Nombre", 
+                        field: "nombre", floatingFilter:true,
+                        flex: 1, minWidth: 150
+                    },
+                {headerName: "Sexo", 
+                        field: "sexo", 
+                        minWidth: 20, maxWidth: 90}
 
             ],
 
@@ -235,12 +90,14 @@ window.addEventListener('load',()=>{
 
             getRowClass: (params) => {
                 if(params.data!== undefined){
+                    /*
                     if(rowId === params.data.id){
 
                         params.node.setSelected(true);
                         seleccionTabla(params.data.id,false);
                         return clasesFila;
                     }
+                    */
                 }
                 return '';
             },
@@ -251,10 +108,13 @@ window.addEventListener('load',()=>{
                     //console.log(event)
                     //const selectedNodes = gridOptions.api.getSelectedNodes();
                     //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
+                    
                     clasesFila='cambioColor';
                     gridOptions.api.redrawRows();
+                    
                     botonesModoNuevo(false);
                     guardarBtn.disabled=true;
+                    
                 }
             },
             onCellValueChanged: (event) => {
@@ -299,99 +159,88 @@ window.addEventListener('load',()=>{
         var grid = new agGrid.Grid(eGridDiv, gridOptions);
 
         const gridApi = gridOptions.api;
-
+        
+        //gridOptions.api.sizeColumnsToFit();
+        
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID: ACTUALIZACION Y NUEVA FILA
 
 
-//---------------------------------------------------------------------Convierte los datos en una fila para AG-GRID
-function datosAFilaGrid(data,n) {
-    //n es el tipo de fila
-    //0: todos los datos
-    //1: todos los datos menos marca y modelo
-    //2: solo nom_auto
-    console.log('datosAFilaGrid')
-    console.log(data);
-    console.log(parseFloat(data.Auto.cilindraje));
-    if (gridOptions.api) {
-        //var newRow = [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
-        //combustible: data.combustible? 'DIESEL.':'GAS.' }];
-        switch(n){
-            case 0:
+        //---------------------------------------------------------------------Convierte los datos en una fila para AG-GRID
+        function datosAFilaGrid(data) {
+            console.log('datosAFilaGrid')
+            console.log(data);
+            //console.log(parseFloat(data.Auto.cilindraje));
+            if (gridOptions.api) {
                 console.log('pase por aqui')
+                /*
+                comboTipo.options[i].value == id_Tipo){
+                    //una vez encontrado mostramos en el comboTipo dicho tipo
+                    comboTipo.selectedIndex=i;
+                */
                 return [{ id: data.id,
-                            placa: data.nom_placa.toUpperCase(), 
-                            marca: data.Auto.Marca.alias.toUpperCase(), 
-                            modelo: data.Auto.nom_auto.toUpperCase(), 
-                            año: data.Auto.ano, 
-                            cilindraje: parseFloat(data.Auto.cilindraje).toFixed(1),
-                            combustible: data.Auto.combustible? 'DIESEL.':'GAS.'}];
-            case 1:
-                return [{ id: data.id, año: data.ano, cilindraje: parseFloat(data.Auto.cilindraje).toFixed(1), 
-                    combustible: data.combustible? 'DIESEL.':'GAS.' }];
-            break;
-            case 2:
-                return [{ modelo: data.nom_auto.toUpperCase() }];
-            break;
+                            tipo: comboTipo.options[comboTipo.selectedIndex].textContent.toUpperCase(),//data.TipoDeIdentificacion.tipo.toUpperCase(), 
+                            identidad: data.identificacion.toUpperCase(), 
+                            nombre: data.apellidos_empresa.toUpperCase()+(data.nombres!=null?' '+data.nombres.toUpperCase():''), 
+                            sexo: data.sexo? 'M':'H'}];
+            
+
+            }
+        }
+
+
+        //---------------------------------------------------------------------Actualiza la fila a la tabla AG-GRID
+        function actualizarFilaAgGrid(data) {
+            const filaActualizada = datosAFilaGrid(data); //n es el tipo de fila: 1 o 2
+            //Actualiza la fila
+            const selectedNodes = gridOptions.api.getSelectedNodes();
+            if (selectedNodes.length > 0) {
+                const selectedNode = selectedNodes[0];
+                const newData = Object.assign({}, selectedNode.data, filaActualizada[0]);
+                selectedNode.setData(newData);
+                //Se encargan de activar la animacion
+                clasesFila = 'cambioColor';
+                gridOptions.api.redrawRows();
+                // Lo enfoca
+                gridOptions.api.ensureNodeVisible(selectedNode);
+
+            }
 
         }
-        return null;
-    }
-}
 
-
-//---------------------------------------------------------------------Actualiza la fila a la tabla AG-GRID
-function actualizarFilaAgGrid(data,n) {
-    const filaActualizada = datosAFilaGrid(data,n); //n es el tipo de fila: 1 o 2
-    //Actualiza la fila
-    const selectedNodes = gridOptions.api.getSelectedNodes();
-    if (selectedNodes.length > 0) {
-        const selectedNode = selectedNodes[0];
-        const newData = Object.assign({}, selectedNode.data, filaActualizada[0]);
-        selectedNode.setData(newData);
-        //Se encargan de activar la animacion
-        clasesFila = 'cambioColor';
-        gridOptions.api.redrawRows();
-        // Lo enfoca
-        gridOptions.api.ensureNodeVisible(selectedNode);
-
-    }
-
-}
-
-//---------------------------------------------------------------------Agrega una nueva fila a la tabla AG-GRID
-function nuevaFilaAgGrid(data) {
-    const filaNueva = datosAFilaGrid(data,0); //n es el tipo de fila: 0
-    const res = gridOptions.api.applyTransaction({ add: filaNueva });
-    if (res.add) {
-        const addedRow = res.add[0];
-        rowId = addedRow.rowId;
-        //Selecciona la fila nueva
-        gridOptions.api.deselectAll();
-        addedRow.setSelected(true);
-        //Enfoca la nueva fila
-        gridOptions.api.ensureNodeVisible(addedRow);
-    }
-}
+        //---------------------------------------------------------------------Agrega una nueva fila a la tabla AG-GRID
+        function nuevaFilaAgGrid(data) {
+            const filaNueva = datosAFilaGrid(data); //n es el tipo de fila: 0
+            const res = gridOptions.api.applyTransaction({ add: filaNueva });
+            if (res.add) {
+                const addedRow = res.add[0];
+                rowId = addedRow.rowId;
+                //Selecciona la fila nueva
+                gridOptions.api.deselectAll();
+                addedRow.setSelected(true);
+                //Enfoca la nueva fila
+                gridOptions.api.ensureNodeVisible(addedRow);
+            }
+        }
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
 
-        cargarTablaPlacas();
-        async function cargarTablaPlacas(){
+        cargarTablaClientes();
+        async function cargarTablaClientes(){
             try{
                 //pinCarga('cargando');
                 // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/tablaPlacas')
+                const data = await fetch('/Clients')
                 .then(response => response.json());
-                const Placas = data;
+                const Clients = data;
                 //mediante un for vamos cargando fila por fila
-                for(i=0;i<Placas.length;i++){
-                    let newRow = datosAFilaGrid(Placas[i],0);
+                for(i=0;i<Clients.length;i++){
+                    let newRow = datosAFilaGrid(Clients[i],0);
                     gridOptions.api.applyTransaction({ add: newRow });
                 }
                 //pinCarga('success');
             }catch(error){
-                console.log('Error al obtener el auto:', error);
+                console.log('Error al obtener los clientes:', error);
                 toast(error.message, "toastColorError");
                 pinCarga('fallo');
 
@@ -408,11 +257,9 @@ function nuevaFilaAgGrid(data) {
         }
 
 
-
+        
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ SELECCION TABLA AG-GRID
 
-                
-                
         async function seleccionTabla(id,mouse) {
             try{
                 const inputCard = document.querySelectorAll('.form-group input');
@@ -425,10 +272,10 @@ function nuevaFilaAgGrid(data) {
                     buttonCard.forEach(button => {
                         button.disabled=true;
                     });
-                    comboMarca.disabled=true;
+                    comboTipo.disabled=true;
                 }
                 if(conectado()){
-                    const data = await fetch('/placa/'+id)
+                    const data = await fetch('/client/'+id)
                     .then(response => {
                         if(!response.ok){
                             throw new Error('Servidor - '+response.status+': '+response.statusText);
@@ -446,123 +293,72 @@ function nuevaFilaAgGrid(data) {
                         buttonCard.forEach(button => {
                             button.disabled=false;
                         });
-                        comboMarca.disabled=false;
+                        comboTipo.disabled=false;
                     };
                 }
             }catch(error){
                 toast(error.message, "toastColorError");
+                console.log(error.message);
                 pinCarga('fallo');
             }
         }
 
-//------------------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
+        //------------------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
 
         async function cargarDatosDesdeSeleccion(data){
-            var placa = data;
+            var client = data;
             console.log(data);
-            await seleccionComboMarca(placa.Auto.id_marca);
-            seleccionComboModelo(placa.id_auto);
-            //Una vez seleccionado el comboMarca y cargado el comboModelo
-            //se selecciona el modelo mediante el id
-            //seleccionComboModelo(modelo.id);
-            //se selecciona el modelo mediante el nom_auto
+            seleccionComboTipo(client.tipo);
             //En la db esta todo en minusculas, pero en el front end esta en mayuscula
             
             //Cargamos el resto de datos
-            document.getElementById("Datos-Placa").value=placa.nom_placa.toUpperCase();
-            //Valida si es un mismo color
-            if(placa.colores.length>1){
-                const arregloColor = placa.colores;
-                //Asigna el color del arregle al color1 y color2
-                arregloColor.forEach(color =>{
-                    if(color.id == placa.color1){
-                        document.querySelector("#Datos-Color1").value = color.hex_color;    
-                    }else{
-                        document.querySelector("#Datos-Color2").value = color.hex_color;    
-                    }
-                });
+            document.getElementById("Datos-Identificacion").value=client.identificacion.toUpperCase();
+            document.getElementById("Datos-Apellidos").value=client.apellidos_empresa.toUpperCase();
+            //Valida si es una persona o una empresa
+            if(client.nombres!==null){
+                ocultarPersona(false);
+                document.getElementById("Datos-Nombres").value=client.nombres.toUpperCase();
+                //Selecciona si es H o M
+                document.getElementById("btnradio1").checked= !client.sexo;
+                document.getElementById("btnradio2").checked=  client.sexo;
             }else{
-                document.querySelector("#Datos-Color1").value = placa.colores[0].hex_color;
-                document.querySelector("#Datos-Color2").value = placa.colores[0].hex_color;
+                ocultarPersona(true);
+                document.getElementById("Datos-Nombres").value='';
             }
             
-            
-            
-            setTimeout(()=>{
-                document.querySelector("#Datos-Color1").setAttribute('disabled','true');
-                document.querySelector("#Datos-Color2").setAttribute('disabled','true');
-            },300);
+            //Direccion y correo electronico
+            document.getElementById("Datos-Direccion").value=client.direccion.toUpperCase();
+            document.getElementById("Datos-Correo").value=client.correo.toUpperCase();
 
             
-            seleccionComboColor1(placa.color1);
-            seleccionComboColor2(placa.color2);
+            const obs_placa = client.obs_cliente;
+            const telefono1 = client.telefono1;
+            const telefono2 = client.telefono2;
+            const telefono3 = client.telefono3;
 
-            
-            let clave = placa.clave;
-            let obs_placa = placa.obs_placa;
-            
-            ocultarInputClave(clave==='0');
+            mostrarInputTelefono1(telefono1!==null);
+            mostrarInputTelefono2(telefono2!==null);
+            mostrarInputTelefono3(telefono3!==null);
             ocultarInputObs(obs_placa===null);
 
-            document.getElementById("Datos-Clave").value=(clave==='0'?'':clave);
+            document.getElementById("Datos-Telefono1").value=(telefono1===null?'':telefono1);
+            document.getElementById("Datos-Telefono2").value=(telefono2===null?'':telefono2);
+            document.getElementById("Datos-Telefono3").value=(telefono3===null?'':telefono3);
             document.getElementById("Datos-Obs").value=  (obs_placa===null?'':obs_placa);
         }
 
 
 
 
-        //-----------------------------------------------------Seteamos el comboMarca desde su Id
-        async function seleccionComboMarca(id_marca){
+        //-----------------------------------------------------Seteamos el comboTipo desde su Id
+        async function seleccionComboTipo(id_Tipo){
             //ComboMarca es un elemento tipo select que almacena varios elementos tipo option
             //Buscamos en el comboMarca .value(id de cada marca) el que corresponda al id_marca del auto seleccionado
-            for(i=0;i<comboMarca.options.length;i++){
-                if(comboMarca.options[i].value == id_marca){
-                    //una vez encontrado mostramos en el comboMarca dicha marca
-                    comboMarca.selectedIndex=i;
-                    //al actualizar el combo marca, cargamos los modelos de dicha marca
-                    await cambioComboMarca(false);//Esto actualiza el combomodelo
+            for(i=0;i<comboTipo.options.length;i++){
+                if(comboTipo.options[i].value == id_Tipo){
+                    //una vez encontrado mostramos en el comboTipo dicho tipo
+                    comboTipo.selectedIndex=i;
                     break;
-                }
-            }
-        }
-
-        //-----------------------------------------------------Seteamos el comboModelo desde su Id
-
-        function seleccionComboModelo(id_auto){
-            //Se busca el .value(id del modelo) que corresponda al id del auto que recibe
-            for(i=0;i<comboModelo.options.length;i++){
-                if(comboModelo.options[i].value == id_auto){
-                    comboModelo.selectedIndex=i;
-                    break;
-                    
-                }
-            }
-        }
-
-
-        //-----------------------------------------------------Seteamos el comboColor1 desde su Id
-
-        function seleccionComboColor1(id_color1){
-            console.log('El id del color1 es: '+id_color1)
-            for(i=0;i<comboColor1.options.length;i++){
-                if(comboColor1.options[i].value == id_color1){
-                    comboColor1.selectedIndex=i;
-                    console.log('Encontre');
-                    break;
-                    
-                }
-            }
-        }
-
-        //-----------------------------------------------------Seteamos el comboColor2 desde su Id
-
-        function seleccionComboColor2(id_color2){
-            for(i=0;i<comboColor2.options.length;i++){
-                if(comboColor2.options[i].value == id_color2){
-                    comboColor2.selectedIndex=i;
-                    console.log('Encontre');
-                    break;
-                    
                 }
             }
         }
@@ -572,18 +368,29 @@ function nuevaFilaAgGrid(data) {
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ OBTENER DATOS
 
         function obtenerDatos(){
-            const noClave = document.getElementById('Datos-NoClave').checked
+            const empresaCheck= checkEmpresa.checked;
+            const telefono1Check= checkTelefono1.checked;
+            const telefono2Check= checkTelefono2.checked;
+            const telefono3Check= checkTelefono3.checked;
             const noObs = document.getElementById('Datos-NoObs').checked
+
             const idSeleccionado = getSelectedRowId();
             const data = {
                 id: (idSeleccionado!==null)?idSeleccionado:0,// si es que el idSeleccionado no existe
-                id_marca: document.getElementById('comboMarca').value,
-                id_auto: document.getElementById('comboModelo').value,
-                nom_placa: document.getElementById('Datos-Placa').value.trim().toLowerCase(),
-                clave: noClave?0:document.getElementById('Datos-Clave').value.trim().toLowerCase(),
-                color1: document.getElementById('comboColor1').value,
-                color2: document.getElementById('comboColor2').value,
-                obs_placa: noObs?null:document.getElementById('Datos-Obs').value.trim().toLowerCase(),
+                identificacion: document.getElementById('Datos-Identificacion').value.trim(),
+                tipo: comboTipo.value,
+                apellidos_empresa: document.getElementById('Datos-Apellidos').value.trim().toLowerCase(),
+                nombres: empresaCheck?null:document.getElementById('Datos-Nombres').value.trim().toLowerCase(),
+                sexo: document.getElementById('btnradio2').checked,
+                
+                telefono1: telefono1Check?document.getElementById('Datos-Telefono1').value.trim().toLowerCase():null,
+                telefono2: telefono2Check?document.getElementById('Datos-Telefono2').value.trim().toLowerCase():null,
+                telefono3: telefono3Check?document.getElementById('Datos-Telefono3').value.trim().toLowerCase():null,
+
+                obs_cliente: noObs?null:document.getElementById('Datos-Obs').value.trim().toLowerCase(),
+
+                direccion: document.getElementById('Datos-Direccion').value.trim().toLowerCase(),
+                correo: document.getElementById('Datos-Correo').value.trim().toLowerCase(),
 
             };
             
@@ -632,28 +439,100 @@ function nuevaFilaAgGrid(data) {
         }
 
         function vaciarDatosModelo(){
-            document.getElementById("Datos-Placa").value='';
-            document.getElementById("Datos-Clave").value='';
+            document.getElementById("Datos-Identificacion").value='';
+            document.getElementById("Datos-Apellidos").value='';
+            document.getElementById("Datos-Nombres").value='';
+            document.getElementById("Datos-Direccion").value='';
+            document.getElementById("Datos-Correo").value='';
+            document.getElementById("Datos-Telefono1").value='';
+            document.getElementById("Datos-Telefono2").value='';
+            document.getElementById("Datos-Telefono3").value='';
             document.getElementById("Datos-Obs").value='';
-            ocultarInputClave(true);
+            ocultarPersona(true);
+            mostrarInputTelefono1(false);
+            mostrarInputTelefono2(false);
+            mostrarInputTelefono3(false);
             ocultarInputObs(true);
         }
 
 
 
-        function ocultarInputClave(ocultar){
-            noTieneClave.checked=ocultar;
+        //----------------------------------------------------------------------PERSONA/EMPRESA
+        function ocultarPersona(ocultar){
+            checkEmpresa.checked=ocultar;
             if(ocultar){
-                document.querySelector("#formClave").style.display='none';
-                document.querySelector("#noTieneClaveLabel").textContent='No tiene clave';
+                document.querySelector("#formPersona").style.display='none';
+                document.querySelector("#noTieneApellidoLabel").textContent='Empresa';
+                //document.querySelector("#empresaApellidoLabel").textContent='Empresa';
+                document.querySelector("#Datos-Apellidos").placeholder='Empresa';
             }else{
-                document.querySelector("#formClave").style.display='block';
-                document.querySelector("#noTieneClaveLabel").textContent='Tiene clave';
+                document.querySelector("#formPersona").style.display='block';
+                document.querySelector("#noTieneApellidoLabel").textContent='Persona';
+                //document.querySelector("#empresaApellidoLabel").textContent='Apellido';
+                document.querySelector("#Datos-Apellidos").placeholder='Apellidos';
+            }
+        }
+        
+
+        //-------------------------BTN No tiene clave
+        const checkEmpresa = document.getElementById('Datos-NoEmpresa');
+        checkEmpresa.addEventListener('change',()=>{
+            ocultarPersona(checkEmpresa.checked);
+            
+        });
+
+        
+        //----------------------------------------------------------------------TELEFONOS
+        const checkTelefono1 = document.getElementById('tieneTelefono1');
+        checkTelefono1.addEventListener('change',()=>{
+            mostrarInputTelefono1(checkTelefono1.checked);
+        });
+        function mostrarInputTelefono1(mostrar){
+            checkTelefono1.checked=mostrar;
+            if(mostrar){
+                document.querySelector("#formTelefono1").style.display='block';
+            }else{
+                document.querySelector("#formTelefono1").style.display='none';
             }
         }
 
+        const checkTelefono2 = document.getElementById('tieneTelefono2');
+        checkTelefono2.addEventListener('change',()=>{
+            mostrarInputTelefono2(checkTelefono2.checked);
+        });
+        function mostrarInputTelefono2(mostrar){
+            checkTelefono2.checked=mostrar;
+            if(mostrar){
+                document.querySelector("#formTelefono2").style.display='block';
+            }else{
+                document.querySelector("#formTelefono2").style.display='none';
+            }
+        }
+
+        const checkTelefono3 = document.getElementById('tieneTelefono3');
+        checkTelefono3.addEventListener('change',()=>{
+            mostrarInputTelefono3(checkTelefono3.checked);
+        });
+        function mostrarInputTelefono3(mostrar){
+            checkTelefono3.checked=mostrar;
+            if(mostrar){
+                document.querySelector("#formTelefono3").style.display='block';
+            }else{
+                document.querySelector("#formTelefono3").style.display='none';
+            }
+        }
+
+        //----------------------------------------------------------------------OBSERVACIONES
+
+        const checkNoObs = document.getElementById('Datos-NoObs');
+        checkNoObs.addEventListener('change',()=>{
+            ocultarInputObs(checkNoObs.checked);
+                
+        });
+
+
         function ocultarInputObs(ocultar){
-            noTieneObs.checked=ocultar;
+            checkNoObs.checked=ocultar;
             if(ocultar){
                 document.querySelector("#formObs").style.display='none';
                 document.querySelector("#noTieneObsLabel").textContent='No tiene observaciones';
@@ -664,9 +543,10 @@ function nuevaFilaAgGrid(data) {
         }
 
 
+        
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ MODAL
 
-//-----------------------------------------------------------Construccion modal
+        //-----------------------------------------------------------Construccion modal
 
         function construirModal(numeroModal){
             const titulo = ['test','Modificar','Nuevo'];
@@ -680,16 +560,7 @@ function nuevaFilaAgGrid(data) {
             //DIV: CardBody
             const modalBody = document.getElementById('modalBody');
             //INPUT: TEXT o elemento P
-            if(numeroModal==10){
-                const colorPicker = document.createElement('input');
-                colorPicker.type="color"
-                colorPicker.id="Datos-Color1"
-                colorPicker.classList.add('form-control');
-                colorPicker.classList.add('form-control-color');
-                colorPicker.classList.add('form-input');
-                colorPicker.name="Color"
-                modalBody.insertBefore(colorPicker,modalBody.firstChild);
-            }else if(numeroModal == 0){
+            if(numeroModal == 0){
                 const inputText = document.createElement('INPUT');
                 inputText.type='text';
                 inputText.id='inputModal';
@@ -705,14 +576,6 @@ function nuevaFilaAgGrid(data) {
                 modalBody.insertBefore(textoP,modalBody.firstChild);
             }
 
-            if(numeroModal==10){
-                const colorPicker = document.createElement('input');
-                colorPicker.type="color"
-                colorPicker.id="Datos-Color1"
-                colorPicker.classList.add('form-control');
-                colorPicker.classList.add('form-control-color');
-                colorPicker.classList.add('form-input');
-            }
             //BUTTON 1
             const boton1 = document.getElementById('confirmar');
             boton1.value= numeroModal;
@@ -745,9 +608,9 @@ function nuevaFilaAgGrid(data) {
                 //Nueva marca
                 if(btnConfirmar.value==0)nuevaMarca();
                 // Guardar cambios al modelo
-                if(btnConfirmar.value==1)modificarPlaca();
+                if(btnConfirmar.value==1)modificarCliente();
                 // Nuevo modelo
-                if(btnConfirmar.value==2)nuevaPlaca();
+                if(btnConfirmar.value==2)nuevoCliente();
 
             }
 
@@ -785,11 +648,10 @@ function nuevaFilaAgGrid(data) {
         });
 
 
-
-
+        
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
 
-
+/*
 //-------------------------BTN NVerificar
 const btnVerificar = document.querySelector("#btn-Verificar");
 btnVerificar.addEventListener('click',async ()=>{
@@ -825,7 +687,7 @@ btnVerificar.addEventListener('click',async ()=>{
         });
 
 
-
+*/
 //-------------------------BTN modificar Modelo
 
         const guardarBtn = document.getElementById("btn-Guardar");
@@ -844,8 +706,9 @@ btnVerificar.addEventListener('click',async ()=>{
                 toast("Vuelva a seleccionar la fila", "toastColorError");
             }
             
-            
         });
+
+
 
 //-------------------------BTN nuevo Modelo
 
@@ -865,13 +728,11 @@ btnVerificar.addEventListener('click',async ()=>{
 
 
 
-
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FUNCIONES PRINCIPALES
 
 
 
-
-//--------------------------------------------- PLACAS REPETIDOS
+        //--------------------------------------------- PLACAS REPETIDOS
 
         async function placasRepetidas(id, nom_placa){
             //No se usa pinCarga cargando
@@ -893,16 +754,16 @@ btnVerificar.addEventListener('click',async ()=>{
         }
 
 
-        async function nuevaPlaca(){
+        async function nuevoCliente(){
             const data = obtenerDatos();
 
-            if(await placasRepetidas(0,data.nom_placa)){
+            if(false && await placasRepetidas(0,data.nom_placa)){
                 //Si devuelve true significa que encontro una modelo año cil igual
                 toast("La Placa ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{
                 pinCarga('cargando');
-                await fetch('/placa',{
+                await fetch('/client',{
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers:{
@@ -938,32 +799,17 @@ btnVerificar.addEventListener('click',async ()=>{
         }
 
 
-
-
-        var btnPrueba = document.querySelector('#btnPrueba');
-        btnPrueba.addEventListener('click', function(e) {
-            e.preventDefault();
-            //obtenerDatos();
-
-            document.querySelector("#Datos-Color1").setAttribute('disabled','true');
-            document.querySelector("#Datos-Color2").setAttribute('disabled','true');
-
-            
-
-        });
-
-
         //---------------------------------------------- MODIFICAR PLACA
 
-        async function modificarPlaca(){
+        async function modificarCliente(){
             const data = obtenerDatos();
 
-            if(await placasRepetidas(data.id,data.nom_placa)){
+            if(false && await placasRepetidas(data.id,data.nom_placa)){
                 //Si devuelve true significa que encontro una placa igual
                 toast("La placa ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{
-                await fetch(`/placa/${data.id}`,{
+                await fetch(`/client/${data.id}`,{
                     method: 'PUT',
                     body: JSON.stringify(data),
                     headers: {
@@ -980,11 +826,8 @@ btnVerificar.addEventListener('click',async ()=>{
                         guardarBtn.disabled=true;
                         cerrarModal();
                         const res = await response.json();
-                        actualizarFilaAgGrid(res,0);
-                        await cambioComboMarca(true);
-                        //seleccionComboModelo(data.id)
-                        //seleccionComboModeloNombre(data.nom_auto);
-                        toast("Placa guardada", "toastColorSuccess");
+                        actualizarFilaAgGrid(res);
+                        toast("Cliente guardado", "toastColorSuccess");
                         pinCarga('success');
                     }
                 }).catch(error =>{
@@ -999,15 +842,19 @@ btnVerificar.addEventListener('click',async ()=>{
 
 
 
+        var btnPrueba = document.querySelector('#btnPrueba');
+        btnPrueba.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            console.log(JSON.stringify(obtenerDatos()));
+            const data = obtenerDatos();
+            nuevaFilaAgGrid(data)
+
+        });
 
 
 
-//Fin de IF Vehiculos/Placas
     }
-
-
 });
-
-
 
 

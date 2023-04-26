@@ -47,7 +47,11 @@ window.addEventListener('load',()=>{
         const pagina = window.location.pathname;
         console.log(pagina);
         if(pagina==('/'))activos[0].classList.add('active');
-        if(pagina.includes('/agentes'))activos[1].classList.add('active');
+        if(pagina.includes('/clientes')){activos[1].classList.add('active')
+            const navElysium = document.getElementById('navElysium');
+            navElysium.style.background= '#be7e15';
+            navElysium.classList.remove('bg-primary')
+    }
         if(pagina.includes('/vehiculos'))activos[2].classList.add('active');
         if(pagina.includes('/Productos'))activos[3].classList.add('active');
         if(pagina.includes('/Ventas'))activos[4].classList.add('active');

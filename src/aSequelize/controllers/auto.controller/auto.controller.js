@@ -1,5 +1,5 @@
-import {tablaMarca} from '../models/tablaMarca';
-import {tablaAuto} from '../models/tablaAuto';
+import {tablaMarca} from '../../models/Auto/tablaMarca';
+import {tablaAuto} from '../../models/Auto/tablaAuto';
 
 
 
