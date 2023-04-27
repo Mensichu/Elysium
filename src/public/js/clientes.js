@@ -102,14 +102,14 @@ let rowId = null;
 
             getRowClass: (params) => {
                 if(params.data!== undefined){
-                    /*
+
                     if(rowId === params.data.id){
 
                         params.node.setSelected(true);
                         seleccionTabla(params.data.id,false);
                         return clasesFila;
                     }
-                    */
+
                 }
                 return '';
             },
@@ -782,6 +782,7 @@ let rowId = null;
             return res.respuesta;
         }
 
+        //---------------------------------------------- NUEVO CLIENTE
 
         async function nuevoCliente(){
             const data = obtenerDatos();
@@ -828,7 +829,7 @@ let rowId = null;
         }
 
 
-        //---------------------------------------------- MODIFICAR PLACA
+        //---------------------------------------------- MODIFICAR CLIENTE
 
         async function modificarCliente(){
             const data = obtenerDatos();

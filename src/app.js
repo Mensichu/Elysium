@@ -11,6 +11,7 @@ import autoRoutes from  './routes/auto.routes';
 import placaRoutes from './routes/placa.routes';
 import colorRoutes from './routes/color.routes';
 import clientRoutes from './routes/client.routes';
+import registroPCRoutes from './routes/registroPC.routes';
 
 
 
@@ -35,6 +36,7 @@ app.set('view engine','.hbs')
 //middleware
 
 app.use(express.json());//Para que reciba datos Json
+//Importa la informacion en el body (req.body)
 app.use(express.urlencoded({extended: false}));//reciba desde from en html
 
 // Routes
@@ -43,6 +45,8 @@ app.use(autoRoutes);
 app.use(placaRoutes);
 app.use(colorRoutes);
 app.use(clientRoutes);
+app.use(registroPCRoutes);
+
 
 // Public
 app.use(express.static(path.join(__dirname, 'public')));

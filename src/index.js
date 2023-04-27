@@ -9,8 +9,9 @@ import {sequelize} from './aSequelize/database/database'
 //import './aSequelize/models/tablaPlacaColores'
 //import './aSequelize/models/Sri/tablaTipoDeIdentificacion'
 //import './aSequelize/models/tablaCliente'
+//import './aSequelize/models/tablaRegistroPlacaCliente'
 
-function main(){
+async function main(){
     try{
         //await sequelize.sync({force:false});
         //await sequelize.authenticate();

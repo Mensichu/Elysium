@@ -874,6 +874,8 @@ btnVerificar.addEventListener('click',async ()=>{
         }
 
 
+        //---------------------------------------------- NUEVA PLACA
+
         async function nuevaPlaca(){
             const data = obtenerDatos();
 

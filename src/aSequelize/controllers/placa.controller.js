@@ -29,7 +29,18 @@ export const getPlacaById = async (req,res)=>{
         ]
         });
         if (placa!==null){
-            res.json(placa);
+            //res.json(placa);
+            // Obtener los registros de la placa
+            const registros = await placa.getRegistros();
+            // Mapear los registros para obtener la información de los clientes
+            const clients = await Promise.all(registros.map(async registro => {
+                const client = await registro.getCliente();
+                return client.toJSON();
+            }));
+            // Agregar la información de la placa al objeto del cliente
+            const placaConClientes = placa.toJSON();
+            placaConClientes.clientes = clients;
+            res.json(placaConClientes);
         }else{
             res.status(404).json({message: 'placa not found'});
         }
