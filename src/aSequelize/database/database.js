@@ -10,3 +10,5 @@ export const sequelize = new Sequelize(
     timezone: process.env.timezone
     }
 );
+
+console.log('Conexion correcta');

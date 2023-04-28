@@ -26,6 +26,14 @@
     
     {{> navigation}}
 
+    {{#if signupMessage}}
+    <div class="alert alert-danger">{{signupMessage}}</div>
+    {{/if}}
+
+    {{#if signinMessage}}
+    <div class="alert alert-danger">{{signinMessage}}</div>
+    {{/if}}
+
     {{{body}}}
 
     <script src="../js/Lib_JS/toastify.js"></script>

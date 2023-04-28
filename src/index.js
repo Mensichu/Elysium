@@ -1,6 +1,6 @@
 
 import app from './app';
-import {sequelize} from './aSequelize/database/database'
+//import {sequelize} from './aSequelize/database/database'
 
 //import './aSequelize/models/tablaMarca'
 //import './aSequelize/models/tablaAuto'
@@ -10,12 +10,13 @@ import {sequelize} from './aSequelize/database/database'
 //import './aSequelize/models/Sri/tablaTipoDeIdentificacion'
 //import './aSequelize/models/tablaCliente'
 //import './aSequelize/models/tablaRegistroPlacaCliente'
+//import './aSequelize/models/Users/tablaUser'
 
 async function main(){
     try{
         //await sequelize.sync({force:false});
         //await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
+        //console.log('Connection has been established successfully.');
         app.listen(app.get('port'));
         console.log('server on port: '+app.get('port'));
     }catch(error){
