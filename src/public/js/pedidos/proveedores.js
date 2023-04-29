@@ -1,10 +1,10 @@
 
-//Clientes
+//Agentes
 window.addEventListener('load',()=>{
     //Solo se ejecuta cada vez que se recargue la pagina y sea Agentes
     const pagina = window.location.pathname;
-    if(pagina == '/clientes'){
-        console.log("Cargo clientes");
+    if(pagina == '/pedidos/proveedores'){
+        console.log("Cargo proveedores");
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA PLACAS
 
 document.querySelector('#fondo').classList.add('showNow');
@@ -57,11 +57,6 @@ let rowId = null;
             }
 
         });
-        // Agrega por defecto si no tiene cedula el cliente a ingresar
-        identificacionInput.addEventListener('contextmenu',(event)=>{
-            event.preventDefault();
-            identificacionInput.value='0000000000'
-        });
 
 
 
@@ -76,22 +71,19 @@ let rowId = null;
                 {headerName: "Id", 
                         field: "id", hide: true
                     },
+                {headerName: "Proveedor", 
+                    field: "proveedor", floatingFilter:true,
+                    flex: 1, minWidth: 150
+                    },
+                {headerName: "Identidad",
+                    field: "identidad",sort: 'asc', floatingFilter:true, 
+                    width: 150
+                    },
                 {headerName: "Tipo", 
                         field: "tipo",
                         minWidth: 30,maxWidth:100
-                    },
-                {headerName: "Identidad",
-                        field: "identidad",sort: 'asc', floatingFilter:true, 
-                        width: 150
-                    },
-                {headerName: "Nombre", 
-                        field: "nombre", floatingFilter:true,
-                        flex: 1, minWidth: 150
-                    },
-                {headerName: "Genero", 
-                        field: "genero", 
-                        minWidth: 20, maxWidth: 110}
-
+                    }
+                
             ],
 
             // default col def properties get applied to all columns
@@ -121,7 +113,7 @@ let rowId = null;
 
             onModelUpdated: (event) => {
                 if(true || rowId!==null){
-                    console.log('-----------------------------------------ON MODEL UPDATED');
+                    console.log('-----------------------------------------CHINGONNKNKN');
                     //console.log(event)
                     //const selectedNodes = gridOptions.api.getSelectedNodes();
                     //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
@@ -129,14 +121,14 @@ let rowId = null;
                     clasesFila='cambioColor';
                     gridOptions.api.redrawRows();
                     
-                    botonesModoNuevo(false);
-                    guardarBtn.disabled=true;
+                    //botonesModoNuevo(false);
+                    //guardarBtn.disabled=true;
                     
                 }
             },
             onCellValueChanged: (event) => {
                 // Aquí va el código que se ejecutará cuando cambie el valor de una celda
-                console.log('--------------------------------------------ON CELL VALUE CHANGED');
+                console.log('--------------------------------------------PERROS QUE PERRAN');
                 //clasesFila='cambioColor';
                 //gridOptions.api.redrawRows();
             },
@@ -184,6 +176,7 @@ let rowId = null;
 
         //---------------------------------------------------------------------Convierte los datos en una fila para AG-GRID
         function datosAFilaGrid(data,n) {
+            console.log('datosAFilaGrid')
             //console.log(parseFloat(data.Auto.cilindraje));
             if (gridOptions.api) {
                 /*
@@ -195,8 +188,7 @@ let rowId = null;
                             tipo: n==0? data.TipoDeIdentificacion.tipo.toUpperCase()
                             :comboTipo.options[comboTipo.selectedIndex].textContent.toUpperCase(),//data.TipoDeIdentificacion.tipo.toUpperCase(), 
                             identidad: data.identificacion.toUpperCase(), 
-                            nombre: data.apellidos_empresa.toUpperCase()+(data.nombres!=null?' '+data.nombres.toUpperCase():''), 
-                            genero: data.nombres!=null?(data.genero? 'M':'H'):'E'}];
+                            proveedor: data.proveedor.toUpperCase()}];
             
 
             }
@@ -245,17 +237,17 @@ let rowId = null;
             try{
                 //pinCarga('cargando');
                 // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/Clients')
+                const data = await fetch('/proveedores')
                 .then(response => response.json());
-                const Clients = data;
+                const Proveedores = data;
                 //mediante un for vamos cargando fila por fila
-                for(i=0;i<Clients.length;i++){
-                    let newRow = datosAFilaGrid(Clients[i],0);
+                for(i=0;i<Proveedores.length;i++){
+                    let newRow = datosAFilaGrid(Proveedores[i],0);
                     gridOptions.api.applyTransaction({ add: newRow });
                 }
                 //pinCarga('success');
             }catch(error){
-                console.log('Error al obtener los clientes:', error);
+                console.log('Error al obtener los proveedores:', error);
                 toast(error.message, "toastColorError");
                 pinCarga('fallo');
 
@@ -290,7 +282,7 @@ let rowId = null;
                     comboTipo.disabled=true;
                 }
                 if(conectado()){
-                    const data = await fetch('/client/'+id)
+                    const data = await fetch('/proveedor/'+id)
                     .then(response => {
                         if(!response.ok){
                             throw new Error('Servidor - '+response.status+': '+response.statusText);
@@ -321,41 +313,44 @@ let rowId = null;
         //------------------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
 
         async function cargarDatosDesdeSeleccion(data){
-            var client = data;
+            var proveedor = data;
             //console.log(data);
-            seleccionComboTipo(client.tipo);
+            seleccionComboTipo(proveedor.tipo);
             //En la db esta todo en minusculas, pero en el front end esta en mayuscula
             
             //Cargamos el resto de datos
-            document.getElementById("Datos-Identificacion").value=client.identificacion.toUpperCase();
-            document.getElementById("Datos-Apellidos").value=client.apellidos_empresa.toUpperCase();
-            //Valida si es una persona o una empresa
-            if(client.nombres!==null){
-                ocultarPersona(false);
-                document.getElementById("Datos-Nombres").value=client.nombres.toUpperCase();
-                //Selecciona si es H o M
-                document.getElementById("btnradio1").checked= !client.genero;
-                document.getElementById("btnradio2").checked=  client.genero;
-            }else{
-                ocultarPersona(true);
-                document.getElementById("Datos-Nombres").value='';
-            }
+            document.getElementById("Datos-Identificacion").value=proveedor.identificacion.toUpperCase();
+            document.getElementById("Datos-Proveedor").value=proveedor.proveedor.toUpperCase();
+            document.getElementById("Datos-Representante").value=proveedor.representante.toUpperCase();
             
-            //Direccion y correo electronico
-            const direccion = client.direccion;
-            const correo = client.correo;
-            //Telefonos
-            const telefono1 = client.telefono1;
-            const telefono2 = client.telefono2;
-            const telefono3 = client.telefono3;
-            const obs_placa = client.obs_cliente;
+            //Cuenta: nombre y cuenta
+            const cuenta1_nombre = proveedor.cuenta1_nombre;
+            const cuenta1_numero = proveedor.cuenta1_numero;
+            const cuenta2_nombre = proveedor.cuenta2_nombre;
+            const cuenta2_numero = proveedor.cuenta2_numero;
 
+            //Direccion y correo electronico
+            const direccion = proveedor.direccion;
+            const correo = proveedor.correo;
+            //Telefonos
+            const telefono1 = proveedor.telefono1;
+            const telefono2 = proveedor.telefono2;
+            const telefono3 = proveedor.telefono3;
+            const obs_placa = proveedor.obs_proveedor;
+
+            mostrarCuenta1(cuenta1_nombre!==null || cuenta1_numero!==null)
+            mostrarCuenta2(cuenta2_nombre!==null || cuenta2_numero!==null)
             mostrarDireccion(direccion!==null);
             mostrarCorreo(correo!==null);
             mostrarInputTelefono1(telefono1!==null);
             mostrarInputTelefono2(telefono2!==null);
             mostrarInputTelefono3(telefono3!==null);
             ocultarInputObs(obs_placa===null);
+
+            document.getElementById("Datos-Cuenta1-Nombre").value=(cuenta1_nombre===null?'':cuenta1_nombre.toUpperCase());
+            document.getElementById("Datos-Cuenta1-Numero").value=(cuenta1_numero===null?'':cuenta1_numero.toUpperCase());
+            document.getElementById("Datos-Cuenta2-Nombre").value=(cuenta2_nombre===null?'':cuenta2_nombre.toUpperCase());
+            document.getElementById("Datos-Cuenta2-Numero").value=(cuenta2_numero===null?'':cuenta2_numero.toUpperCase());
 
             document.getElementById("Datos-Direccion").value=(direccion===null?'':direccion.toUpperCase());
             document.getElementById("Datos-Correo").value=(correo===null?'':correo.toLowerCase());
@@ -386,9 +381,11 @@ let rowId = null;
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ OBTENER DATOS
-
         function obtenerDatos(){
-            const empresaCheck= checkEmpresa.checked;
+            
+            const cuenta1Check= checkCuenta1.checked;
+            const cuenta2Check= checkCuenta2.checked;
+
             const direccionCheck= checkDireccion.checked;
             const correoCheck= checkCorreo.checked;
 
@@ -402,9 +399,14 @@ let rowId = null;
                 id: (idSeleccionado!==null)?idSeleccionado:0,// si es que el idSeleccionado no existe
                 identificacion: document.getElementById('Datos-Identificacion').value.trim(),
                 tipo: comboTipo.value,
-                apellidos_empresa: document.getElementById('Datos-Apellidos').value.trim().toLowerCase(),
-                nombres: empresaCheck?null:document.getElementById('Datos-Nombres').value.trim().toLowerCase(),
-                genero: empresaCheck?false:document.getElementById('btnradio2').checked,
+                proveedor: document.getElementById('Datos-Proveedor').value.trim().toLowerCase(),
+                representante: document.getElementById('Datos-Representante').value.trim().toLowerCase(),
+                
+                cuenta1_nombre: cuenta1Check?document.getElementById('Datos-Cuenta1-Nombre').value.trim().toLowerCase():null,
+                cuenta1_numero: cuenta1Check?document.getElementById('Datos-Cuenta1-Numero').value.trim().toLowerCase():null,
+                cuenta2_nombre: cuenta2Check?document.getElementById('Datos-Cuenta2-Nombre').value.trim().toLowerCase():null,
+                cuenta2_numero: cuenta2Check?document.getElementById('Datos-Cuenta2-Numero').value.trim().toLowerCase():null,
+
                 
                 direccion: direccionCheck?document.getElementById('Datos-Direccion').value.trim().toLowerCase():null,
                 correo: correoCheck?document.getElementById('Datos-Correo').value.trim().toLowerCase():null,
@@ -413,7 +415,7 @@ let rowId = null;
                 telefono2: telefono2Check?document.getElementById('Datos-Telefono2').value.trim().toLowerCase():null,
                 telefono3: telefono3Check?document.getElementById('Datos-Telefono3').value.trim().toLowerCase():null,
 
-                obs_cliente: noObs?null:document.getElementById('Datos-Obs').value.trim().toLowerCase(),
+                obs_proveedor: noObs?null:document.getElementById('Datos-Obs').value.trim().toLowerCase(),
 
             };
             
@@ -463,15 +465,22 @@ let rowId = null;
 
         function vaciarDatosModelo(){
             document.getElementById("Datos-Identificacion").value='';
-            document.getElementById("Datos-Apellidos").value='';
-            document.getElementById("Datos-Nombres").value='';
+            document.getElementById("Datos-Proveedor").value='';
+            document.getElementById("Datos-Representante").value='';
+            document.getElementById("Datos-Cuenta1-Nombre").value='';
+            document.getElementById("Datos-Cuenta1-Numero").value='';
+            document.getElementById("Datos-Cuenta2-Nombre").value='';
+            document.getElementById("Datos-Cuenta2-Numero").value='';
             document.getElementById("Datos-Direccion").value='';
             document.getElementById("Datos-Correo").value='';
             document.getElementById("Datos-Telefono1").value='';
             document.getElementById("Datos-Telefono2").value='';
             document.getElementById("Datos-Telefono3").value='';
             document.getElementById("Datos-Obs").value='';
-            ocultarPersona(true);
+            
+            mostrarCuenta1(false);
+            mostrarCuenta2(false);
+
             mostrarDireccion(false);
             mostrarCorreo(false);
             mostrarInputTelefono1(false);
@@ -481,30 +490,33 @@ let rowId = null;
         }
 
 
-
-        //----------------------------------------------------------------------PERSONA/EMPRESA
-        function ocultarPersona(ocultar){
-            checkEmpresa.checked=ocultar;
-            if(ocultar){
-                document.querySelector("#formPersona").style.display='none';
-                document.querySelector("#noTieneApellidoLabel").textContent='Empresa';
-                document.querySelector("#apellidosLabel").style.display='none';
-                document.querySelector("#Datos-Apellidos").placeholder='Empresa';
+        //----------------------------------------------------------------------Cuenta Nº 1
+        const checkCuenta1 = document.getElementById('tieneCuenta1');
+        checkCuenta1.addEventListener('change',()=>{
+            mostrarCuenta1(checkCuenta1.checked);
+        });
+        function mostrarCuenta1(mostrar){
+            checkCuenta1.checked=mostrar;
+            if(mostrar){
+                document.querySelector("#formCuenta1").style.display='block';
             }else{
-                document.querySelector("#formPersona").style.display='block';
-                document.querySelector("#noTieneApellidoLabel").textContent='Persona';
-                document.querySelector("#apellidosLabel").style.display='block';
-                document.querySelector("#Datos-Apellidos").placeholder='Apellidos';
+                document.querySelector("#formCuenta1").style.display='none';
             }
         }
-        
 
-        //-------------------------BTN Es EMRPESA
-        const checkEmpresa = document.getElementById('Datos-NoEmpresa');
-        checkEmpresa.addEventListener('change',()=>{
-            ocultarPersona(checkEmpresa.checked);
-            
+        //----------------------------------------------------------------------Cuenta Nº 2
+        const checkCuenta2 = document.getElementById('tieneCuenta2');
+        checkCuenta2.addEventListener('change',()=>{
+            mostrarCuenta2(checkCuenta2.checked);
         });
+        function mostrarCuenta2(mostrar){
+            checkCuenta2.checked=mostrar;
+            if(mostrar){
+                document.querySelector("#formCuenta2").style.display='block';
+            }else{
+                document.querySelector("#formCuenta2").style.display='none';
+            }
+        }
 
 
         //----------------------------------------------------------------------DIRECCION
@@ -618,8 +630,8 @@ let rowId = null;
             //INPUT: elemento P
             const textoP = document.createElement('P');
             textoP.classList.add('card-title');
-            if(numeroModal == 1)textoP.textContent='Guardar cambios a cliente existente';
-            if(numeroModal == 2)textoP.textContent='Guardar como nuevo cliente';
+            if(numeroModal == 1)textoP.textContent='Guardar cambios a proveedor existente';
+            if(numeroModal == 2)textoP.textContent='Guardar como nuevo proveedor';
             modalBody.insertBefore(textoP,modalBody.firstChild);
 
             //BUTTON 1
@@ -651,9 +663,9 @@ let rowId = null;
                 pinCarga('cargando');
 
                 // Guardar cambios al modelo
-                if(btnConfirmar.value==1)modificarCliente();
+                if(btnConfirmar.value==1)modificarProvedor();
                 // Nuevo modelo
-                if(btnConfirmar.value==2)nuevoCliente();
+                if(btnConfirmar.value==2)nuevoProveedor();
 
             }
 
@@ -694,26 +706,36 @@ let rowId = null;
         
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
 
-
+        async function presionarEnter(event){
+            if (event.code === "Enter" || event.which === 13) {
+                // Código a ejecutar al presionar Enter
+                const data = obtenerDatos();
+                pinCarga('cargando');
+                //Al querer verificar si el cliente existe para agregar uno nuevo
+                //Esta omite el id actual, y busca todos menos los '0000000000'
+                if(await proveedoresRepetidos(0,data.identificacion,data.proveedor)){
+                    //Si devuelve true significa que encontro una modelo año cil igual
+                    toast("El proveedor ya existe!", "toastColorError");
+                    pinCarga('fallo');
+                }else{
+                    toast("Identificacion y proveedor disponible", "toastColorSuccess");
+                    pinCarga('success');
+                }
+            }
+        }
 
         identificacionInput.addEventListener('keyup', async (event)=>{
             
             if(identificacionInput.value.length>9){
-                if (event.code === "Enter" || event.which === 13) {
-                    // Código a ejecutar al presionar Enter
-                    const data = obtenerDatos();
-                    pinCarga('cargando');
-                    //Al querer verificar si el cliente existe para agregar uno nuevo
-                    //Esta omite el id actual, y busca todos menos los '0000000000'
-                    if(await clientesRepetidos(0,data.identificacion)){
-                        //Si devuelve true significa que encontro una modelo año cil igual
-                        toast("El cliente ya existe!", "toastColorError");
-                        pinCarga('fallo');
-                    }else{
-                        toast("Identificacion disponible", "toastColorSuccess");
-                        pinCarga('success');
-                    }
-                }
+                presionarEnter(event);
+            }
+        });
+
+        const proveedorInput = document.getElementById('Datos-Proveedor');
+        proveedorInput.addEventListener('keyup', async (event)=>{
+            
+            if(identificacionInput.value.length>1){
+                presionarEnter(event);
             }
         });
 
@@ -763,13 +785,13 @@ let rowId = null;
 
 
 
-        //--------------------------------------------- PLACAS REPETIDOS
+        //--------------------------------------------- PROVEEDOR REPETIDOS
 
-        async function clientesRepetidos(id, identificacion){
+        async function proveedoresRepetidos(id, identificacion, proveedor){
             //No se usa pinCarga cargando
-            const queryParams = new URLSearchParams({id:id, identificacion:identificacion});
+            const queryParams = new URLSearchParams({id:id, identificacion:identificacion,proveedor:proveedor});
 
-            const res = await fetch(`/clientsRepetidos?${queryParams.toString()}`)
+            const res = await fetch(`/proveedoresRepetidos?${queryParams.toString()}`)
             .then(response => {
                 if(!response.ok){
                     throw new Error('Servidor - '+response.status+': '+response.statusText);
@@ -786,16 +808,16 @@ let rowId = null;
 
         //---------------------------------------------- NUEVO CLIENTE
 
-        async function nuevoCliente(){
+        async function nuevoProveedor(){
             const data = obtenerDatos();
-
-            if(await clientesRepetidos(0,data.identificacion)){
+            console.log(data)
+            if(await proveedoresRepetidos(0,data.identificacion,data.proveedor)){
                 //Si devuelve true significa que encontro una identificacion
                 toast("El cliente ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{
                 pinCarga('cargando');
-                await fetch('/client',{
+                await fetch('/proveedor',{
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers:{
@@ -815,11 +837,12 @@ let rowId = null;
                     botonesModoNuevo(false);
                     cerrarModal();
                     nuevaFilaAgGrid(res)
-                    toast("Modelo agregado", "toastColorSuccess");
+                    toast("Proveedor agregado", "toastColorSuccess");
                     pinCarga('success');
                     rowId=res.id;
                 }).catch(error =>{
                     toast(error.message, "toastColorError");
+                    console.log(error.message)
                     pinCarga('fallo');
                 })
                 
@@ -831,17 +854,16 @@ let rowId = null;
         }
 
 
-        //---------------------------------------------- MODIFICAR CLIENTE
-
-        async function modificarCliente(){
+        //---------------------------------------------- MODIFICAR PROVEEDOR
+        async function modificarProvedor(){
             const data = obtenerDatos();
 
-            if(await clientesRepetidos(data.id,data.identificacion)){
-                //Si devuelve true significa que encontro una placa igual
-                toast("El cliente ya existe!", "toastColorError");
+            if(await proveedoresRepetidos(data.id,data.identificacion,data.proveedor)){
+                //Si devuelve true significa que encontro una proveedor igual
+                toast("El proveedor ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{
-                await fetch(`/client/${data.id}`,{
+                await fetch(`/proveedor/${data.id}`,{
                     method: 'PUT',
                     body: JSON.stringify(data),
                     headers: {
@@ -853,13 +875,11 @@ let rowId = null;
                         toast(response.status, "toastColorError");
                         throw new Error('Servidor - '+response.status+': '+response.statusText);
                     }else{
-                        //const filaActualizada = datosAFilaGrid(data);
-                        
                         guardarBtn.disabled=true;
                         cerrarModal();
                         const res = await response.json();
                         actualizarFilaAgGrid(res);
-                        toast("Cliente guardado", "toastColorSuccess");
+                        toast("Proveedor guardado", "toastColorSuccess");
                         pinCarga('success');
                     }
                 }).catch(error =>{
@@ -872,44 +892,46 @@ let rowId = null;
             },300);
         }
 
+        //---------------------------------------------- WHATSAPP TELEFONOS
+        const btnWs1 = document.getElementById('btn-Ws1');
+        btnWs1.addEventListener('click',()=>{
+            const value = document.getElementById('Datos-Telefono1').value
+            messageToWs(value);
+        })
+        const btnWs2 = document.getElementById('btn-Ws2');
+        btnWs2.addEventListener('click',()=>{
+            const value = document.getElementById('Datos-Telefono2').value
+            messageToWs(value);
+        })
+        const btnWs3 = document.getElementById('btn-Ws3');
+        btnWs3.addEventListener('click',()=>{
+            const value = document.getElementById('Datos-Telefono3').value
+            messageToWs(value);
+        })
+
+
+
         //---------------------------------------------- COPY MAIL
         const btnCopyMail = document.getElementById('btn-CopyMail');
          btnCopyMail.addEventListener('click',()=>{
              const inputCorreo = document.getElementById('Datos-Correo');
+             console.log(inputCorreo.value)
              btnCopy(inputCorreo);
          })
 
-
-        //---------------------------------------------- WHATSAPP TELEFONOS
-         const btnWs1 = document.getElementById('btn-Ws1');
-         btnWs1.addEventListener('click',()=>{
-             const value = document.getElementById('Datos-Telefono1').value
-             messageToWs(value);
-         })
-         const btnWs2 = document.getElementById('btn-Ws2');
-         btnWs2.addEventListener('click',()=>{
-             const value = document.getElementById('Datos-Telefono2').value
-             messageToWs(value);
-         })
-         const btnWs3 = document.getElementById('btn-Ws3');
-         btnWs3.addEventListener('click',()=>{
-             const value = document.getElementById('Datos-Telefono3').value
-             messageToWs(value);
-         })
-
-
+        
 
         var btnPrueba = document.querySelector('#btnPrueba');
         btnPrueba.addEventListener('click', async function(e) {
             e.preventDefault();
-            const texto = document.getElementById('Datos-Identificacion').value
-            console.log(texto);
-            console.log(await clientesRepetidos(0, texto));
+            
+            const value = document.getElementById('Datos-Telefono1').value
+            messageToWs(value);
 
         });
 
 
-
+        
     }
 });
 

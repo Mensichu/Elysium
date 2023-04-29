@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="/css/global.css">
-<link rel="stylesheet" href="/css/client.css">
+<link rel="stylesheet" href="/css/proveedor.css">
 
 
 
@@ -8,60 +8,102 @@
         <div class="row ">
             <div class="col-12 col-md-4" >
                 <div class="card text-white ">
-                    <div class="card-header ">Datos del Cliente</div>
+                    <div class="card-header ">Datos del Proveedor</div>
                     <div id="datosModeloCard" class="card-body datosModeloBody">
-                        <form id="formulario" class="formDatosPlaca" ></form>
-
-                            <div class="form-group">
-                                <label class="form-label mt-2 labelsColor" for="inputValid">Ruc/Cédula:</label>
-                                <div class=" input-group">
-                                    <select class="form-select " id="comboTipo" style="width: 20%">
-                                        <option value="0">No aplica</option>
-                                    </select>
-                                    <input type="text" id="Datos-Identificacion" class="form-control form-input" name="Identificacion" 
-                                        placeholder="Identificacion" minlength="1"maxlength="15" style="width: auto">
-                                </div>
-                                    <div class="invalid-feedback">Id incorrecto!</div>
-                            </div>
-
-                            
-                            <label id="empresaApellidoLabel" class="form-label mt-3 labelsColor" for="inputValid">Datos de cliente</label>
-                            <div class="form-group formGroupBorder " >
-                                <div class="input-group ">
-                                        <div class="form-check form-switch mt-2">
-                                            <input class="form-check-input" type="checkbox" id="Datos-NoEmpresa" checked="">
-                                            <label id="noTieneApellidoLabel" class="form-check-label" for="flexSwitchCheckDefault">Empresa</label>
-                                        </div>
-                                </div>
-                                <div class="form-group">
-                                    <label id="apellidosLabel" class="form-label mt-2" for="inputValid" style="display: none;">Apellidos:</label>
-                                    <div class="input-group">
-                                        <input type="text" id="Datos-Apellidos" class="form-control form-input" name="Apellidos" placeholder="Empresa" minlength="1"maxlength="200">
+                        <form id="formulario" class="formDatosProveedor" ></form>
+                            <label id="datosPersonalLabel" class="form-label labelsColor" for="inputValid">Datos personales</label>
+                            <div class="form-group formGroupBorder">
+                                <!-- Identificacion -->    
+                                <div class="form-group mt-2">
+                                    <label class="form-label labelsColor" for="inputValid">Ruc/Cédula:</label>
+                                    <div class=" input-group">
+                                        <select class="form-select " id="comboTipo" style="width: 20%">
+                                            <option value="0">No aplica</option>
+                                        </select>
+                                        <input type="text" id="Datos-Identificacion" class="form-control form-input" name="Identificacion" 
+                                            placeholder="Identificacion" minlength="1"maxlength="15" style="width: auto">
                                     </div>
+                                        <div class="invalid-feedback">Id incorrecto!</div>
+                                </div>
+                                <!-- Proveedor -->    
+                                <div class="form-group mt-2">
+                                    <label id="proveedorLabel" class="form-label labelsColor" for="inputValid">Proveedor</label>
+                                    <input type="text" id="Datos-Proveedor" class="form-control form-input" name="Proveedor" placeholder="Empresa" minlength="1"maxlength="200">
                                     <div class="invalid-feedback">Texto incorrecto!</div>
                                 </div>
+                                <!-- Representante -->    
+                                <div class="form-group mt-2">
+                                    <label id="representanteLabel" class="form-label labelsColor" for="inputValid">Representante</label>
+                                    <input type="text" id="Datos-Representante" class="form-control form-input" name="Representante" placeholder="Representante" minlength="1"maxlength="200">
+                                    <div class="invalid-feedback">Texto incorrecto!</div>
+                                </div>
+                                
+                            </div>
+                            
+                            
+                            
 
-                                <div id="formPersona" class="form-group" style="display: none;">
-                                    <div class="form-group">
-                                        <label class="form-label mt-2" for="inputValid">Nombres:</label>
-                                        <div class="input-group">
-                                            <input type="text" id="Datos-Nombres" class="form-control form-input" name="Nombres" placeholder="Nombres" minlength="1"maxlength="200">
-                                        </div>
-                                        <div class="invalid-feedback">Nombres incorrecto!</div>
+                            <!-- Datos de cuenta bancaria -->
+                            <label id="datosCuentaLabel" class="form-label mt-3 labelsColor" for="inputValid">Datos de cuenta</label>
+                            <div class="form-group formGroupBorder">
+                                <!-- Cuenta1 -->
+                                <div class="mt-2">
+                                    <div class="input-group">
+                                            <div class="form-check form-switch ">
+                                                <input class="form-check-input" type="checkbox" id="tieneCuenta1" >
+                                                <label id="tieneCuenta1Label"class="form-check-label" for="flexSwitchCheckDefault">Cuenta Nº1</label>
+                                            </div>
                                     </div>
 
-                                    <div class="form-group row" >
-                                        <label class="form-label mt-2" for="inputValid">Genero:</label>
-                                        <div class="form-group btn-group" role="group" aria-label="Basic radio toggle button group">
-                                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked="">
-                                            <label class="btn btn-outline-warning" for="btnradio1">Hombre</label>
-                                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" >
-                                            <label class="btn btn-outline-warning" for="btnradio2">Mujer</label>
+                                    <div id="formCuenta1" class="form-group mt-2" style="display: none;">
+                                        <div class="form-group">
+                                            <label id="cuenta1_nomLabel" class="form-label labelsColor" for="inputValid">Beneficiario:</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control form-input" name="Cuenta1-Nombre" id="Datos-Cuenta1-Nombre" placeholder="a nombre de..." minlength="1"maxlength="100">
+                                            </div>
+                                            <div class="invalid-feedback">Nombre incorrecto!</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label id="cuenta1_numeroLabel" class="form-label mt-2 labelsColor" for="inputValid">Numero:</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control form-input" name="Cuenta1-Numero" id="Datos-Cuenta1-Numero" placeholder="Ingrese la cuenta primaria" minlength="1"maxlength="100">
+                                            </div>
+                                            <div class="invalid-feedback">Cuenta incorrecta!</div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
+                                <!-- Cuenta2 -->
+                                <div class="mt-2">
+                                    <div class="input-group">
+                                            <div class="form-check form-switch ">
+                                                <input class="form-check-input" type="checkbox" id="tieneCuenta2" >
+                                                <label id="tieneCuenta2Label"class="form-check-label" for="flexSwitchCheckDefault">Cuenta Nº2</label>
+                                            </div>
+                                    </div>
+
+                                    <div id="formCuenta2" class="form-group mt-2" style="display: none;">
+                                        <div class="form-group">
+                                            <label id="cuenta2_nomLabel" class="form-label labelsColor" for="inputValid">Beneficiario:</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control form-input" name="Cuenta2-Nombre" id="Datos-Cuenta2-Nombre" placeholder="a nombre de..." minlength="1"maxlength="100">
+                                            </div>
+                                            <div class="invalid-feedback">Nombre incorrecto!</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label id="cuenta2_numeroLabel" class="form-label mt-2 labelsColor" for="inputValid">Numero:</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control form-input" name="Cuenta2-Numero" id="Datos-Cuenta2-Numero" placeholder="Ingrese la cuenta secundaria" minlength="1"maxlength="100">
+                                            </div>
+                                            <div class="invalid-feedback">Cuenta incorrecta!</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                
+
+                                
+                            </div>
 
                             <!-- CORREO y TELEFONOS -->
                             <label id="empresaApellidoLabel" class="form-label mt-3 labelsColor" for="inputValid">Datos de contacto</label>
@@ -77,7 +119,7 @@
                                     <div id="formDireccion" class="form-group mt-2" style="display: none;">
                                         <div class="form-group">
                                             <div class="input-group">
-                                                <input type="text" class="form-control form-input" name="Direccion" id="Datos-Direccion" placeholder="Ingrese la dirección" minlength="1"maxlength="100">
+                                                <input type="text" class="form-control form-input" name="Direccion" id="Datos-Direccion" placeholder="Ingresa la dirección" minlength="1"maxlength="100">
                                             </div>
                                             <div class="invalid-feedback">Dirección incorrecta!</div>
                                         </div>
@@ -96,7 +138,7 @@
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <input type="text" class="form-control form-input" name="Correo" id="Datos-Correo" placeholder="Ingresa el correo electronico" minlength="1"maxlength="100">
-                                                <button class="btn btn-warning" type="button" id="btn-CopyMail" >
+                                                <button class="btn btnColor" type="button" id="btn-CopyMail" >
                                                         <i class="fa-solid fa-copy"></i>
                                                 </button>
                                             </div>
@@ -122,7 +164,7 @@
                                                 <div class="input-group">
                                                     <input type="text" id="Datos-Telefono1" class="form-control form-input" name="Telefono1" placeholder="Celular" minlength="1"maxlength="30">
                                                     <button class="btn btn-success" type="button" id="btn-Ws1" >
-                                                        <i class="fa-brands fa-whatsapp "></i>
+                                                        <i class="fa-brands fa-whatsapp fa-beat-fade"></i>
                                                     </button>
                                                 </div>
                                                 <div class="invalid-feedback">Telefono incorrecto!</div>
@@ -143,7 +185,7 @@
                                                 <div class="input-group">
                                                     <input type="text" id="Datos-Telefono2" class="form-control form-input" name="Telefono2" placeholder="Oficina" minlength="1"maxlength="30">
                                                     <button class="btn btn-success" type="button" id="btn-Ws2" >
-                                                        <i class="fa-brands fa-whatsapp "></i>
+                                                        <i class="fa-brands fa-whatsapp fa-beat-fade"></i>
                                                     </button>
                                                 </div>
                                                 <div class="invalid-feedback">Telefono incorrecto!</div>
@@ -164,7 +206,7 @@
                                                 <div class="input-group">
                                                     <input type="text" id="Datos-Telefono3" class="form-control form-input" name="Telefono3" placeholder="Casa" minlength="1"maxlength="30">
                                                     <button class="btn btn-success" type="button" id="btn-Ws3" >
-                                                        <i class="fa-brands fa-whatsapp "></i>
+                                                        <i class="fa-brands fa-whatsapp fa-beat-fade"></i>
                                                     </button>
                                                 </div>
                                                 <div class="invalid-feedback">Telefono incorrecto!</div>
@@ -195,8 +237,9 @@
                             </div>
 
                             <div class="form-group" style="padding-top: 10px; text-align: center;">
-                                <button class="btn btn-warning  btnHover1" style="width:100%;" id="btn-Guardar">Guardar cambios</button>
+                                <button class="btn btnColor " style="width:100%;" id="btn-Guardar">Guardar cambios</button>
                             </div>
+
 
                             <div class="form-group" style="padding-top: 20px; text-align: center;">
                                 <button class="btn btn-outline-success  btnHover2" style="margin-left: 2px; width:100%" id="btn-Nuevo">Nuevo</button>
@@ -214,7 +257,7 @@
             <!------------------------------------------------------------------------->
             <div class="col-12 col-md-8">
                 <div class="card text-white ">
-                    <div class="card-header">Tabla de Clientes</div>
+                    <div class="card-header">Tabla de Proveedores</div>
                         <div class="card-body tablaModeloBody">
                             <div id="idTabla" class="tabla-con-scroll" >
                                 <div class="diseñoTablaGrid" style="height:100%">
@@ -231,20 +274,6 @@
             </div>
 
 
-            <div class="card text-white mt-2">
-                <div class="card-header">Documentos del cliente</div>
-                    <div class="card-body tablaModeloBody2">
-                        <div id="idTabla2" class="tabla-con-scroll2" >
-                            <div class="diseñoTablaGrid2" style="height:100%">
-                                    <div id="myGrid2" class="ag-theme-alpine-dark" style="height: 100%"></div>
-                            </div>
-                            
-                            
-                        </div>
-                    </div>
-                
-                </div>
-            </div>
             <button id="btnPrueba" stylea="display:none">Prueba</button>
 
         </div>
@@ -273,8 +302,8 @@
             <div id="modalBody" class="card-body justify-content-center align-items-center text-align-center">
                 <!--input o texto p-->
                 <div id="divBotones" class="d-flex justify-content-center">
-                    <button value="" class="btn btn-warning modal-button" id="confirmar">Nueva Marca</button>
-                    <button class="btn btn-warning modal-button" id="cancelar">Cancelar</button>
+                    <button class="btn btnColor modal-button" id="confirmar">Nueva Marca</button>
+                    <button class="btn btnColor modal-button" id="cancelar">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -291,8 +320,8 @@
 
 
 
-<script src="../js/clientes.js"></script>
-<script src="../js/Validaciones/validacion.cliente.js"></script>
+<script src="../js/pedidos/proveedores.js"></script>
+<script src="../js/Validaciones/validacion.proveedor.js"></script>
 
 
 

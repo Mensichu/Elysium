@@ -1,0 +1,106 @@
+:root{
+    --color1:#501a69;
+    --color2:#401252;
+    --borderColorGroup:#7c259e;
+    --colorHeaderCards: #3a1947;
+    --colorBodyCards: #200e27;
+  }
+  
+  .labelsColor{
+    color: white;
+  }
+
+  .btnColor{
+    background: var(--color1);
+    border-color: var(--color2);
+  }
+
+  .btnColor:hover {
+    background-color: var(--color2) !important;/* cambia a color rojo al hacer hover */
+  }
+
+  .form-check-input:checked {
+      background-color: var(--color1);
+      border-color: var(--color2);
+    }
+  
+
+    .formGroupBorder{
+        border: 1px dashed var(--borderColorGroup);
+    }
+  
+    #comboTipo {
+      /* tus estilos personalizados aquí */
+      background-color: var(--color1); /* Cambia el color de fondo del select */
+      color: #ffffff; /* Cambia el color del texto del select */
+      
+      
+      
+    }
+  
+    #comboTipo option {
+      background-color: #fff; /* Mantiene el color de fondo de las opciones transparente */
+      color: #000000; /* Cambia el color del texto del select */
+    }
+  
+    #comboTipo:focus {
+      outline: none; /* Quita el contorno que aparece al seleccionar el select */
+    }
+  
+  
+    .card .card-header {
+      background: var(--colorHeaderCards);
+    }
+  
+  
+  
+  
+  /*                                               TABLA AG GRID                    */
+  
+  .ag-theme-alpine-dark .ag-row-selected {
+    /*background-color: var(--color1);*/
+  }
+
+  .ag-theme-alpine-dark .ag-row-hover {
+    /*background-color: var(--color2);*/
+  }
+
+  .datosModeloBody{
+    height: auto;
+    background-color: var(--colorBodyCards);
+    
+  }
+
+  
+
+  .tablaModeloBody{
+    height: 698px;
+    min-height: var(--minAnchoDatosModelo);
+    background-color: var(--colorBodyCards);
+  }
+  
+  .diseñoTablaGrid{
+    max-width: 98%;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  
+  /* Se agrega el scroll a la tabla */
+  .tabla-con-scroll {
+    height: 100%;
+    /*height: 500px;*/
+    overflow: auto;
+  }
+
+
+
+/*                                               MODAL                    */
+
+  .modal-content {
+    background-color: var(--colorBodyCards) !important;
+  }
+
+
+  .circuloOrig {
+    background-color: var(--colorBodyCards) !important;
+  }

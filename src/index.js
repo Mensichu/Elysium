@@ -1,16 +1,9 @@
 
 import app from './app';
-//import {sequelize} from './aSequelize/database/database'
+import {sequelize} from './aSequelize/database/database'
 
-//import './aSequelize/models/tablaMarca'
-//import './aSequelize/models/tablaAuto'
-//import './aSequelize/models/tablaPlaca'
-//import './aSequelize/models/tablaColor'
-//import './aSequelize/models/tablaPlacaColores'
-//import './aSequelize/models/Sri/tablaTipoDeIdentificacion'
-//import './aSequelize/models/tablaCliente'
-//import './aSequelize/models/tablaRegistroPlacaCliente'
-//import './aSequelize/models/Users/tablaUser'
+
+//import './aSequelize/models/Pedidos/tablaProveedor'
 
 async function main(){
     try{

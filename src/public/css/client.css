@@ -1,7 +1,31 @@
 :root{
   --color1:#be7e15;
   --color2:#94490b;
+  --borderColorGroup:#94490b;
+    --colorHeaderCards: #be7e15;
+    --colorBodyCards: #94490b;
 }
+
+
+.labelsColor{
+  color: var(--color1);
+}
+
+.btnColor{
+  background: var(--color1);
+  border-color: var(--color2);
+}
+
+.formGroupBorder{
+  border: 1px dashed var(--borderColorGroup);
+}
+
+
+.card .card-header {
+  background: var(--colorHeaderCards);
+}
+
+
 
 .form-check-input:checked {
     background-color: var(--color1);
@@ -27,10 +51,6 @@
     outline: none; /* Quita el contorno que aparece al seleccionar el select */
   }
 
-
-  .card .card-header {
-    background: var(--color1);
-  }
 
 
 

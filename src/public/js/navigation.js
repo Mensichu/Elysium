@@ -56,6 +56,11 @@ window.addEventListener('load',()=>{
         if(pagina.includes('/Productos'))activos[3].classList.add('active');
         if(pagina.includes('/Ventas'))activos[4].classList.add('active');
         if(pagina.includes('/Pedidos'))activos[5].classList.add('active');
+        if(pagina.includes('/pedidos/proveedores')){activos[5].classList.add('active')
+            const navElysium = document.getElementById('navElysium');
+            navElysium.style.background= '#3a1947';
+            navElysium.classList.remove('bg-primary');
+    };
         if(pagina.includes('/Pagos'))activos[6].classList.add('active');
         
 
@@ -212,3 +217,34 @@ function toast(mensaje,colorClass){
 }
 
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ WHATSAPP CONTACTO
+
+function messageToWs(valueTelefonoString) {
+    const regex = /\d{10}/;
+    const match = valueTelefonoString.match(regex);
+  
+    if (match) {
+        //alert('Se han encontrado 10 números seguidos: ' + match[0]);
+        let url = `https://wa.me/+593${match[0]}`;
+        window.open(url, '_blank');
+    }else{
+        toast('No se encontro un numero valido', "toastColorError");
+    }
+  }
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ MAIL COPY
+
+  function btnCopy(inputCorreo){
+    // Seleccionar el texto del input
+    const text = inputCorreo.value;
+    // Select the value/contents of the element
+    inputCorreo.select();
+    // Copy it to clipboard
+    document.execCommand("Copy");
+    // Deselect the text
+    window.getSelection().removeAllRanges();
+    toast("texto copiado!", "toastColorInfo");
+}
+    

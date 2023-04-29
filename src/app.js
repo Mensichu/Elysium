@@ -11,12 +11,13 @@ const passport = require('passport');
 const {engine} = require('express-handlebars');
 const morgan = require('morgan');
 
-import productsRoutes from './routes/routes';
+import routes from './routes/routes';
 import autoRoutes from  './routes/auto.routes';
 import placaRoutes from './routes/placa.routes';
 import colorRoutes from './routes/color.routes';
 import clientRoutes from './routes/client.routes';
 import registroPCRoutes from './routes/registroPC.routes';
+import proveedorRoutes from './routes/proveedor.routes';
 
 
 
@@ -66,13 +67,14 @@ app.use((req,res,next)=>{
 });
 
 // Routes
-app.use(productsRoutes);
+
 app.use(autoRoutes);
 app.use(placaRoutes);
 app.use(colorRoutes);
 app.use(clientRoutes);
 app.use(registroPCRoutes);
-
+app.use(proveedorRoutes);
+app.use(routes);
 
 // Public
 app.use(express.static(path.join(__dirname, 'public')));
