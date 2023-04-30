@@ -309,9 +309,7 @@ function datosAFilaGrid(data,n) {
     //0: todos los datos
     //1: todos los datos menos marca y modelo
     //2: solo nom_auto
-    console.log('datosAFilaGrid')
-    console.log(data);
-    console.log(parseFloat(data.Auto.cilindraje));
+    
     if (gridOptions.api) {
         //var newRow = [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
         //combustible: data.combustible? 'DIESEL.':'GAS.' }];
@@ -459,7 +457,6 @@ function nuevaFilaAgGrid(data) {
 
         async function cargarDatosDesdeSeleccion(data){
             var placa = data;
-            console.log(data);
             await seleccionComboMarca(placa.Auto.id_marca);
             seleccionComboModelo(placa.id_auto);
             //Una vez seleccionado el comboMarca y cargado el comboModelo
@@ -543,11 +540,9 @@ function nuevaFilaAgGrid(data) {
         //-----------------------------------------------------Seteamos el comboColor1 desde su Id
 
         function seleccionComboColor1(id_color1){
-            console.log('El id del color1 es: '+id_color1)
             for(i=0;i<comboColor1.options.length;i++){
                 if(comboColor1.options[i].value == id_color1){
                     comboColor1.selectedIndex=i;
-                    console.log('Encontre');
                     break;
                     
                 }
@@ -560,7 +555,6 @@ function nuevaFilaAgGrid(data) {
             for(i=0;i<comboColor2.options.length;i++){
                 if(comboColor2.options[i].value == id_color2){
                     comboColor2.selectedIndex=i;
-                    console.log('Encontre');
                     break;
                     
                 }

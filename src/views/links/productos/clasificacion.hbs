@@ -1,0 +1,172 @@
+<link rel="stylesheet" href="/css/global.css">
+<!--<link rel="stylesheet" href="/css/client.css">-->
+
+
+
+<div id="fondo" class="showDelay mt-4" stylea="padding: 10px; border:2px black solid">
+    <div class="container">
+        <div class="row ">
+            <div class="col-12 col-md-4" >
+                <div class="card text-white ">
+                    <div class="card-header ">Clasificacion de productos:</div>
+                    <div id="datosModeloCard" class="card-body datosModeloBody">
+                        <form id="formulario" class="formDatosPlaca" ></form>
+
+                            <div class="form-group">
+                                <label class="form-label mt-2 labelsColor" for="inputValid">Tipo:</label>
+                                <div class=" input-group">
+                                    <select class="form-select " id="comboTipo" style="width: 20%">
+                                        <option value="0">No aplica</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label mt-2 labelsColor" for="inputValid">Categoria:</label>
+                                <div class=" input-group">
+                                    <select class="form-select " id="comboCategoria" style="width: 20%">
+                                        <option value="0">No aplica</option>
+                                    </select>
+                                </div>
+                                <div class="input-group mt-2">
+                                        <input type="text" id="Datos-Categoria" class="form-control form-input" name="Categoria" placeholder="Categoria" minlength="1"maxlength="30">
+                                        <button class="btn btn-success " type="button" id="btn-Categoria" >Agregar</button>
+                                    </div>
+                                    <div class="invalid-feedback">Id incorrecto!</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label mt-2 labelsColor" for="inputValid">Grupo:</label>
+                                <div class=" input-group">
+                                    <select class="form-select " id="comboGrupo" style="width: 20%">
+                                        <option value="0">No aplica</option>
+                                    </select>
+                                </div>
+                                <div class="input-group mt-2">
+                                        <input type="text" id="Datos-Grupo" class="form-control form-input" name="Grupo" placeholder="Grupo" minlength="1"maxlength="30">
+                                        <button class="btn btn-success " type="button" id="btn-Grupo" >Agregar</button>
+                                    </div>
+                                    <div class="invalid-feedback">Id incorrecto!</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label mt-2 labelsColor" for="inputValid">Subgrupo:</label>
+                                <div class=" input-group">
+                                    <select class="form-select " id="comboSubgrupo" style="width: 20%">
+                                        <option value="0">No aplica</option>
+                                    </select>
+                                </div>
+                                <div class="input-group mt-2">
+                                        <input type="text" id="Datos-Subgrupo" class="form-control form-input" name="Subgrupo" placeholder="Subgrupo" minlength="1"maxlength="30">
+                                        <button class="btn btn-success " type="button" id="btn-Subgrupo" >Agregar</button>
+                                    </div>
+                                    <div class="invalid-feedback">Id incorrecto!</div>
+                            </div>
+
+
+
+                            
+                        </form>
+                            
+                        
+                    </div>
+            
+                </div>
+            </div>
+
+            <!-------------------------------TABLAS------------------------------------>
+            <!------------------------------------------------------------------------->
+            <div class="col-12 col-md-8">
+                <div class="card text-white ">
+                    <div class="card-header">Tabla de Clientes</div>
+                        <div class="card-body tablaModeloBody">
+                            <div id="idTabla" class="tabla-con-scroll" >
+                                <div class="diseñoTablaGrid" style="height:100%">
+                                        <div id="myGrid" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+                    
+                    </div>
+                </div>
+                
+            </div>
+
+
+            <div class="card text-white mt-2">
+                <div class="card-header">Documentos del cliente</div>
+                    <div class="card-body tablaModeloBody2">
+                        <div id="idTabla2" class="tabla-con-scroll2" >
+                            <div class="diseñoTablaGrid2" style="height:100%">
+                                    <div id="myGrid2" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                
+                </div>
+            </div>
+            <button id="btnPrueba" stylea="display:none">Prueba</button>
+
+        </div>
+    
+    
+    
+        <div class="firma" style="display: none;">
+            <figure>
+                <figcaption class="blockquote-footer">
+            Developed by <cite title="Source Title">Alex Carangui</cite>
+            </figcaption>
+            </figure>   
+            
+        </div>
+
+
+    </div>
+
+
+    <div id="myModal" class="modal">
+        <div class="card border-light mb-3 modal-content">
+            <div id="'modalHeader" class="card-header d-flex justify-content-between align-items-center">
+                <h5 id="tituloHeader">Nuevo</h5>
+                <button id="cancelar1" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="modalBody" class="card-body justify-content-center align-items-center text-align-center">
+                <!--input o texto p-->
+                <div id="divBotones" class="d-flex justify-content-center">
+                    <button value="" class="btn btn-warning modal-button" id="confirmar">Nueva Marca</button>
+                    <button class="btn btn-warning modal-button" id="cancelar">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+<!--                                                            ANIMACION DE BOTON                                                -->
+
+<div id="circulo" class="circuloOrig"></div>
+<div id="pin" class="wait"></div>
+
+
+
+<script src="../js/productos/clasificacion.js"></script>
+<!--<script src="../js/Validaciones/validacion.cliente.js"></script>-->
+
+
+
+
+
+
+
+
+
+
+
+
+

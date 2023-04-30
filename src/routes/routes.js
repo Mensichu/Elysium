@@ -43,10 +43,13 @@ router.post('/login', passport.authenticate('local-signin', {
 
 
   
+router.get('/register', (req,res)=>{
+  res.render('register');
+});
+
 router.get('/login', (req,res)=>{
   res.render('login');
 });
-
 
 
 
@@ -68,7 +71,7 @@ router.post('/logout', function(req, res, next) {
 
 
 
-router.get('/clientes', (req,res)=>{
+router.get('/clientes',isAuthenticated, (req,res)=>{
     res.render('links/clientes');
 });
 
@@ -84,7 +87,11 @@ router.get('/vehiculos/autos',isAuthenticated, (req,res)=>{
     res.render('links/autos');
 });
 
-router.get('/pedidos/proveedores',(req,res)=>{
+router.get('/productos/clasificacion', (req,res)=>{
+  res.render('links/productos/clasificacion');
+});
+
+router.get('/pedidos/proveedores',isAuthenticated, (req,res)=>{
   res.render('links/pedidos/proveedores');
 });
 

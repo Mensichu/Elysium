@@ -3,7 +3,9 @@ import app from './app';
 import {sequelize} from './aSequelize/database/database'
 
 
-//import './aSequelize/models/Pedidos/tablaProveedor'
+
+//import './aSequelize/models/Productos/tablaGrupo'
+//import './aSequelize/models/Productos/tablaProductCategory'
 
 async function main(){
     try{

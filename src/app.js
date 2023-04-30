@@ -18,7 +18,7 @@ import colorRoutes from './routes/color.routes';
 import clientRoutes from './routes/client.routes';
 import registroPCRoutes from './routes/registroPC.routes';
 import proveedorRoutes from './routes/proveedor.routes';
-
+import clasificacionRoutes from './routes/clasificacion.routes'
 
 
 const app = express();
@@ -74,6 +74,7 @@ app.use(colorRoutes);
 app.use(clientRoutes);
 app.use(registroPCRoutes);
 app.use(proveedorRoutes);
+app.use(clasificacionRoutes);
 app.use(routes);
 
 // Public

@@ -282,8 +282,8 @@ window.addEventListener('load',()=>{
             //0: todos los datos
             //1: todos los datos menos marca y modelo
             //2: solo nom_auto
-            console.log('DatosAFilaGrid');
-            console.log(data.cilindraje);
+            //console.log('DatosAFilaGrid');
+            //console.log(data.cilindraje);
             if (gridOptions.api) {
                 //var newRow = [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
                 //combustible: data.combustible? 'DIESEL.':'GAS.' }];
@@ -428,9 +428,6 @@ window.addEventListener('load',()=>{
     async function cargarDatosDesdeSeleccion(data){
         // almaceno la respuesta ajax en la variable modelo
         var modelo = data;
-        console.log((modelo.cilindraje.toFixed(1)).replace(",", "."))
-        console.log((modelo.cilindraje.toFixed(1)))
-        console.log((modelo.cilindraje))
         await seleccionComboMarca(modelo.id_marca);
         //Una vez seleccionado el comboMarca y cargado el comboModelo
         //se selecciona el modelo mediante el id
