@@ -1,9 +1,9 @@
 :root{
-  --color1:#be7e15;
+  --color1:#ff9d00;
   --color2:#94490b;
   --borderColorGroup:#94490b;
     --colorHeaderCards: #be7e15;
-    --colorBodyCards: #94490b;
+    --colorBodyCards: #94490b3f;
 }
 
 
@@ -21,9 +21,6 @@
 }
 
 
-.card .card-header {
-  background: var(--colorHeaderCards);
-}
 
 
 
@@ -52,6 +49,35 @@
   }
 
 
+
+
+  .card .card-header {
+    background: var(--colorHeaderCards);
+
+  }
+
+  .card .card-body {
+    background: transparent;
+    background-color: var(--colorBodyCards);
+    border-radius: 0 0 5px 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    backdrop-filter: blur(10px);
+  }
+
+  .card{
+    background: transparent;
+  }
+
+  
+/*                                               FONDO                    */
+
+body{
+background: url('../img/orange.jpg');
+background-size: cover;
+background-attachment: fixed;
+background-position: center;
+}
 
 
   

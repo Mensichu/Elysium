@@ -1,8 +1,17 @@
 :root{
     --ancho:200px;
     --minAnchoDatosModelo:625px;
+
+    --color1:#264bb1;
+    --color2:#264bb1;
+    --borderColorGroup:#4036cf;
+    --colorHeaderCards: #273f83;
+    --colorBodyCards: #1b34795e;
 }
 
+.formGroupBorder{
+    border: 1px dashed var(--borderColorGroup);
+  }
 
 .datosModeloBody{
     height: auto;
@@ -41,47 +50,35 @@
     overflow: auto;
   }
 
-/*
-  thead tr {
-    position: sticky;
-    z-index: 2;
-    top: 0;
-    background-color: #444444;
-    padding-top: 0;
+
+
+  .card .card-header {
+    background: var(--colorHeaderCards);
+
   }
 
-.texto-blanco{
-    color:white;
+  .card .card-body {
+    background: transparent;
+    background-color: var(--colorBodyCards);
+    border-radius: 0 0 5px 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    backdrop-filter: blur(10px);
+  }
+
+  .card{
+    background: transparent;
+  }
+
+  
+/*                                               FONDO                    */
+
+body{
+background: url('../img/gris\ 2.jpg');
+background-size: cover;
+background-attachment: fixed;
+background-position: center;
 }
-*/
-
-
-/*--------------------------------------TABLAS --------------------*/
-/*
-thead th span.icon-arrow {
-    display: inline-block;
-    width: 1.3rem;
-    height: 1.3rem;
-    border: 1.4px solid #6c00bd;
-    border-radius: 50%;
-    text-align: center;
-    font-size: 1rem;
-    font-family: sans-serif;
-    margin-left: .5rem;
-}
-
-
-
-thead th {
-    position: sticky;
-    top: 0;
-    left: 0;
-    cursor: pointer;
-}
-
-
-
-*/
 
 .hidden {
     display: none;
@@ -89,36 +86,6 @@ thead th {
 
 
 
-
-
-
-
-
-
-
-
-  /*//--------------------------------Animaciones*/
-/*
-.cambio-tamañoSel {
-    border-radius: 20px;
-    transform: scale(1.01);
-    transition: transform 0.2s ease-in-out;
-  }
-
-  .cambio-tamañoSel2 {
-    
-    transform: scale(1.01);
-    transition: transform 0.2s ease-in-out;
-    border-radius: 50%;
-  }
-
-
-.cambio-tamaño{
-    border-radius: 20px;
-    transform: scale(1.01);
-    transition: transform 0.2s ease-in-out 0.4s;
-}
-*/
 
 
 

@@ -1,4 +1,13 @@
+:root{
+  --ancho:200px;
+  --minAnchoDatosModelo:625px;
 
+  --color1:#264bb1;
+  --color2:#264bb1;
+  --borderColorGroup:#4138c5;
+  --colorHeaderCards: #4a5472;
+  --colorBodyCards: #313b555e;
+}
 
 
 
@@ -17,6 +26,37 @@
     padding-left: 2px;
     padding-right: 2px;
 
+}
+
+
+
+
+.card .card-header {
+  background: var(--colorHeaderCards);
+
+}
+
+.card .card-body {
+  background: transparent;
+  background-color: var(--colorBodyCards);
+  border-radius: 0 0 5px 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  backdrop-filter: blur(10px);
+}
+
+.card{
+  background: transparent;
+}
+
+
+/*                                               FONDO                    */
+
+body{
+background: url('../img/gris.jpg');
+background-size: cover;
+background-attachment: fixed;
+background-position: center;
 }
 
 

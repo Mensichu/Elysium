@@ -47,23 +47,22 @@ window.addEventListener('load',()=>{
         const pagina = window.location.pathname;
         console.log(pagina);
         if(pagina==('/'))activos[0].classList.add('active');
-        if(pagina.includes('/clientes')){activos[1].classList.add('active')
-            const navElysium = document.getElementById('navElysium');
-            navElysium.style.background= '#be7e15';
-            navElysium.classList.remove('bg-primary')
-    }
-        if(pagina.includes('/vehiculos'))activos[2].classList.add('active');
-        if(pagina.includes('/Productos'))activos[3].classList.add('active');
+        if(pagina.includes('/clientes')){activos[1].classList.add('active');bg_navElysium('#be7e15')};
+        if(pagina.includes('/vehiculos/modelos')){activos[2].classList.add('active');bg_navElysium('#273f83')};
+        if(pagina.includes('/vehiculos/placas')){activos[2].classList.add('active');bg_navElysium('#4a5472')};
+        if(pagina.includes('/productos/clasificacion')){activos[3].classList.add('active');bg_navElysium('#9c342c');};
         if(pagina.includes('/Ventas'))activos[4].classList.add('active');
         if(pagina.includes('/Pedidos'))activos[5].classList.add('active');
-        if(pagina.includes('/pedidos/proveedores')){activos[5].classList.add('active')
-            const navElysium = document.getElementById('navElysium');
-            navElysium.style.background= '#3a1947';
-            navElysium.classList.remove('bg-primary');
-    };
+        if(pagina.includes('/pedidos/proveedores')){activos[5].classList.add('active');bg_navElysium('#3a1947');};
         if(pagina.includes('/Pagos'))activos[6].classList.add('active');
         
 
+    }
+
+    function bg_navElysium(bg_color){
+        const navElysium = document.getElementById('navElysium');
+            navElysium.style.background= bg_color;
+            navElysium.classList.remove('bg-primary');
     }
     
 });

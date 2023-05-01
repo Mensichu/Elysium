@@ -75,93 +75,85 @@ let rowId = null;
 
             // each entry here represents one column
             columnDefs: [
-                {headerName: "Id", 
-                        field: "id", hide: true
-                    },
+                
                 {headerName: "Tipo", 
                         field: "tipo",
-                        minWidth: 30,maxWidth:100
+                        minWidth: 150,maxWidth:200
                     },
-                {headerName: "Identidad",
-                        field: "identidad",sort: 'asc', floatingFilter:true, 
-                        width: 150
+                {headerName: "Categoria",
+                        field: "categoria",sort: 'asc', floatingFilter:true, 
+                        flex:1, minWidth: 150
                     },
-                {headerName: "Nombre", 
-                        field: "nombre", floatingFilter:true,
-                        flex: 1, minWidth: 150
+                {headerName: "Grupo", 
+                        field: "grupo", floatingFilter:true,
+                        minWidth: 150,maxWidth:150
                     },
-                {headerName: "Genero", 
-                        field: "genero", 
-                        minWidth: 20, maxWidth: 110}
+                {headerName: "Subgrupo", 
+                        field: "subgrupo", 
+                        minWidth: 150, maxWidth: 150}
 
             ],
 
-            // default col def properties get applied to all columns
-            defaultColDef: {sortable: true, 
-                            filter: 'agTextColumnFilter', 
-                            enableRowGroup:true,
-                            filterParams:{
-                                buttons: ["apply","reset"]
-                            },
-                            resizable: true,
-                            //autoSizeAllColumns: true
+                    // default col def properties get applied to all columns
+                    defaultColDef: {sortable: true, 
+                        filter: 'agTextColumnFilter', 
+                        enableRowGroup:true,
+                        filterParams:{
+                            buttons: ["apply","reset"]
                         },
+                        resizable: true,
+                        //autoSizeAllColumns: true
+                    },
 
-            getRowClass: (params) => {
-                if(params.data!== undefined){
+        getRowClass: (params) => {
+            if(params.data!== undefined){
 
-                    if(rowId === params.data.id){
+                if(rowId === params.data.id){
 
-                        params.node.setSelected(true);
-                        seleccionTabla(params.data.id,false);
-                        return clasesFila;
-                    }
-
+                    params.node.setSelected(true);
+                    seleccionTabla(params.data.id,false);
+                    return clasesFila;
                 }
-                return '';
-            },
 
-            onModelUpdated: (event) => {
-                if(true || rowId!==null){
-                    console.log('-----------------------------------------ON MODEL UPDATED');
-                    //console.log(event)
-                    //const selectedNodes = gridOptions.api.getSelectedNodes();
-                    //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
-                    
-                    clasesFila='cambioColor';
-                    gridOptions.api.redrawRows();
-                    
-                    
-                }
-            },
-            
-            getRowId: (params) => { return params.data.id; },
-
-            //Usa el ancho maximo disponible
-            //domLayout: 'autoHeight', Esto quita la virtualizacion y los setFocus
-            
-            rowHeight: 50, // altura de las filas en píxeles
-            headerHeight: 40, // altura del encabezado en píxeles
-            rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
-
-            rowGroupPanelShow: 'always',
-            //popupParent: document.body,
-            rowSelection: 'single', // allow rows to be selected
-            animateRows: true, // have rows animate to new positions when sorted
-
-            // example event handler
-            onCellClicked: params => {
-                if(params.data!== undefined){
-                    //console.log('cell was clicked', params.data);
-                    rowId = params.data.id;
-                    botonesModoNuevo(false);
-                    guardarBtn.disabled=false;
-                    seleccionTabla(rowId,true);
-
-                }else{
-                    guardarBtn.disabled=true;
-                }
             }
+            return '';
+        },
+
+        onModelUpdated: (event) => {
+            if(true || rowId!==null){
+                console.log('-----------------------------------------ON MODEL UPDATED');
+                //console.log(event)
+                //const selectedNodes = gridOptions.api.getSelectedNodes();
+                //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
+                
+                clasesFila='cambioColor';
+                gridOptions.api.redrawRows();
+                
+                
+            }
+        },
+        onCellValueChanged: (event) => {
+            // Aquí va el código que se ejecutará cuando cambie el valor de una celda
+            console.log('--------------------------------------------ON CELL VALUE CHANGED');
+            //clasesFila='cambioColor';
+            //gridOptions.api.redrawRows();
+        },
+
+        //getRowId: (params) => { return params.data.id; },
+
+        //Usa el ancho maximo disponible
+        //domLayout: 'autoHeight', Esto quita la virtualizacion y los setFocus
+
+        rowHeight: 50, // altura de las filas en píxeles
+        headerHeight: 40, // altura del encabezado en píxeles
+        rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
+
+        rowGroupPanelShow: 'always',
+        //popupParent: document.body,
+        rowSelection: 'single', // allow rows to be selected
+        animateRows: true, // have rows animate to new positions when sorted
+
+        
         };
 
         // get div to host the grid
@@ -169,8 +161,7 @@ let rowId = null;
         // new grid instance, passing in the hosting DIV and Grid Options
         var grid = new agGrid.Grid(eGridDiv, gridOptions);
 
-        const gridApi = gridOptions.api;
-        
+
         //gridOptions.api.sizeColumnsToFit();
         
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID: ACTUALIZACION Y NUEVA FILA
@@ -185,12 +176,10 @@ let rowId = null;
                     //una vez encontrado mostramos en el comboTipo dicho tipo
                     comboTipo.selectedIndex=i;
                 */
-                return [{ id: data.id,
-                            tipo: n==0? data.TipoDeIdentificacion.tipo.toUpperCase()
-                            :comboTipo.options[comboTipo.selectedIndex].textContent.toUpperCase(),//data.TipoDeIdentificacion.tipo.toUpperCase(), 
-                            identidad: data.identificacion.toUpperCase(), 
-                            nombre: data.apellidos_empresa.toUpperCase()+(data.nombres!=null?' '+data.nombres.toUpperCase():''), 
-                            genero: data.nombres!=null?(data.genero? 'M':'H'):'E'}];
+                return [{   tipo:       data.c1.toUpperCase(),
+                            categoria:  data.c2.toUpperCase(),
+                            grupo:      data.c3.toUpperCase(), 
+                            subgrupo:   data.c4.toUpperCase()}];
             
 
             }
@@ -234,17 +223,39 @@ let rowId = null;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
 
-        cargarTablaClientes();
-        async function cargarTablaClientes(){
+        cargarTablaCategorias();
+        async function cargarTablaCategorias(){
+            try{
+                
+                const data = await fetch('/categoriasAll')
+                .then(response => response.json());
+                
+                const categorias = clasificacionTabla(data);
+                //mediante un for vamos cargando fila por fila
+                for(i=0;i<categorias.length;i++){
+                    let newRow = datosAFilaGrid(categorias[i]);
+                    gridOptions.api.applyTransaction({ add: newRow });
+                }
+                
+                //pinCarga('success');
+            }catch(error){
+                console.log('Error al obtener los clientes:', error);
+                toast(error.message, "toastColorError");
+                pinCarga('fallo');
+
+            }
+
+            /*
             try{
                 //pinCarga('cargando');
                 // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/Clients')
+                const data = await fetch('/categorias')
                 .then(response => response.json());
-                const Clients = data;
+                const categorias = data;
+                console.log(categorias)
                 //mediante un for vamos cargando fila por fila
-                for(i=0;i<Clients.length;i++){
-                    let newRow = datosAFilaGrid(Clients[i],0);
+                for(i=0;i<categorias.length;i++){
+                    let newRow = datosAFilaGrid(categorias[i]);
                     gridOptions.api.applyTransaction({ add: newRow });
                 }
                 //pinCarga('success');
@@ -254,6 +265,7 @@ let rowId = null;
                 pinCarga('fallo');
 
             }
+            */
         }
 
 
@@ -547,14 +559,106 @@ let rowId = null;
         var btnPrueba = document.querySelector('#btnPrueba');
         btnPrueba.addEventListener('click', async function(e) {
             e.preventDefault();
-            const texto = document.getElementById('Datos-Identificacion').value
-            console.log(texto);
-            console.log(await clientesRepetidos(0, texto));
+            
+            try{
+                
+                const data = await fetch('/categoriasAll')
+                .then(response => response.json());
+
+                clasificacionTabla(data);
+                
+                //pinCarga('success');
+            }catch(error){
+                console.log('Error al obtener los clientes:', error);
+                toast(error.message, "toastColorError");
+                pinCarga('fallo');
+
+            }
+
+            
+            
 
         });
 
 
+        function clasificacionTabla(data){
+            let filas=[];
+            let c1=[],c2=[],c3=[],c4=[];
+            data.forEach(tipo =>{
+                if(null === tipo.parentCategoryId){
+                    c1.push({"id":tipo.id,"parentCategoryId":tipo.parentCategoryId,"name":tipo.name})
+                    
+                }
+            });
+            //console.log('Este es c1: ');
+            //console.log(c1);
+            let band=0;
+            c1.forEach(tipo =>{
+                data.forEach(categoria =>{
+                    if(categoria.parentCategoryId==tipo.id){
+                        c2.push({"id":categoria.id,"c1":categoria.parentCategoryId,"c1_name":tipo.name,"name":categoria.name})
+                        band=1;
+                    }
+                });
+                if(band==0){
+                    //console.log('No encontro ninguno de:');
+                    //console.log(tipo.name);
+                    filas.push({"c1":tipo.name,"c2":"","c3":"","c4":""})
+                }
+                band=0;
+            });
+            //console.log('Este es c2: ');
+            //console.log(c2);
+            band=0;
+            c2.forEach(categoria =>{
+                data.forEach(grupo =>{
+                    if(grupo.parentCategoryId==categoria.id){
+                        c3.push({"id":grupo.id,
+                                    "c2":grupo.parentCategoryId, "c2_name":categoria.name,
+                                    "c1":categoria.c1,"c1_name":categoria.c1_name,
+                                    "name":grupo.name})
+                        band=1;
+                    }
+                });
+                if(band==0){
+                    //console.log('No encontro ninguno de:');
+                    //console.log(categoria.name);
+                    filas.push({"c1":categoria.c1_name,"c2":categoria.name,"c3":"","c4":""})
+                }
+                band=0;
+            });
+            //console.log('Este es c3: ');
+            //console.log(c3);
+            band=0;
+            c3.forEach(grupo =>{
+                data.forEach(subgrupo =>{
+                    if(subgrupo.parentCategoryId==grupo.id){
+                        c4.push({"id":subgrupo.id,
+                                    "c3":subgrupo.parentCategoryId, "c3_name":grupo.name,
+                                    "c2":grupo.c2,"c2_name":grupo.c2_name,
+                                    "c1":grupo.c1,"c1_name":grupo.c1_name,
+                                    "name":subgrupo.name})
+                        band=1;
+                        filas.push({"c1":grupo.c1_name,"c2":grupo.c2_name,"c3":grupo.name,"c4":subgrupo.name})    
+                    }
+                });
+                if(band==0){
+                    //console.log('No encontro ninguno de:');
+                    //console.log(grupo.name);
+                    filas.push({"c1":grupo.c1_name,"c2":grupo.c2_name,"c3":grupo.name,"c4":""})
+                }
+                band=0;
+            });
+            //console.log('Este es c4: ');
+            //console.log(c4);
 
+            //console.log('ESTA ES LA TABLA FINAL:')
+            //console.log(filas);
+            return filas
+        }
+
+          
+          
     }
 });
 
