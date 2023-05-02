@@ -87,6 +87,10 @@ router.get('/vehiculos/autos',isAuthenticated, (req,res)=>{
     res.render('links/autos');
 });
 
+router.get('/productos', (req,res)=>{
+  res.render('links/productos/productos');
+});
+
 router.get('/productos/clasificacion', (req,res)=>{
   res.render('links/productos/clasificacion');
 });

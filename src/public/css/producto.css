@@ -1,0 +1,156 @@
+:root{
+  --ancho:200px;
+  --minAnchoDatosModelo:625px;
+
+  --color1:#264bb1;
+  --color2:#264bb1;
+  --borderColorGroup:#4138c5;
+  --colorHeaderCards: #464e66;
+  --colorBodyCards: #313b555e;
+  --backgroundColorGroup:#807a7a49;
+}
+
+  .labelsColor{
+    -webkit-text-stroke: 0.3px rgb(179, 179, 179);
+    color: white;
+    
+    
+  }
+
+  .btnColor{
+    background: var(--color1);
+    border-color: var(--color2);
+  }
+
+  .btnColor:hover {
+    background-color: var(--color2) !important;/* cambia a color rojo al hacer hover */
+  }
+
+  .form-check-input:checked {
+      background-color: var(--color1);
+      border-color: var(--color2);
+    }
+  
+
+    .formGroupBorder{
+        border: 1px dashed transparent;
+        background-color: var(--backgroundColorGroup);
+        
+    }
+  
+
+  
+  
+    .card .card-header {
+      background: var(--colorHeaderCards);
+
+    }
+  
+    .card .card-body {
+      background: transparent;
+      background-color: var(--colorBodyCards);
+      border-radius: 0 0 5px 5px;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      backdrop-filter: blur(10px);
+    }
+
+    .card{
+      background: transparent;
+    }
+  
+    
+/*                                               FONDO                    */
+
+body{
+  background: url('../img/gris\ 3.jfif');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+  
+  
+  /*                                               TABLA AG GRID                    */
+  
+  .ag-theme-alpine-dark .ag-row-selected {
+    /*background-color: var(--color1);*/
+  }
+
+  .ag-theme-alpine-dark .ag-row-hover {
+    /*background-color: var(--color2);*/
+  }
+
+  .datosModeloBody{
+    height: auto;
+    background-color: var(--colorBodyCards);
+    
+  }
+
+  
+
+  .tablaModeloBody{
+    height: 698px;
+    min-height: var(--minAnchoDatosModelo);
+    background-color: var(--colorBodyCards);
+  }
+  
+  .diseñoTablaGrid{
+    max-width: 98%;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  
+  /* Se agrega el scroll a la tabla */
+  .tabla-con-scroll {
+    height: 100%;
+    /*height: 500px;*/
+    overflow: auto;
+  }
+
+
+
+/*                                               MODAL                    */
+
+  .modal-content {
+    background-color: var(--colorBodyCards) !important;
+  }
+
+
+  .circuloOrig {
+    background-color: var(--colorBodyCards) !important;
+  }
+
+
+
+  .orientacionDivs {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .izquierda {
+    flex: none; /* Anula la propiedad "flex: 1" del padre */
+    margin-right: auto; /* Anula la propiedad "margin-left: auto" del padre */
+    margin-left: 0; /* Anula la propiedad "margin-right: 0" del padre */
+    width: 50%;
+
+}
+
+.anchoResp1{
+  display: block;
+}
+.anchoResp2{
+  display: none;
+}
+
+
+/* Si es mas alto que 1000px y mas ancho que 1000px*/
+@media (max-width: 1615px) {
+  .anchoResp1{
+    display: none;
+  }
+  .anchoResp2{
+    display: block;
+  }
+}

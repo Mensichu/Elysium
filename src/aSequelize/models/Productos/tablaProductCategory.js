@@ -1,5 +1,6 @@
 import {DataTypes} from 'sequelize'
 import {sequelize} from '../../database/database'
+import {tablaProducto} from '../Productos/tablaProducto'
 
 export const tablaProductCategory = sequelize.define('ProductCategory', {
   id: {
@@ -36,3 +37,7 @@ tablaProductCategory.hasMany(tablaProductCategory, {
   as: 'subcategories',
   foreignKey: 'parentCategoryId'
 });
+
+
+tablaProductCategory.hasMany(tablaProducto, { foreignKey: 'id_subgrupo' });
+tablaProducto.belongsTo(tablaProductCategory, { foreignKey: 'id_subgrupo' });

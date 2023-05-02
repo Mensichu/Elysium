@@ -16,7 +16,7 @@ export const tablaProveedor = sequelize.define('Proveedor',{
         type: DataTypes.STRING(20),
         allowNull: true
     },
-    proveedor:{
+    nom_proveedor:{
         type: DataTypes.STRING(200),
         allowNull: false
     },
@@ -70,7 +70,9 @@ export const tablaProveedor = sequelize.define('Proveedor',{
     }
 },{
     //habilita la creacion createAt updateAt
-    timestamps: true
+    timestamps: true,
+    // deshabilita la pluralización automática del nombre de la tabla
+    freezeTableName: true
 });
 
 // Establecer la relación

@@ -3,64 +3,155 @@
 window.addEventListener('load',()=>{
     //Solo se ejecuta cada vez que se recargue la pagina y sea Agentes
     const pagina = window.location.pathname;
-    if(pagina == '/pedidos/proveedores'){
-        console.log("Cargo proveedores");
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA PLACAS
+    if(pagina == '/productos'){
+        console.log("Cargo productos");
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA PRODUCTO
 
 document.querySelector('#fondo').classList.add('showNow');
 
 let rowId = null;
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO TIPO
-        const comboTipo = document.getElementById('comboTipo');
-        cargarComboTipo();
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO PROVEEDOR
+        const comboProveedor = document.getElementById('comboProveedor');
+        cargarComboProveedor();
         //Combo Tipo
-        async function cargarComboTipo(){
+        async function cargarComboProveedor(){
             try{
-                let tipos = await fetch('/comboTipos')
+                let proveedores = await fetch('/comboProveedor')
                 .then(response => response.json());
 
-                console.log("Numero de tipos en el combo tipo: "+tipos.length); 
+                console.log("Numero de tipos en el combo tipo: "+proveedores.length); 
                 //Creamos el elemento temporal
                 const fragmento = document.createDocumentFragment();
                 for(i=0;i<3;i++){
                     //Creamos la etiqueta option con su value y texto de cada marca al combobox de tipos
                     const item = document.createElement("OPTION");
-                    item.textContent = tipos[i].tipo.toUpperCase();
-                    item.value =tipos[i].id;
+                    item.textContent = proveedores[i].nom_proveedor.toUpperCase();
+                    item.value =proveedores[i].id;
                     fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
                 }
 
                 //Vaciamos el combo primero
-                for(i=comboTipo.options.length-1;i>=0;i--){
-                    comboTipo.remove(i);
+                for(i=comboProveedor.options.length-1;i>=0;i--){
+                    comboProveedor.remove(i);
                 }
 
                 //Se agrega al combobox comboMarca
-                comboTipo.appendChild(fragmento);
-                comboTipo.selectedIndex=1;
+                comboProveedor.appendChild(fragmento);
 
             }catch(error){
                 console.log('Error al obtener comboTipo:', error);
             }
         }
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CAMBIA CEDULA A RUC
 
-        const identificacionInput = document.getElementById('Datos-Identificacion');
-        identificacionInput.addEventListener('input',(event)=>{
-            if(comboTipo.selectedIndex == 1 && identificacionInput.value.length >10){
-                comboTipo.selectedIndex=0;
-            }
-            if(comboTipo.selectedIndex == 0 && identificacionInput.value.length <11){
-                comboTipo.selectedIndex=1;
-            }
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO SECCION
+const comboSeccion = document.getElementById('comboSeccion');
+cargarComboSeccion();
+//Combo Tipo
+async function cargarComboSeccion(){
+    try{
+        let seccion = await fetch('/comboSeccion')
+        .then(response => response.json());
+
+        console.log("Numero de tipos en el combo tipo: "+seccion.length); 
+        //Creamos el elemento temporal
+        const fragmento = document.createDocumentFragment();
+        for(i=0;i<3;i++){
+            //Creamos la etiqueta option con su value y texto de cada marca al combobox de tipos
+            const item = document.createElement("OPTION");
+            item.textContent = seccion[i].cod_seccion.toUpperCase()+':'+seccion[i].nom_seccion.toUpperCase();
+            item.value =seccion[i].id;
+            fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+        }
+
+        //Vaciamos el combo primero
+        for(i=comboSeccion.options.length-1;i>=0;i--){
+            comboSeccion.remove(i);
+        }
+
+        //Se agrega al combobox comboMarca
+        comboSeccion.appendChild(fragmento);
+        
+
+    }catch(error){
+        console.log('Error al obtener comboTipo:', error);
+    }
+}
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO Clasificacion
+        
+        //Funcion para cargar un combo dependiendo de su categoriaPadre
+        async function cargarCombo(combo, id){
+            try{
+                //const data = await fetch('/comboAutos/'+comboMarca.value)
+                const tipos = await fetch('/categorias/'+id)
+                .then(response => response.json());
+                //console.log("Numero de tipos en el combo tipo: "+tipos.length); 
+                //Creamos el elemento temporal
+                const fragmento = document.createDocumentFragment();
+                for(i=0;i<tipos.length;i++){
+                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de tipos
+                    const item = document.createElement("OPTION");
+                    item.textContent = tipos[i].name.toUpperCase();
+                    item.value =tipos[i].id;
+                    fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+                }
+
+                //Vaciamos el combo primero
+                for(i=combo.options.length-1;i>=0;i--){
+                    combo.remove(i);
+                }
+                if(tipos.length==0){
+                    const item = document.createElement("OPTION");
+                    item.textContent = 'No Aplica'
+                    item.value = 0;
+                    fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+                }
+                //Se agrega al combobox comboMarca
+                combo.appendChild(fragmento);
+                combo.selectedIndex=0;
+
+            }catch(error){
+                console.log('Error al obtener comboTipo:', error);
+            }
+        }
+
+        //Eventos listener click
+
+        const comboTipo = document.getElementById('comboTipo');
+        
+        const comboCategoria = document.getElementById('comboCategoria');
+        comboTipo.addEventListener('change',async ()=>{
+            await cargarCombo(comboCategoria,comboTipo.value);
+            await cargarCombo(comboGrupo,comboCategoria.value);
+            await cargarCombo(comboSubgrupo,comboGrupo.value);
         });
 
+        const comboGrupo = document.getElementById('comboGrupo');
+        comboCategoria.addEventListener('change',async ()=>{
+            await cargarCombo(comboGrupo,comboCategoria.value);
+            await cargarCombo(comboSubgrupo,comboGrupo.value);
+        });
+
+        const comboSubgrupo = document.getElementById('comboSubgrupo');
+        comboGrupo.addEventListener('change',async ()=>{
+            await cargarCombo(comboSubgrupo,comboGrupo.value);
+        });
+
+        //Carga inicial
+        cargarCombosClasificacion();
+        async function cargarCombosClasificacion(c1_id,c2_id,c3_id,c4_id){
+            await cargarCombo(comboTipo,-1);
+            await cargarCombo(comboCategoria,comboTipo.value);
+            await cargarCombo(comboGrupo,comboCategoria.value);
+            await cargarCombo(comboSubgrupo,comboGrupo.value);
+        }
 
 
-        //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID
         let clasesFila='';
 
         // configurar la instancia de ag-Grid
@@ -70,18 +161,18 @@ let rowId = null;
             columnDefs: [
                 {headerName: "Id", 
                         field: "id", hide: true
-                    },
-                {headerName: "Proveedor", 
-                    field: "nom_proveedor", floatingFilter:true,
-                    flex: 1, minWidth: 150
-                    },
-                {headerName: "Identidad",
-                    field: "identidad",sort: 'asc', floatingFilter:true, 
+                    },/*
+                {headerName: "Proveedor",
+                    field: "nom_proveedor",sort: 'asc', floatingFilter:true, 
                     width: 150
+                    },*/
+                {headerName: "Marca",
+                    field: "marca",sort: 'asc', floatingFilter:true, 
+                    width: 140
                     },
-                {headerName: "Tipo", 
-                        field: "tipo",
-                        minWidth: 30,maxWidth:100
+                {headerName: "Producto", 
+                    field: "nom_producto", floatingFilter:true,
+                    flex: 1, minWidth: 150
                     }
                 
             ],
@@ -184,11 +275,10 @@ let rowId = null;
                     //una vez encontrado mostramos en el comboTipo dicho tipo
                     comboTipo.selectedIndex=i;
                 */
-                return [{ id: data.id,
-                            tipo: n==0? data.TipoDeIdentificacion.tipo.toUpperCase()
-                            :comboTipo.options[comboTipo.selectedIndex].textContent.toUpperCase(),//data.TipoDeIdentificacion.tipo.toUpperCase(), 
-                            identidad: data.identificacion.toUpperCase(), 
-                            nom_proveedor: data.nom_proveedor.toUpperCase()}];
+                return [{   id: data.id,
+                            /*nom_proveedor:data.Proveedors[0].nom_proveedor.toUpperCase(),//data.TipoDeIdentificacion.tipo.toUpperCase(), */
+                            marca: data.marca.toUpperCase(), 
+                            nom_producto: data.nom_producto.toUpperCase()}];
             
 
             }
@@ -232,17 +322,17 @@ let rowId = null;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
 
-        cargarTablaClientes();
-        async function cargarTablaClientes(){
+        cargarTablaProductos();
+        async function cargarTablaProductos(){
             try{
                 //pinCarga('cargando');
                 // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/proveedores')
+                const data = await fetch('/productosTabla')
                 .then(response => response.json());
-                const Proveedores = data;
+                const Productos = data;
                 //mediante un for vamos cargando fila por fila
-                for(i=0;i<Proveedores.length;i++){
-                    let newRow = datosAFilaGrid(Proveedores[i],0);
+                for(i=0;i<Productos.length;i++){
+                    let newRow = datosAFilaGrid(Productos[i],0);
                     gridOptions.api.applyTransaction({ add: newRow });
                 }
                 //pinCarga('success');
@@ -282,7 +372,7 @@ let rowId = null;
                     comboTipo.disabled=true;
                 }
                 if(conectado()){
-                    const data = await fetch('/proveedor/'+id)
+                    const data = await fetch('/producto/'+id)
                     .then(response => {
                         if(!response.ok){
                             throw new Error('Servidor - '+response.status+': '+response.statusText);
@@ -291,7 +381,7 @@ let rowId = null;
                     });
                     // carga los datos de data en los combos y textos de "Datos del Modelo"
                     await cargarDatosDesdeSeleccion(data);
-                    validacionVaciar();
+                    //validacionVaciar();
                     if(mouse){
                         pinCarga('successFast')
                         inputCard.forEach(input => {
@@ -313,114 +403,149 @@ let rowId = null;
         //------------------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
 
         async function cargarDatosDesdeSeleccion(data){
-            var proveedor = data;
+            var producto = data;
             //console.log(data);
-            seleccionComboTipo(proveedor.tipo);
+            seleccionCombo(data.Proveedors[0].id,comboProveedor);
             //En la db esta todo en minusculas, pero en el front end esta en mayuscula
             
             //Cargamos el resto de datos
-            document.getElementById("Datos-Identificacion").value=proveedor.identificacion.toUpperCase();
-            document.getElementById("Datos-Nom-Proveedor").value=proveedor.nom_proveedor.toUpperCase();
-            document.getElementById("Datos-Representante").value=proveedor.representante.toUpperCase();
+            document.getElementById("Datos-Marca").value=producto.marca.toUpperCase();
+            document.getElementById("Datos-Nom-Producto").value=producto.nom_producto.toUpperCase();
+            document.getElementById("Datos-Nom-Impresion").value=producto.nom_impresion.toUpperCase();
             
-            //Cuenta: nombre y cuenta
-            const cuenta1_nombre = proveedor.cuenta1_nombre;
-            const cuenta1_numero = proveedor.cuenta1_numero;
-            const cuenta2_nombre = proveedor.cuenta2_nombre;
-            const cuenta2_numero = proveedor.cuenta2_numero;
+            //Clasificacion
+            console.log('Envio el subgrupo: '+producto.id_subgrupo)
+            const c = await cargarClasificacion(producto.id_subgrupo,true);
+            cargarCombos(c);
 
-            //Direccion y correo electronico
-            const direccion = proveedor.direccion;
-            const correo = proveedor.correo;
-            //Telefonos
-            const telefono1 = proveedor.telefono1;
-            const telefono2 = proveedor.telefono2;
-            const telefono3 = proveedor.telefono3;
-            const obs_placa = proveedor.obs_proveedor;
+            //Costo
+            document.getElementById("Datos-CostoSinIva").value=producto.costosiniva.toFixed(2);
+            document.getElementById("Datos-Iva").value=producto.iva.toFixed(2);
+            document.getElementById("Datos-CostoConIva").value=producto.costoconiva.toFixed(2);
+            //Ganancias
+            document.getElementById("Datos-G1").value=producto.porcentaje1;
+            document.getElementById("Datos-Pvp1").value=producto.pvp1.toFixed(2);
+            document.getElementById("Datos-G2").value=producto.porcentaje2;
+            document.getElementById("Datos-Pvp2").value=producto.pvp2.toFixed(2);
+            document.getElementById("Datos-G3").value=producto.porcentaje3;
+            document.getElementById("Datos-Pvp3").value=producto.pvp3.toFixed(2);
+            //Stock
+            document.getElementById("Datos-Cantidad").value=producto.cantidad.toFixed(2);
+            document.getElementById("Datos-Minimo").value=producto.minimo.toFixed(2);
+            
+            const obs_producto = producto.obs_prodcuto;
+            ocultarInputObs(obs_producto===null);
+            document.getElementById("Datos-Obs").value=  (obs_producto===null?'':obs_producto);
 
-            mostrarCuenta1(cuenta1_nombre!==null || cuenta1_numero!==null)
-            mostrarCuenta2(cuenta2_nombre!==null || cuenta2_numero!==null)
-            mostrarDireccion(direccion!==null);
-            mostrarCorreo(correo!==null);
-            mostrarInputTelefono1(telefono1!==null);
-            mostrarInputTelefono2(telefono2!==null);
-            mostrarInputTelefono3(telefono3!==null);
-            ocultarInputObs(obs_placa===null);
-
-            document.getElementById("Datos-Cuenta1-Nombre").value=(cuenta1_nombre===null?'':cuenta1_nombre.toUpperCase());
-            document.getElementById("Datos-Cuenta1-Numero").value=(cuenta1_numero===null?'':cuenta1_numero.toUpperCase());
-            document.getElementById("Datos-Cuenta2-Nombre").value=(cuenta2_nombre===null?'':cuenta2_nombre.toUpperCase());
-            document.getElementById("Datos-Cuenta2-Numero").value=(cuenta2_numero===null?'':cuenta2_numero.toUpperCase());
-
-            document.getElementById("Datos-Direccion").value=(direccion===null?'':direccion.toUpperCase());
-            document.getElementById("Datos-Correo").value=(correo===null?'':correo.toLowerCase());
-
-            document.getElementById("Datos-Telefono1").value=(telefono1===null?'':telefono1);
-            document.getElementById("Datos-Telefono2").value=(telefono2===null?'':telefono2);
-            document.getElementById("Datos-Telefono3").value=(telefono3===null?'':telefono3);
-
-            document.getElementById("Datos-Obs").value=  (obs_placa===null?'':obs_placa);
+            seleccionCombo(producto.id_seccion, comboSeccion);
         }
 
 
 
-
-        //-----------------------------------------------------Seteamos el comboTipo desde su Id
-        async function seleccionComboTipo(id_Tipo){
+        //Borrar fue reemplazado por seleccionCombo
+        //-----------------------------------------------------Seteamos el comboProveedor desde su Id
+        async function seleccionComboProveedor(id_proveedor){
             //ComboMarca es un elemento tipo select que almacena varios elementos tipo option
             //Buscamos en el comboMarca .value(id de cada marca) el que corresponda al id_marca del auto seleccionado
-            for(i=0;i<comboTipo.options.length;i++){
-                if(comboTipo.options[i].value == id_Tipo){
+            for(i=0;i<comboProveedor.options.length;i++){
+                if(comboProveedor.options[i].value == id_proveedor){
                     //una vez encontrado mostramos en el comboTipo dicho tipo
-                    comboTipo.selectedIndex=i;
+                    comboProveedor.selectedIndex=i;
                     break;
                 }
             }
         }
 
 
+        function seleccionCombo(id, combo){
+            //ComboMarca es un elemento tipo select que almacena varios elementos tipo option
+            //Buscamos en el comboMarca .value(id de cada marca) el que corresponda al id_marca del auto seleccionado
+            for(i=0;i<combo.options.length;i++){
+                if(combo.options[i].value == id){
+                    //una vez encontrado mostramos en el comboTipo dicho tipo
+                    combo.selectedIndex=i;
+                    return;
+                }
+            }
+            console.log('No encontre seleccionCombo');
+        }
+
+
+        async function cargarCombos(c){
+            console.log('Aqui esta c:')
+            console.log(c)
+            //Combo tipo
+            seleccionCombo(c[3].columna,comboTipo)
+            //Combo Categoria
+            await cargarCombo(comboCategoria,comboTipo.value);  //cargamos
+            seleccionCombo(c[2].columna,comboCategoria);        //Seteamos
+            //Combo Grupo
+            await cargarCombo(comboGrupo,comboCategoria.value);  //cargamos
+            seleccionCombo(c[1].columna,comboGrupo);        //Seteamos
+            //Combo Grupo
+            await cargarCombo(comboSubgrupo,comboGrupo.value);  //cargamos
+            seleccionCombo(c[0].columna,comboSubgrupo);        //Seteamos
+        }
+
+
+
+
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ OBTENER DATOS
         function obtenerDatos(){
             
-            const cuenta1Check= checkCuenta1.checked;
-            const cuenta2Check= checkCuenta2.checked;
-
-            const direccionCheck= checkDireccion.checked;
-            const correoCheck= checkCorreo.checked;
-
-            const telefono1Check= checkTelefono1.checked;
-            const telefono2Check= checkTelefono2.checked;
-            const telefono3Check= checkTelefono3.checked;
+            //const costoSinIvaCorregido = corregirFlotante(document.getElementById("Datos-Cilindraje").value)
             const noObs = document.getElementById('Datos-NoObs').checked
 
             const idSeleccionado = getSelectedRowId();
             const data = {
                 id: (idSeleccionado!==null)?idSeleccionado:0,// si es que el idSeleccionado no existe
-                identificacion: document.getElementById('Datos-Identificacion').value.trim(),
-                tipo: comboTipo.value,
-                nom_proveedor: document.getElementById('Datos-Nom-Proveedor').value.trim().toLowerCase(),
-                representante: document.getElementById('Datos-Representante').value.trim().toLowerCase(),
-                
-                cuenta1_nombre: cuenta1Check?document.getElementById('Datos-Cuenta1-Nombre').value.trim().toLowerCase():null,
-                cuenta1_numero: cuenta1Check?document.getElementById('Datos-Cuenta1-Numero').value.trim().toLowerCase():null,
-                cuenta2_nombre: cuenta2Check?document.getElementById('Datos-Cuenta2-Nombre').value.trim().toLowerCase():null,
-                cuenta2_numero: cuenta2Check?document.getElementById('Datos-Cuenta2-Numero').value.trim().toLowerCase():null,
 
-                
-                direccion: direccionCheck?document.getElementById('Datos-Direccion').value.trim().toLowerCase():null,
-                correo: correoCheck?document.getElementById('Datos-Correo').value.trim().toLowerCase():null,
-
-                telefono1: telefono1Check?document.getElementById('Datos-Telefono1').value.trim().toLowerCase():null,
-                telefono2: telefono2Check?document.getElementById('Datos-Telefono2').value.trim().toLowerCase():null,
-                telefono3: telefono3Check?document.getElementById('Datos-Telefono3').value.trim().toLowerCase():null,
-
-                obs_proveedor: noObs?null:document.getElementById('Datos-Obs').value.trim().toLowerCase(),
+                //Datos
+                id_proveedor: comboProveedor.value,
+                marca: document.getElementById('Datos-Marca').value.trim().toLowerCase(),
+                nom_producto: document.getElementById('Datos-Nom-Producto').value.trim().toLowerCase(),
+                nom_impresion: document.getElementById('Datos-Nom-Impresion').value.trim().toLowerCase(),
+                //Clasificacion
+                id_subgrupo: comboSubgrupo.value,
+                //Costo
+                costosiniva: document.getElementById('Datos-CostoSinIva').value,
+                iva: document.getElementById('Datos-Iva').value,
+                costoconiva: document.getElementById('Datos-CostoConIva').value,
+                //Precio
+                porcentaje1: document.getElementById('Datos-G1').value,
+                pvp1: document.getElementById('Datos-Pvp1').value,
+                porcentaje2: document.getElementById('Datos-G2').value,
+                pvp2: document.getElementById('Datos-Pvp2').value,
+                porcentaje3: document.getElementById('Datos-G3').value,
+                pvp3: document.getElementById('Datos-Pvp3').value,
+                //Stock
+                cantidad: document.getElementById('Datos-Cantidad').value,
+                minimo: document.getElementById('Datos-Minimo').value,
+                //Obs
+                obs_prodcuto: noObs?null:document.getElementById('Datos-Obs').value.trim().toLowerCase(),
+                //Seccion
+                id_seccion: comboSeccion.value
 
             };
             
             return data;
         }
+
+
+        function corregirFlotante(floatString){
+            try{
+                const numero = parseFloat(floatString);
+                const numCorregido = numero.toFixed(2);
+                return numCorregido
+            }catch(error){
+    
+                console.log(error.Error);
+            }
+            return floatString;
+        }
+
+
 
         function botonesModoNuevo(bloquear){
             const modoActual = nuevoBtn.textContent;
@@ -453,9 +578,9 @@ let rowId = null;
         function modoNuevoModelo(){
 
             if(nuevoBtn.textContent === 'Nuevo'){
-                vaciarDatosModelo()
+                vaciarDatosProducto()
                 botonesModoNuevo(true);
-                validacionVaciar();
+                //validacionVaciar();
                 return false;
             }else{
                 return true;
@@ -463,132 +588,27 @@ let rowId = null;
             }
         }
 
-        function vaciarDatosModelo(){
-            document.getElementById("Datos-Identificacion").value='';
-            document.getElementById("Datos-Nom-Proveedor").value='';
-            document.getElementById("Datos-Representante").value='';
-            document.getElementById("Datos-Cuenta1-Nombre").value='';
-            document.getElementById("Datos-Cuenta1-Numero").value='';
-            document.getElementById("Datos-Cuenta2-Nombre").value='';
-            document.getElementById("Datos-Cuenta2-Numero").value='';
-            document.getElementById("Datos-Direccion").value='';
-            document.getElementById("Datos-Correo").value='';
-            document.getElementById("Datos-Telefono1").value='';
-            document.getElementById("Datos-Telefono2").value='';
-            document.getElementById("Datos-Telefono3").value='';
+        function vaciarDatosProducto(){
+
+            document.getElementById("Datos-Marca").value='';
+            document.getElementById("Datos-Nom-Producto").value='';
+            document.getElementById("Datos-Nom-Impresion").value='';
+            document.getElementById("Datos-CostoSinIva").value='';
+            document.getElementById("Datos-Iva").value='';
+            document.getElementById("Datos-CostoConIva").value='';
+            document.getElementById("Datos-G1").value='';
+            document.getElementById("Datos-Pvp1").value='';
+            document.getElementById("Datos-G2").value='';
+            document.getElementById("Datos-Pvp2").value='';
+            document.getElementById("Datos-G3").value='';
+            document.getElementById("Datos-Pvp3").value='';
+            document.getElementById("Datos-Cantidad").value='';
+            document.getElementById("Datos-Minimo").value='';
             document.getElementById("Datos-Obs").value='';
             
-            mostrarCuenta1(false);
-            mostrarCuenta2(false);
-
-            mostrarDireccion(false);
-            mostrarCorreo(false);
-            mostrarInputTelefono1(false);
-            mostrarInputTelefono2(false);
-            mostrarInputTelefono3(false);
             ocultarInputObs(true);
         }
 
-
-        //----------------------------------------------------------------------Cuenta Nº 1
-        const checkCuenta1 = document.getElementById('tieneCuenta1');
-        checkCuenta1.addEventListener('change',()=>{
-            mostrarCuenta1(checkCuenta1.checked);
-        });
-        function mostrarCuenta1(mostrar){
-            checkCuenta1.checked=mostrar;
-            if(mostrar){
-                document.querySelector("#formCuenta1").style.display='block';
-            }else{
-                document.querySelector("#formCuenta1").style.display='none';
-            }
-        }
-
-        //----------------------------------------------------------------------Cuenta Nº 2
-        const checkCuenta2 = document.getElementById('tieneCuenta2');
-        checkCuenta2.addEventListener('change',()=>{
-            mostrarCuenta2(checkCuenta2.checked);
-        });
-        function mostrarCuenta2(mostrar){
-            checkCuenta2.checked=mostrar;
-            if(mostrar){
-                document.querySelector("#formCuenta2").style.display='block';
-            }else{
-                document.querySelector("#formCuenta2").style.display='none';
-            }
-        }
-
-
-        //----------------------------------------------------------------------DIRECCION
-        const checkDireccion = document.getElementById('tieneDireccion');
-        checkDireccion.addEventListener('change',()=>{
-            mostrarDireccion(checkDireccion.checked);
-        });
-        function mostrarDireccion(mostrar){
-            checkDireccion.checked=mostrar;
-            if(mostrar){
-                document.querySelector("#formDireccion").style.display='block';
-            }else{
-                document.querySelector("#formDireccion").style.display='none';
-            }
-        }
-
-
-        //----------------------------------------------------------------------CORREO
-        const checkCorreo = document.getElementById('tieneCorreo');
-        checkCorreo.addEventListener('change',()=>{
-            mostrarCorreo(checkCorreo.checked);
-        });
-        function mostrarCorreo(mostrar){
-            checkCorreo.checked=mostrar;
-            if(mostrar){
-                document.querySelector("#formCorreo").style.display='block';
-            }else{
-                document.querySelector("#formCorreo").style.display='none';
-            }
-        }
-
-
-
-        //----------------------------------------------------------------------TELEFONOS
-        const checkTelefono1 = document.getElementById('tieneTelefono1');
-        checkTelefono1.addEventListener('change',()=>{
-            mostrarInputTelefono1(checkTelefono1.checked);
-        });
-        function mostrarInputTelefono1(mostrar){
-            checkTelefono1.checked=mostrar;
-            if(mostrar){
-                document.querySelector("#formTelefono1").style.display='block';
-            }else{
-                document.querySelector("#formTelefono1").style.display='none';
-            }
-        }
-
-        const checkTelefono2 = document.getElementById('tieneTelefono2');
-        checkTelefono2.addEventListener('change',()=>{
-            mostrarInputTelefono2(checkTelefono2.checked);
-        });
-        function mostrarInputTelefono2(mostrar){
-            checkTelefono2.checked=mostrar;
-            if(mostrar){
-                document.querySelector("#formTelefono2").style.display='block';
-            }else{
-                document.querySelector("#formTelefono2").style.display='none';
-            }
-        }
-
-        const checkTelefono3 = document.getElementById('tieneTelefono3');
-        checkTelefono3.addEventListener('change',()=>{
-            mostrarInputTelefono3(checkTelefono3.checked);
-        });
-        function mostrarInputTelefono3(mostrar){
-            checkTelefono3.checked=mostrar;
-            if(mostrar){
-                document.querySelector("#formTelefono3").style.display='block';
-            }else{
-                document.querySelector("#formTelefono3").style.display='none';
-            }
-        }
 
         //----------------------------------------------------------------------OBSERVACIONES
 
@@ -663,9 +683,9 @@ let rowId = null;
                 pinCarga('cargando');
 
                 // Guardar cambios al modelo
-                if(btnConfirmar.value==1)modificarProvedor();
+                if(btnConfirmar.value==1)modificarProducto();
                 // Nuevo modelo
-                if(btnConfirmar.value==2)nuevoProveedor();
+                if(btnConfirmar.value==2)nuevoProducto();
 
             }
 
@@ -724,7 +744,7 @@ let rowId = null;
             }
         }
 
-        identificacionInput.addEventListener('keyup', async (event)=>{
+        /*identificacionInput.addEventListener('keyup', async (event)=>{
             
             if(identificacionInput.value.length>9){
                 presionarEnter(event);
@@ -739,7 +759,7 @@ let rowId = null;
             }
         });
 
-
+        */
 
 //-------------------------BTN modificar Modelo
 
@@ -749,7 +769,7 @@ let rowId = null;
         guardarBtn.addEventListener('click',(e)=>{
             e.preventDefault();
             if(rowId!== null){
-                if(validacionGuardar()){
+                if(true || validacionGuardar()){
                     //Construimos aqui el modal
                     construirModal(1);
                     //Una vez que tenemos las dimensiones construidas, lanzamos la animacion y mostramos
@@ -769,7 +789,7 @@ let rowId = null;
 
         nuevoBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if( (modoNuevoModelo() && validacionNuevo()) ){
+            if( (modoNuevoModelo() && true /*|| validacionNuevo()*/) ){
 
                 //Construimos aqui el modal
                 construirModal(2);
@@ -806,18 +826,19 @@ let rowId = null;
             return res.respuesta;
         }
 
-        //---------------------------------------------- NUEVO CLIENTE
+        //---------------------------------------------- NUEVO PRODUCTO
 
-        async function nuevoProveedor(){
+        async function nuevoProducto(){
             const data = obtenerDatos();
+            delete data.id;
             console.log(data)
-            if(await proveedoresRepetidos(0,data.identificacion,data.nom_proveedor)){
+            if(false && await productosRepetidos(0,data.identificacion,data.nom_proveedor)){
                 //Si devuelve true significa que encontro una identificacion
                 toast("El cliente ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{
                 pinCarga('cargando');
-                await fetch('/proveedor',{
+                await fetch('/producto',{
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers:{
@@ -837,7 +858,7 @@ let rowId = null;
                     botonesModoNuevo(false);
                     cerrarModal();
                     nuevaFilaAgGrid(res)
-                    toast("Proveedor agregado", "toastColorSuccess");
+                    toast("Producto agregado", "toastColorSuccess");
                     pinCarga('success');
                     rowId=res.id;
                 }).catch(error =>{
@@ -854,16 +875,16 @@ let rowId = null;
         }
 
 
-        //---------------------------------------------- MODIFICAR PROVEEDOR
-        async function modificarProvedor(){
+        //---------------------------------------------- MODIFICAR PRODUCTO
+        async function modificarProducto(){
             const data = obtenerDatos();
 
-            if(await proveedoresRepetidos(data.id,data.identificacion,data.nom_proveedor)){
+            if(false && await proveedoresRepetidos(data.id,data.identificacion,data.nom_proveedor)){
                 //Si devuelve true significa que encontro una proveedor igual
                 toast("El proveedor ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{
-                await fetch(`/proveedor/${data.id}`,{
+                await fetch(`/producto/${data.id}`,{
                     method: 'PUT',
                     body: JSON.stringify(data),
                     headers: {
@@ -879,7 +900,7 @@ let rowId = null;
                         cerrarModal();
                         const res = await response.json();
                         actualizarFilaAgGrid(res);
-                        toast("Proveedor guardado", "toastColorSuccess");
+                        toast("Producto actualizado!", "toastColorSuccess");
                         pinCarga('success');
                     }
                 }).catch(error =>{
@@ -892,43 +913,64 @@ let rowId = null;
             },300);
         }
 
-        //---------------------------------------------- WHATSAPP TELEFONOS
-        const btnWs1 = document.getElementById('btn-Ws1');
-        btnWs1.addEventListener('click',()=>{
-            const value = document.getElementById('Datos-Telefono1').value
-            messageToWs(value);
-        })
-        const btnWs2 = document.getElementById('btn-Ws2');
-        btnWs2.addEventListener('click',()=>{
-            const value = document.getElementById('Datos-Telefono2').value
-            messageToWs(value);
-        })
-        const btnWs3 = document.getElementById('btn-Ws3');
-        btnWs3.addEventListener('click',()=>{
-            const value = document.getElementById('Datos-Telefono3').value
-            messageToWs(value);
-        })
+
+
+        async function cargarClasificacion(id,mouse) {
+            try{
+                const inputCard = document.querySelectorAll('.form-group input');
+                const buttonCard = document.querySelectorAll('.form-group button');
+                if(mouse){
+                    pinCarga('cargando')
+                    inputCard.forEach(input => {
+                        input.disabled=true;
+                    });
+                    buttonCard.forEach(button => {
+                        button.disabled=true;
+                    });
+                    comboTipo.disabled=true;
+                }
+                if(conectado()){
+                    const data = await fetch('/clasificacion/'+id)
+                    .then(response => {
+                        if(!response.ok){
+                            throw new Error('Servidor - '+response.status+': '+response.statusText);
+                        }
+                        return response.json()
+                    });
+                    // carga los datos de data en los combos y textos de "Datos del Modelo"
+                    
+                    //validacionVaciar();
+                    if(mouse){
+                        pinCarga('successFast')
+                        inputCard.forEach(input => {
+                            input.disabled=false;
+                        });
+                        buttonCard.forEach(button => {
+                            button.disabled=false;
+                        });
+                        comboTipo.disabled=false;
+                    };
+                    return data;
+                }
+            }catch(error){
+                toast(error.message, "toastColorError");
+                console.log(error.message);
+                pinCarga('fallo');
+            }
+        }
 
 
 
-        //---------------------------------------------- COPY MAIL
-        const btnCopyMail = document.getElementById('btn-CopyMail');
-         btnCopyMail.addEventListener('click',()=>{
-             const inputCorreo = document.getElementById('Datos-Correo');
-             console.log(inputCorreo.value)
-             btnCopy(inputCorreo);
-         })
 
-        
 
         var btnPrueba = document.querySelector('#btnPrueba');
         btnPrueba.addEventListener('click', async function(e) {
             e.preventDefault();
             
-            const value = document.getElementById('Datos-Telefono1').value
-            messageToWs(value);
+            console.log(obtenerDatos());
 
         });
+        
 
 
         

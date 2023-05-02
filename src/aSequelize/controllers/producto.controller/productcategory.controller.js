@@ -38,7 +38,7 @@ export const createCategoriaHijo = async (req,res) =>{
 export const getCategorias = async (req,res) =>{
     try{
         let {id}= req.params;
-        id=id==0?null:id;
+        id=id==-1?null:id;
         const categorias = await tablaProductCategory.findAll({
             where: {parentCategoryId:id}
         })
@@ -48,7 +48,7 @@ export const getCategorias = async (req,res) =>{
     }
 }
 
-
+//NO la estoy usando
 import {sequelize} from '../../database/database'
 const { Sequelize } = require('sequelize');
 /*SELECT id, value, ROW_NUMBER() OVER (PARTITION BY id ORDER BY (SELECT NULL)) AS rn*/
@@ -96,7 +96,7 @@ export const getCategoriasTabla = async (req,res) =>{
 
 
 
-
+//Este devuelve todos los datos, mediante una funcion en el front End se ordena los datos.
 export const getCategoriasAll = async (req,res) =>{
     try{
         const categoriasAll = await tablaProductCategory.findAll({
@@ -107,5 +107,30 @@ export const getCategoriasAll = async (req,res) =>{
         res.json(categoriasAll);
     }catch(error){
         return res.status(500).json({ message: error.message });
+    }
+}
+
+
+
+export const getCategoriasById = async (req,res)=>{
+    const {id} = req.params;
+    
+    try{
+        let c=[];
+        let temp = id;
+        c.push({"columna":parseInt(temp)});
+        while (temp!==null) {
+            const categoria = await tablaProductCategory.findByPk(temp);
+            if(categoria!==null){
+                c.push({"columna":categoria.parentCategoryId})
+                temp = categoria.parentCategoryId;
+            }else{
+                res.status(404).json({message: 'categoriasById not found'});
+            }
+        }
+        res.json(c);
+    }
+    catch(error){
+        return res.status(500).json({message: error.message});
     }
 }

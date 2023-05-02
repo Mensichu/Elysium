@@ -19,6 +19,7 @@ import clientRoutes from './routes/client.routes';
 import registroPCRoutes from './routes/registroPC.routes';
 import proveedorRoutes from './routes/proveedor.routes';
 import clasificacionRoutes from './routes/clasificacion.routes'
+import productoRoutes from './routes/producto.routes'
 
 
 const app = express();
@@ -75,6 +76,7 @@ app.use(clientRoutes);
 app.use(registroPCRoutes);
 app.use(proveedorRoutes);
 app.use(clasificacionRoutes);
+app.use(productoRoutes);
 app.use(routes);
 
 // Public

@@ -24,7 +24,7 @@ const expresiones = {
 
         const idElementos =[
             "Datos-Identificacion",
-            "Datos-Proveedor",
+            "Datos-Nom-Proveedor",
             "Datos-Representante",
 
             "Datos-Cuenta1-Nombre",

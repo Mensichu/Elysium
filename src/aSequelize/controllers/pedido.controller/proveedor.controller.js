@@ -1,15 +1,14 @@
-
 import { tablaProveedor } from '../../models/Pedidos/tablaProveedor';
+import { tablaProducto } from '../../models/Productos/tablaProducto';
 import {tablaTipoDeIdentificacion} from '../../models/Sri/tablaTipoDeIdentificacion'
-
 
 export const createProveedor = async (req,res) =>{
     try{
-        const { tipo, identificacion, proveedor, representante, cuenta1_nombre, cuenta1_numero, cuenta2_nombre,
+        const { tipo, identificacion, nom_proveedor, representante, cuenta1_nombre, cuenta1_numero, cuenta2_nombre,
              cuenta2_numero, telefono1, telefono2, telefono3, direccion, correo, obs_proveedor } = req.body;
 
         const proveedorNew = await tablaProveedor.create(
-            { tipo, identificacion, proveedor, representante, cuenta1_nombre, cuenta1_numero, cuenta2_nombre,
+            { tipo, identificacion, nom_proveedor, representante, cuenta1_nombre, cuenta1_numero, cuenta2_nombre,
                 cuenta2_numero, telefono1, telefono2, telefono3, direccion, correo, obs_proveedor }
         );
 
@@ -49,7 +48,7 @@ export const getTablaProveedores = async (req,res) =>{
     try{
         const proveedores = await tablaProveedor.findAll({
             where:{estado:true},
-            attributes:['id','identificacion','proveedor','representante'],
+            attributes:['id','identificacion','nom_proveedor','representante'],
             include:[
                 {
                     model: tablaTipoDeIdentificacion,
@@ -57,7 +56,7 @@ export const getTablaProveedores = async (req,res) =>{
                 }
             ],
             
-            order:[['proveedor','ASC']]
+            order:[['nom_proveedor','ASC']]
         });
         res.json(proveedores);
     }catch(error){
@@ -79,6 +78,13 @@ export const getProveedor = async (req,res)=>{
                 {
                     model:tablaTipoDeIdentificacion,
                     attributes:['tipo']
+                },
+                {
+                    model: tablaProducto,
+                    attributes:['marca','nom_producto','cantidad','minimo'],
+                    through:{
+                        attributes:['costosiniva']
+                    }
                 }
         ]
         });
@@ -93,19 +99,34 @@ export const getProveedor = async (req,res)=>{
     
 }
 
+export const getComboProveedor = async (req,res) =>{
+    try{
+        const proveedores = await tablaProveedor.findAll({
+            where:{estado:true},
+            attributes:['id','nom_proveedor'],
+            
+            
+            order:[['nom_proveedor','ASC']]
+        });
+        res.json(proveedores);
+    }catch(error){
+        //500 es un error que indica q es error del servidor
+        return res.status(500).json({ message: error.message });
+    }
+}
 
 
 const { Op } = require("sequelize");
 
 export const getProveedoresRepetidos = async (req, res)=>{
-    const {id, identificacion,proveedor} = req.query;
+    const {id, identificacion,nom_proveedor} = req.query;
 
     try{
         const proveedorEncontrado = await tablaProveedor.findAll({
             where:{
                 [Op.or]:[
                     {   identificacion: {[Op.eq]: identificacion}   },
-                    {   proveedor: {[Op.eq]: proveedor}             }
+                    {   nom_proveedor: {[Op.eq]: nom_proveedor}             }
                 ],
                 
                 id: {

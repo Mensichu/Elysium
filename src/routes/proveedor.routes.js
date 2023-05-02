@@ -1,5 +1,6 @@
 import {Router} from 'express'
-import {createProveedor,updateProveedor,getProveedor,getTablaProveedores,getProveedoresRepetidos} from '../aSequelize/controllers/pedido.controller/proveedor.controller'
+import {createProveedor,updateProveedor,getProveedor,getTablaProveedores,getProveedoresRepetidos,
+    getComboProveedor} from '../aSequelize/controllers/pedido.controller/proveedor.controller'
 
 const router = Router();
 
@@ -11,6 +12,10 @@ router.get('/proveedor/:id',getProveedor);
 
 router.get('/proveedores',getTablaProveedores)
 
+router.get('/comboProveedor',getComboProveedor)
+
 router.get('/proveedoresRepetidos',getProveedoresRepetidos);
+
+
 
 export default router

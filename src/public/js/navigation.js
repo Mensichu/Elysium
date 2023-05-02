@@ -50,6 +50,7 @@ window.addEventListener('load',()=>{
         if(pagina.includes('/clientes')){activos[1].classList.add('active');bg_navElysium('#be7e15')};
         if(pagina.includes('/vehiculos/modelos')){activos[2].classList.add('active');bg_navElysium('#273f83')};
         if(pagina.includes('/vehiculos/placas')){activos[2].classList.add('active');bg_navElysium('#4a5472')};
+        if(pagina.includes('/productos')){activos[3].classList.add('active');bg_navElysium('#4a5472');};
         if(pagina.includes('/productos/clasificacion')){activos[3].classList.add('active');bg_navElysium('#9c342c');};
         if(pagina.includes('/Ventas'))activos[4].classList.add('active');
         if(pagina.includes('/Pedidos'))activos[5].classList.add('active');
