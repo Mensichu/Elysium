@@ -726,6 +726,76 @@ async function cargarComboSeccion(){
         
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
 
+        const costoSinIvaInput = document.getElementById('Datos-CostoSinIva');
+        const IvaInput = document.getElementById('Datos-Iva');
+        const costoConIvaInput = document.getElementById('Datos-CostoConIva');
+        const G1Input = document.getElementById('Datos-G1');
+        const G2Input = document.getElementById('Datos-G2');
+        const G3Input = document.getElementById('Datos-G3');
+        const pvp1Input = document.getElementById('Datos-Pvp1')
+        const pvp2Input = document.getElementById('Datos-Pvp2')
+        const pvp3Input = document.getElementById('Datos-Pvp3')
+
+        costoSinIvaInput.addEventListener('input',()=>{
+            //Calculo de iva y subtotalConIva
+            const subtotalSinIva = parseFloat(costoSinIvaInput.value)
+            const iva = 0.12*subtotalSinIva;
+            const subtotalConIva = (subtotalSinIva+iva).toFixed(2)
+                //Value
+                IvaInput.value = iva.toFixed(2);
+                costoConIvaInput.value=  subtotalConIva;
+            //Calculamos el pvp
+            calculoPVP(subtotalConIva);
+            
+        });
+
+        costoConIvaInput.addEventListener('input',()=>{
+            //Calculo de iva y subtotalSinIva
+            const subtotalConIva = parseFloat(costoConIvaInput.value).toFixed(2)
+            const subtotalSinIva = (subtotalConIva/1.12).toFixed(2)
+            const iva = subtotalConIva-subtotalSinIva;
+                //Value
+                IvaInput.value = iva.toFixed(2);
+                costoSinIvaInput.value=  subtotalSinIva;
+            //Calculamos el pvp
+            calculoPVP(subtotalConIva);
+            
+        });
+
+        G1Input.addEventListener('input',()=>{
+            const subtotalConIva = parseFloat(costoConIvaInput.value).toFixed(2)
+            calculoPVP(subtotalConIva);
+        });
+        G2Input.addEventListener('input',()=>{
+            const subtotalConIva = parseFloat(costoConIvaInput.value).toFixed(2)
+            calculoPVP(subtotalConIva);
+        });
+        G3Input.addEventListener('input',()=>{
+            const subtotalConIva = parseFloat(costoConIvaInput.value).toFixed(2)
+            calculoPVP(subtotalConIva);
+        });
+
+
+
+        function calculoPVP(subtotalConIva){
+            //Calculo de pvp1
+            const g1 = parseFloat(G1Input.value)
+            const pvp1 = subtotalConIva*(1+(g1/100))
+                //Value
+                pvp1Input.value = pvp1.toFixed(2);
+            //Calculo de pvp2
+            const g2 = parseFloat(G2Input.value)
+            const pvp2 = subtotalConIva*(1+(g2/100))
+                //Value
+                pvp2Input.value = pvp2.toFixed(2);
+            //Calculo de pvp3
+            const g3 = parseFloat(G3Input.value)
+            const pvp3 = subtotalConIva*(1+(g3/100))
+                //Value
+                pvp3Input.value = pvp3.toFixed(2);
+        }
+
+
         async function presionarEnter(event){
             if (event.code === "Enter" || event.which === 13) {
                 // Código a ejecutar al presionar Enter

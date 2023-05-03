@@ -145,6 +145,7 @@ body{
 }
 
 
+
 /* Si es mas alto que 1000px y mas ancho que 1000px*/
 @media (max-width: 1615px) {
   .anchoResp1{
@@ -152,5 +153,27 @@ body{
   }
   .anchoResp2{
     display: block;
+  }
+}
+
+
+/* SEPARACION DE DIVS*/
+
+
+.divClasProd > div{
+  padding: 4px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+}
+
+
+.spanClass{
+  display: block;
+}
+
+@media (max-width: 1255px) {
+  .spanClass{
+    display: none;
   }
 }
