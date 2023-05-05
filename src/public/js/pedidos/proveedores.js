@@ -1,11 +1,11 @@
 
-//Agentes
+//Proveedores
 window.addEventListener('load',()=>{
-    //Solo se ejecuta cada vez que se recargue la pagina y sea Agentes
+    //Solo se ejecuta cada vez que se recargue la pagina y sea Proveedores
     const pagina = window.location.pathname;
     if(pagina == '/pedidos/proveedores'){
         console.log("Cargo proveedores");
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA PLACAS
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA PROVEEDORES
 
 document.querySelector('#fondo').classList.add('showNow');
 
@@ -60,7 +60,7 @@ let rowId = null;
 
 
 
-        //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID
         let clasesFila='';
 
         // configurar la instancia de ag-Grid
@@ -114,15 +114,9 @@ let rowId = null;
             onModelUpdated: (event) => {
                 if(true || rowId!==null){
                     console.log('-----------------------------------------CHINGONNKNKN');
-                    //console.log(event)
-                    //const selectedNodes = gridOptions.api.getSelectedNodes();
-                    //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
                     
                     clasesFila='cambioColor';
                     gridOptions.api.redrawRows();
-                    
-                    //botonesModoNuevo(false);
-                    //guardarBtn.disabled=true;
                     
                 }
             },
@@ -179,11 +173,7 @@ let rowId = null;
             console.log('datosAFilaGrid')
             //console.log(parseFloat(data.Auto.cilindraje));
             if (gridOptions.api) {
-                /*
-                comboTipo.options[i].value == id_Tipo){
-                    //una vez encontrado mostramos en el comboTipo dicho tipo
-                    comboTipo.selectedIndex=i;
-                */
+
                 return [{ id: data.id,
                             tipo: n==0? data.TipoDeIdentificacion.tipo.toUpperCase()
                             :comboTipo.options[comboTipo.selectedIndex].textContent.toUpperCase(),//data.TipoDeIdentificacion.tipo.toUpperCase(), 
@@ -232,8 +222,8 @@ let rowId = null;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
 
-        cargarTablaClientes();
-        async function cargarTablaClientes(){
+        cargarTablaProveedores();
+        async function cargarTablaProveedores(){
             try{
                 //pinCarga('cargando');
                 // Hace una llamada fetch y trae el arreglo de datos para la tabla
@@ -289,7 +279,7 @@ let rowId = null;
                         }
                         return response.json()
                     });
-                    // carga los datos de data en los combos y textos de "Datos del Modelo"
+                    // carga los datos de data en los combos y textos de "Datos del Proveedor"
                     await cargarDatosDesdeSeleccion(data);
                     validacionVaciar();
                     if(mouse){
@@ -310,7 +300,7 @@ let rowId = null;
             }
         }
 
-        //------------------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
+        //------------------------------------------------------------------------------------Cargar Datos a DATOS DEL PROVEEDOR
 
         async function cargarDatosDesdeSeleccion(data){
             var proveedor = data;
@@ -368,7 +358,6 @@ let rowId = null;
         //-----------------------------------------------------Seteamos el comboTipo desde su Id
         async function seleccionComboTipo(id_Tipo){
             //ComboMarca es un elemento tipo select que almacena varios elementos tipo option
-            //Buscamos en el comboMarca .value(id de cada marca) el que corresponda al id_marca del auto seleccionado
             for(i=0;i<comboTipo.options.length;i++){
                 if(comboTipo.options[i].value == id_Tipo){
                     //una vez encontrado mostramos en el comboTipo dicho tipo
@@ -434,7 +423,7 @@ let rowId = null;
                 bg_new.classList.add('bg_new');
                 nuevoBtn.classList.add('btn-success');
                 nuevoBtn.classList.remove('btn-outline-success');
-                toast("Ingrese la nueva placa a agregar", "toastColorInfo");
+                toast("Ingrese el nuevo proveedor a agregar", "toastColorInfo");
             }else if(!bloquear && modoActual!='Nuevo'){
                 //Desbloqueado
                 //mostrarTextoModelo(false);
@@ -806,14 +795,15 @@ let rowId = null;
             return res.respuesta;
         }
 
-        //---------------------------------------------- NUEVO CLIENTE
+        //---------------------------------------------- NUEVO PROVEEDOR
 
         async function nuevoProveedor(){
             const data = obtenerDatos();
+            delete data.id;
             console.log(data)
             if(await proveedoresRepetidos(0,data.identificacion,data.nom_proveedor)){
-                //Si devuelve true significa que encontro una identificacion
-                toast("El cliente ya existe!", "toastColorError");
+                //Si devuelve true significa que encontro un proveedor igual
+                toast("El proveedor ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{
                 pinCarga('cargando');
@@ -833,7 +823,6 @@ let rowId = null;
                 })
                 .then(async res =>{
                     data.id = res.id
-                    //await cambioComboMarca(true);
                     botonesModoNuevo(false);
                     cerrarModal();
                     nuevaFilaAgGrid(res)
@@ -859,7 +848,7 @@ let rowId = null;
             const data = obtenerDatos();
 
             if(await proveedoresRepetidos(data.id,data.identificacion,data.nom_proveedor)){
-                //Si devuelve true significa que encontro una proveedor igual
+                //Si devuelve true significa que encontro un proveedor igual
                 toast("El proveedor ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{

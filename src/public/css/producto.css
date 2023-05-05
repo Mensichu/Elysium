@@ -177,3 +177,18 @@ body{
     display: none;
   }
 }
+
+/* Desactiva las flechas para incrementar y decrementar el input number */
+/* para chrome y safari */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/*
+para firefox
+input[type=number] {
+  -moz-appearance: textfield;
+}
+*/

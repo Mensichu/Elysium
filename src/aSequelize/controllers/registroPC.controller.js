@@ -43,7 +43,7 @@ export const getRegistro = async (req,res)=>{
         if (client!==null){
             res.json(client);
         }else{
-            res.status(404).json({message: 'client not found'});
+            res.status(404).json({message: 'registro Placa Cliente not found'});
         }
     }catch(error){
         return res.status(500).json({message:error.message});

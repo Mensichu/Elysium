@@ -1,23 +1,20 @@
 const expresiones = {
     
-    nombres: /^[a-zA-Z0-9À-ÿ\s]{1,200}$/, // Letras y espacios, pueden llevar acentos.
-    apellidos: /^[a-zA-Z0-9À-ÿ\s\.\-\_\'\"]{1,200}$/, // Letras y espacios, pueden llevar acentos.
-    password: /^.{4,12}$/, // 4 a 12 digitos.
-    correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-    direccion: /^[a-zA-Z0-9À-ÿ\s\.\,\-\_\:]{1,100}$/, // Letras y espacios, pueden llevar acentos.
-    telefono: /^[a-zA-Z0-9À-ÿ\s]{1,30}$/, // Letras y espacios, pueden llevar acentos.
-    
-
     identificacion: /^[0-9]{10,15}$/, // Letras, numeros 
+    apellidos: /^[a-zA-Z0-9À-ÿ\s\.\-\_\'\"]{1,200}$/, // Letras y espacios, pueden llevar acentos.
+    nombres: /^[a-zA-Z0-9À-ÿ\s]{1,200}$/, // Letras y espacios, pueden llevar acentos.
+    direccion: /^[a-zA-Z0-9À-ÿ\s\.\,\-\_\:]{1,100}$/, // Letras y espacios, pueden llevar acentos.
+    correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+    telefono: /^[a-zA-Z0-9À-ÿ\s]{1,30}$/, // Letras y espacios, pueden llevar acentos.
+    //password: /^.{4,12}$/, // 4 a 12 digitos.
     observacion: /^[a-zA-Z0-9\ \.\-\n]{1,200}$/, // Letras, numeros 
-    //observacion: /^(?:[a-zA-Z0-9.-]{1,50})?$/, // Letras, numeros 
 
 
 }
 
 
 
-//---------------------------------------------------------------VEHICULOS
+//---------------------------------------------------------------CLIENTES
 
         const idElementos =[
             "Datos-Identificacion",
@@ -76,10 +73,6 @@ const expresiones = {
                 case 'Telefono3':
                     const tieneTelef3 = !document.querySelector("#tieneTelefono3").checked;
                     return tieneTelef3?true:validarCampo(elemento,expresiones.telefono);
-
-                case 'usar':
-                    const noTieneClave = document.querySelector("#Datos-NoClave").checked;
-                    return noTieneClave?true:validarCampo(elemento,expresiones.clave);
 
                 case 'Observacion':
                     const noTieneObs = document.querySelector("#Datos-NoObs").checked;
@@ -178,18 +171,40 @@ const expresiones = {
             return val1&&val2&&val3;
         }
 
-
+        /*
         function validacionDatos(){
             let validado= true;
             idElementos.forEach((idElemento)=>{
                 let elemento = document.getElementById(idElemento);
-                //Datos no requiere validar Alias para guardar o nuevo
+                //Datos no requiere validar Identificacion para guardar o nuevo
                 if(elemento.name!='Identificacion' && !validarClients(elemento)) {
                     toast("Ingrese correctamente el "+elemento.name+"!", "toastColorError");
                     validado = false;
                 }
 
             });
+            return validado;
+        }
+        */
+       
+        function validacionDatos(){
+            let validado= true;
+            let band =0;
+            let mensaje ="";
+            idElementos.forEach((idElemento)=>{
+                let elemento = document.getElementById(idElemento);
+                
+                if(elemento.name!='Identificacion' && !validarClients(elemento)) {
+                    mensaje = mensaje +' - '+elemento.name+''
+                    band=1;
+                }
+        
+            });
+            if(band==1){
+                toast("Ingrese correctamente los sgts. campos: \n"+mensaje+"!", "toastColorError");
+                validado = false;
+                band=0;
+            }
             return validado;
         }
 

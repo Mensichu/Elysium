@@ -17,22 +17,13 @@ function isAuthenticated(req,res,next){
   res.redirect('/login');
 }
 
-//*/
-
-
-
-
-//*/
-
-
-
 //Login para registrarse
 router.post('/register', passport.authenticate('local-signup', {
   successRedirect: '/',
   failureRedirect: '/register',
   passReqToCallback:true
 }));
-//*/
+
 
 router.post('/login', passport.authenticate('local-signin', {
     successRedirect: '/',
@@ -42,7 +33,7 @@ router.post('/login', passport.authenticate('local-signin', {
 
 
 
-  
+
 router.get('/register', (req,res)=>{
   res.render('register');
 });
@@ -79,7 +70,7 @@ router.get('/vehiculos/modelos',isAuthenticated, (req,res)=>{
     res.render('links/vehiculos/modelos');
 });
 
-router.get('/vehiculos/placas',isAuthenticated, (req,res)=>{
+router.get('/vehiculos/placas', (req,res)=>{
     res.render('links/vehiculos/placas');
 });
 

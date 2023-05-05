@@ -4,12 +4,9 @@ import {tablaTipoDeIdentificacion} from '../../models/Sri/tablaTipoDeIdentificac
 
 export const createProveedor = async (req,res) =>{
     try{
-        const { tipo, identificacion, nom_proveedor, representante, cuenta1_nombre, cuenta1_numero, cuenta2_nombre,
-             cuenta2_numero, telefono1, telefono2, telefono3, direccion, correo, obs_proveedor } = req.body;
-
+        
         const proveedorNew = await tablaProveedor.create(
-            { tipo, identificacion, nom_proveedor, representante, cuenta1_nombre, cuenta1_numero, cuenta2_nombre,
-                cuenta2_numero, telefono1, telefono2, telefono3, direccion, correo, obs_proveedor }
+            req.body
         );
 
         res.json(proveedorNew);
@@ -26,9 +23,7 @@ export const updateProveedor = async (req,res)=>{
     try{
         const proveedor = await tablaProveedor.findByPk(id);
         if(proveedor!==null){
-            //Al ser los mismos nombres de parametros se usa auto = req.body
-            //si solo paso los campos que quiero actualizar el solo actualizo esos campos
-            //auto.set(req.body) No deseo actualizar modelo y marca
+
             proveedor.set(req.body);
 
             await proveedor.save();
@@ -43,28 +38,6 @@ export const updateProveedor = async (req,res)=>{
         return res.status(500).json({message: error.message});
     }
 }
-
-export const getTablaProveedores = async (req,res) =>{
-    try{
-        const proveedores = await tablaProveedor.findAll({
-            where:{estado:true},
-            attributes:['id','identificacion','nom_proveedor','representante'],
-            include:[
-                {
-                    model: tablaTipoDeIdentificacion,
-                    attributes: ['tipo'],
-                }
-            ],
-            
-            order:[['nom_proveedor','ASC']]
-        });
-        res.json(proveedores);
-    }catch(error){
-        //500 es un error que indica q es error del servidor
-        return res.status(500).json({ message: error.message });
-    }
-}
-
 
 export const getProveedor = async (req,res)=>{
     const {id} = req.params;
@@ -98,6 +71,28 @@ export const getProveedor = async (req,res)=>{
     }
     
 }
+
+export const getTablaProveedores = async (req,res) =>{
+    try{
+        const proveedores = await tablaProveedor.findAll({
+            where:{estado:true},
+            attributes:['id','identificacion','nom_proveedor','representante'],
+            include:[
+                {
+                    model: tablaTipoDeIdentificacion,
+                    attributes: ['tipo'],
+                }
+            ],
+            
+            order:[['nom_proveedor','ASC']]
+        });
+        res.json(proveedores);
+    }catch(error){
+        //500 es un error que indica q es error del servidor
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 
 export const getComboProveedor = async (req,res) =>{
     try{

@@ -5,7 +5,7 @@ import {tablaProductCategory} from '../../models/Productos/tablaProductCategory'
 import {tablaRegistroProveedorProducto} from '../../models/Productos/tablaRegistroProveedorProducto';
 
 
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CATEGORIAS
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PRODUCTOS
 
 
 export const createProducto = async (req,res) =>{
@@ -31,9 +31,7 @@ export const updateProducto = async (req,res)=>{
     try{
         const producto = await tablaProducto.findByPk(id);
         if(producto!==null){
-            //Al ser los mismos nombres de parametros se usa auto = req.body
-            //si solo paso los campos que quiero actualizar el solo actualizo esos campos
-            //auto.set(req.body) No deseo actualizar modelo y marca
+
             producto.set(req.body);
 
             await producto.save();
@@ -49,21 +47,11 @@ export const updateProducto = async (req,res)=>{
     }
 }
 
-export const createSeccion = async (req,res) =>{
-    try{
-        const seccion = await tablaProductoSeccion.create(req.body);
-        //Agregamos la relacion del proveedor con el producto
-        
-        res.json(seccion);
-    }catch(error){
-        return res.status(500).json({ message: error.message });
-    }
-}
-
 
 export const getProducto = async (req,res)=>{
     const {id} = req.params;
     try{
+        //obtenemos un producto mediante su id
         const producto = await tablaProducto.findOne({
             where:{id},
             attributes:{
@@ -74,7 +62,7 @@ export const getProducto = async (req,res)=>{
                     model:tablaProveedor,
                     attributes:['id','nom_proveedor'],
                     //excluye los atributos de la tablaProveedorProducto relacional
-                    through: { attributes: [] }, // Exclude junction table attributes
+                    //through: { attributes: [] }, // Exclude junction table attributes
                     
                 },
                 {
@@ -102,7 +90,6 @@ export const getProducto = async (req,res)=>{
 }
 
 
-//Este devuelve todos los datos, mediante una funcion en el front End se ordena los datos.
 export const getProductos = async (req,res) =>{
     try{
         const productos = await tablaProducto.findAll({
@@ -126,8 +113,56 @@ export const getProductos = async (req,res) =>{
 }
 
 
+export const getComboProductos = async (req,res) =>{
+    const {id} = req.params;
+    try{
+        const productos = await tablaProducto.findAll({
+            where:{id_subgrupo:id},
+            attributes: ['id','nom_producto','porcentaje1','porcentaje2','porcentaje3']
+            
+        });
+        res.json(productos);
+    }catch(error){
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+
+//No se usa
+const { Op } = require("sequelize");
+
+export const getProductoSubgrupo = async (req,res) =>{
+    const listaIds = JSON.parse(req.query.ids);
+    try{
+        const productos = await tablaProducto.findAll({
+            where: {
+                id_subgrupo: {
+                  [Op.in]: listaIds
+                }
+            },
+            attributes:['id','nom_producto','id_subgrupo'],
+        });
+        res.json(productos);
+    }catch(error){
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+export const createSeccion = async (req,res) =>{
+    try{
+        //Cremos una nueva seccion de la empresa
+        const seccion = await tablaProductoSeccion.create(req.body);
+        
+        res.json(seccion);
+    }catch(error){
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+
 export const getComboSeccion = async (req,res) =>{
     try{
+        //Devuelve todas las secciones para ser mostradas en el combo
         const seccion = await tablaProductoSeccion.findAll({
             attributes:['id','cod_seccion','nom_seccion'],
             

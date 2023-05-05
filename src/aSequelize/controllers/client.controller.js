@@ -31,9 +31,7 @@ export const updateClient = async (req,res)=>{
     try{
         const client = await tablaCliente.findByPk(id);
         if(client!==null){
-            //Al ser los mismos nombres de parametros se usa auto = req.body
-            //si solo paso los campos que quiero actualizar el solo actualizo esos campos
-            //auto.set(req.body) No deseo actualizar modelo y marca
+
             client.set(req.body);
 
             await client.save();
@@ -41,7 +39,7 @@ export const updateClient = async (req,res)=>{
             res.json(client);
             
         }else{
-            res.status(404).json({message: 'placa not found'});
+            res.status(404).json({message: 'client not found'});
         }
     }
     catch(error){

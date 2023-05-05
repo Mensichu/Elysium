@@ -1,11 +1,11 @@
 
 //Clientes
 window.addEventListener('load',()=>{
-    //Solo se ejecuta cada vez que se recargue la pagina y sea Agentes
+    //Solo se ejecuta cada vez que se recargue la pagina y sea Clientes
     const pagina = window.location.pathname;
     if(pagina == '/clientes'){
         console.log("Cargo clientes");
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA PLACAS
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA CLIENTES
 
 document.querySelector('#fondo').classList.add('showNow');
 
@@ -24,7 +24,7 @@ let rowId = null;
                 //Creamos el elemento temporal
                 const fragmento = document.createDocumentFragment();
                 for(i=0;i<3;i++){
-                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de tipos
+                    //Creamos la etiqueta option con su value y texto de cada tipo al combobox de tipos
                     const item = document.createElement("OPTION");
                     item.textContent = tipos[i].tipo.toUpperCase();
                     item.value =tipos[i].id;
@@ -122,9 +122,6 @@ let rowId = null;
             onModelUpdated: (event) => {
                 if(true || rowId!==null){
                     console.log('-----------------------------------------ON MODEL UPDATED');
-                    //console.log(event)
-                    //const selectedNodes = gridOptions.api.getSelectedNodes();
-                    //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
                     
                     clasesFila='cambioColor';
                     gridOptions.api.redrawRows();
@@ -137,8 +134,7 @@ let rowId = null;
             onCellValueChanged: (event) => {
                 // Aquí va el código que se ejecutará cuando cambie el valor de una celda
                 console.log('--------------------------------------------ON CELL VALUE CHANGED');
-                //clasesFila='cambioColor';
-                //gridOptions.api.redrawRows();
+
             },
 
             getRowId: (params) => { return params.data.id; },
@@ -184,21 +180,16 @@ let rowId = null;
 
         //---------------------------------------------------------------------Convierte los datos en una fila para AG-GRID
         function datosAFilaGrid(data,n) {
-            //console.log(parseFloat(data.Auto.cilindraje));
+
             if (gridOptions.api) {
-                /*
-                comboTipo.options[i].value == id_Tipo){
-                    //una vez encontrado mostramos en el comboTipo dicho tipo
-                    comboTipo.selectedIndex=i;
-                */
+
                 return [{ id: data.id,
                             tipo: n==0? data.TipoDeIdentificacion.tipo.toUpperCase()
-                            :comboTipo.options[comboTipo.selectedIndex].textContent.toUpperCase(),//data.TipoDeIdentificacion.tipo.toUpperCase(), 
+                            :comboTipo.options[comboTipo.selectedIndex].textContent.toUpperCase(),
                             identidad: data.identificacion.toUpperCase(), 
                             nombre: data.apellidos_empresa.toUpperCase()+(data.nombres!=null?' '+data.nombres.toUpperCase():''), 
                             genero: data.nombres!=null?(data.genero? 'M':'H'):'E'}];
             
-
             }
         }
 
@@ -297,7 +288,7 @@ let rowId = null;
                         }
                         return response.json()
                     });
-                    // carga los datos de data en los combos y textos de "Datos del Modelo"
+                    // carga los datos de data en los combos y textos de "Datos del Cliente
                     await cargarDatosDesdeSeleccion(data);
                     validacionVaciar();
                     if(mouse){
@@ -318,7 +309,7 @@ let rowId = null;
             }
         }
 
-        //------------------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
+        //------------------------------------------------------------------------------------Cargar Datos a DATOS DEL CLIENTE
 
         async function cargarDatosDesdeSeleccion(data){
             var client = data;
@@ -372,8 +363,7 @@ let rowId = null;
 
         //-----------------------------------------------------Seteamos el comboTipo desde su Id
         async function seleccionComboTipo(id_Tipo){
-            //ComboMarca es un elemento tipo select que almacena varios elementos tipo option
-            //Buscamos en el comboMarca .value(id de cada marca) el que corresponda al id_marca del auto seleccionado
+
             for(i=0;i<comboTipo.options.length;i++){
                 if(comboTipo.options[i].value == id_Tipo){
                     //una vez encontrado mostramos en el comboTipo dicho tipo
@@ -425,8 +415,6 @@ let rowId = null;
             const bg_new = document.getElementById('datosModeloCard')
             if(bloquear && modoActual!='Agregar'){
                 //Bloqueado
-                //mostrarTextoModelo(true);
-                //guardarNomAutoBtn.disabled=true;
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Agregar';
                 bg_new.classList.add('bg_new');
@@ -435,7 +423,6 @@ let rowId = null;
                 toast("Ingrese la nueva placa a agregar", "toastColorInfo");
             }else if(!bloquear && modoActual!='Nuevo'){
                 //Desbloqueado
-                //mostrarTextoModelo(false);
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Nuevo';
                 bg_new.classList.remove('bg_new');
@@ -719,7 +706,7 @@ let rowId = null;
 
 
 
-//-------------------------BTN modificar Modelo
+//-------------------------BTN modificar Cliente
 
         const guardarBtn = document.getElementById("btn-Guardar");
 
@@ -741,7 +728,7 @@ let rowId = null;
 
 
 
-//-------------------------BTN nuevo Modelo
+//-------------------------BTN nuevo Cliente
 
         const nuevoBtn = document.getElementById("btn-Nuevo");
 
@@ -763,7 +750,7 @@ let rowId = null;
 
 
 
-        //--------------------------------------------- PLACAS REPETIDOS
+        //--------------------------------------------- CLIENTES REPETIDOS
 
         async function clientesRepetidos(id, identificacion){
             //No se usa pinCarga cargando
@@ -815,7 +802,7 @@ let rowId = null;
                     botonesModoNuevo(false);
                     cerrarModal();
                     nuevaFilaAgGrid(res)
-                    toast("Modelo agregado", "toastColorSuccess");
+                    toast("Cliente agregado", "toastColorSuccess");
                     pinCarga('success');
                     rowId=res.id;
                 }).catch(error =>{

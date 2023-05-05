@@ -1,20 +1,14 @@
 const expresiones = {
     
-    representante: /^[a-zA-Z0-9À-ÿ\s]{1,200}$/, // Letras y espacios, pueden llevar acentos.
+    identificacion: /^[0-9]{10,15}$/, // Letras, numeros 
     proveedor: /^[a-zA-Z0-9À-ÿ\s\.\-\_\'\"]{1,200}$/, // Letras y espacios, pueden llevar acentos.
-    password: /^.{4,12}$/, // 4 a 12 digitos.
-    correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-    direccion: /^[a-zA-Z0-9À-ÿ\s\.\,\-\_\:]{1,100}$/, // Letras y espacios, pueden llevar acentos.
-    telefono: /^[a-zA-Z0-9À-ÿ\s]{1,30}$/, // Letras y espacios, pueden llevar acentos.
-
+    representante: /^[a-zA-Z0-9À-ÿ\s]{1,200}$/, // Letras y espacios, pueden llevar acentos.
     cuenta_nombre: /^[a-zA-Z0-9À-ÿ\s\.\-\_\'\"]{1,30}$/, // Letras y espacios, pueden llevar acentos.
     cuenta_numero: /^[a-zA-Z0-9À-ÿ\s\.\-\_\'\"]{1,30}$/, // Letras y espacios, pueden llevar acentos.
-    
-
-    identificacion: /^[0-9]{10,15}$/, // Letras, numeros 
+    direccion: /^[a-zA-Z0-9À-ÿ\s\.\,\-\_\:]{1,100}$/, // Letras y espacios, pueden llevar acentos.
+    correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+    telefono: /^[a-zA-Z0-9À-ÿ\s]{1,30}$/, // Letras y espacios, pueden llevar acentos.
     observacion: /^[a-zA-Z0-9\ \.\-\n]{1,200}$/, // Letras, numeros 
-    //observacion: /^(?:[a-zA-Z0-9.-]{1,50})?$/, // Letras, numeros 
-
 
 }
 
@@ -73,17 +67,6 @@ const expresiones = {
                 case 'Cuenta1-Nombre':
                     
                     if(!tieneCuenta1){
-                        /*
-                        if(c1Nombre.length==0 && c1Numero.length==0){
-                            return validarCampo(elemento,expresiones.cuenta_nombre)
-                        }
-                        if(c1Nombre.length==0 && c1Numero.length>=0){
-                            return true;
-                        }
-                        if(c1Nombre.length!=0){
-                            return validarCampo(elemento,expresiones.cuenta_nombre)
-                        }
-                        */
                         if(c1Nombre.length==0){
                             if(c1Numero.length==0){
                                 return validarCampo(elemento,expresiones.cuenta_nombre)

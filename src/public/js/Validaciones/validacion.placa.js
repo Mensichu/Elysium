@@ -1,28 +1,15 @@
 const expresiones = {
-    usuario: /^[a-zA-Z0-9\_\-]{1,16}$/, // Letras, numeros, guion y guion_bajo
-    nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
-    password: /^.{4,12}$/, // 4 a 12 digitos.
-    correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-    telefono: /^\d{7,14}$/, // 7 a 14 numeros.
-    alias: /^[a-zA-Z0-9\ \_\-]{1,16}$/, // Letras, numeros, guion y guion_bajo
-    modelo: /^[a-zA-Z0-9\ \_\-]{1,32}$/, // Letras, numeros, guion y guion_bajo
-    ano: /^\d{4,6}$/, // 7 a 14 numeros.
-    cilindraje: /^[0-9\,\.]{1,6}$/ ,
-    capacidad: /^[0-9\,\.]{1,3}$/ ,
 
     placa: /^[a-zA-Z0-9]{1,10}$/, // Letras, numeros 
     color: /^[a-zA-Z0-9\#]{1,10}$/, // Letras, numeros, Numeral
     clave: /^[a-zA-Z0-9]{1,10}$/, // Letras, numeros
     observacion: /^[a-zA-Z0-9\ \.\-\n]{1,100}$/, // Letras, numeros 
-    //observacion: /^(?:[a-zA-Z0-9.-]{1,50})?$/, // Letras, numeros 
-
 
 }
 
 
 
-//---------------------------------------------------------------VEHICULOS
-
+//---------------------------------------------------------------PLACAS
         const idElementos =[
             "Datos-Placa",
             "Datos-Color1",
@@ -158,7 +145,7 @@ const expresiones = {
             return val1&&val2&&val3&&val4;
         }
 
-
+        /*
         function validacionDatos(){
             let validado= true;
             idElementos.forEach((idElemento)=>{
@@ -172,7 +159,28 @@ const expresiones = {
             });
             return validado;
         }
+        */
 
+        function validacionDatos(){
+            let validado= true;
+            let band =0;
+            let mensaje ="";
+            idElementos.forEach((idElemento)=>{
+                let elemento = document.getElementById(idElemento);
+                
+                if(elemento.name!='Placa' && !validarPlacas(elemento)) {
+                    mensaje = mensaje +' - '+elemento.name+''
+                    band=1;
+                }
+        
+            });
+            if(band==1){
+                toast("Ingrese correctamente los sgts. campos: \n"+mensaje+"!", "toastColorError");
+                validado = false;
+                band=0;
+            }
+            return validado;
+        }
 
         function validacionPlaca(){
             const placa = document.getElementById("Datos-Placa");
@@ -186,25 +194,7 @@ const expresiones = {
             return val1&&val2&&val3;
         }
 
-        /*
         
-
-        
-
-        function validacionAlias(){
-            const alias = document.getElementById("Datos-Alias");
-            return validarVehiculos(alias);
-        }
-
-        function validacionNomAuto(){
-            const modelo = document.getElementById("Datos-Modelo");
-            return validarVehiculos(modelo);
-        }
-
-        
-
-        
-        */
         function validacionVaciar(){
             const invalidClass = document.querySelectorAll('.is-invalid');
             const validClass = document.querySelectorAll('.is-valid')

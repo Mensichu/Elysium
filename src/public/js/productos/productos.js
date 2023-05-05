@@ -1,7 +1,7 @@
 
-//Agentes
+//Productos
 window.addEventListener('load',()=>{
-    //Solo se ejecuta cada vez que se recargue la pagina y sea Agentes
+    //Solo se ejecuta cada vez que se recargue la pagina y sea Productos
     const pagina = window.location.pathname;
     if(pagina == '/productos'){
         console.log("Cargo productos");
@@ -17,14 +17,14 @@ let rowId = null;
         //Combo Tipo
         async function cargarComboProveedor(){
             try{
-                let proveedores = await fetch('/comboProveedor')
+                const proveedores = await fetch('/comboProveedor')
                 .then(response => response.json());
 
-                console.log("Numero de tipos en el combo tipo: "+proveedores.length); 
+                console.log("Numero de proveedores en el combo proveedor: "+proveedores.length); 
                 //Creamos el elemento temporal
                 const fragmento = document.createDocumentFragment();
                 for(i=0;i<3;i++){
-                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de tipos
+                    //Creamos la etiqueta option con su value y texto de cada proveedor al combobox de proveedores
                     const item = document.createElement("OPTION");
                     item.textContent = proveedores[i].nom_proveedor.toUpperCase();
                     item.value =proveedores[i].id;
@@ -36,11 +36,11 @@ let rowId = null;
                     comboProveedor.remove(i);
                 }
 
-                //Se agrega al combobox comboMarca
+                //Se agrega al combobox comboProveedor
                 comboProveedor.appendChild(fragmento);
 
             }catch(error){
-                console.log('Error al obtener comboTipo:', error);
+                console.log('Error al obtener comboProveedor:', error);
             }
         }
 
@@ -49,17 +49,17 @@ let rowId = null;
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO SECCION
 const comboSeccion = document.getElementById('comboSeccion');
 cargarComboSeccion();
-//Combo Tipo
+//Combo Seccion
 async function cargarComboSeccion(){
     try{
-        let seccion = await fetch('/comboSeccion')
+        const seccion = await fetch('/comboSeccion')
         .then(response => response.json());
 
-        console.log("Numero de tipos en el combo tipo: "+seccion.length); 
+        console.log("Numero de secciones en el combo seccion: "+seccion.length); 
         //Creamos el elemento temporal
         const fragmento = document.createDocumentFragment();
         for(i=0;i<3;i++){
-            //Creamos la etiqueta option con su value y texto de cada marca al combobox de tipos
+            //Creamos la etiqueta option con su value y texto de cada seccion al combobox de seccion
             const item = document.createElement("OPTION");
             item.textContent = seccion[i].cod_seccion.toUpperCase()+':'+seccion[i].nom_seccion.toUpperCase();
             item.value =seccion[i].id;
@@ -76,7 +76,7 @@ async function cargarComboSeccion(){
         
 
     }catch(error){
-        console.log('Error al obtener comboTipo:', error);
+        console.log('Error al obtener comboSeccion:', error);
     }
 }
 
@@ -85,14 +85,12 @@ async function cargarComboSeccion(){
         //Funcion para cargar un combo dependiendo de su categoriaPadre
         async function cargarCombo(combo, id){
             try{
-                //const data = await fetch('/comboAutos/'+comboMarca.value)
                 const tipos = await fetch('/categorias/'+id)
                 .then(response => response.json());
-                //console.log("Numero de tipos en el combo tipo: "+tipos.length); 
                 //Creamos el elemento temporal
                 const fragmento = document.createDocumentFragment();
                 for(i=0;i<tipos.length;i++){
-                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de tipos
+                    //Creamos la etiqueta option con su value y texto de cada clasificacion al combobox de clasificacion
                     const item = document.createElement("OPTION");
                     item.textContent = tipos[i].name.toUpperCase();
                     item.value =tipos[i].id;
@@ -114,7 +112,7 @@ async function cargarComboSeccion(){
                 combo.selectedIndex=0;
 
             }catch(error){
-                console.log('Error al obtener comboTipo:', error);
+                console.log('Error al obtener comboClasificacion:', error);
             }
         }
 
@@ -142,7 +140,7 @@ async function cargarComboSeccion(){
 
         //Carga inicial
         cargarCombosClasificacion();
-        async function cargarCombosClasificacion(c1_id,c2_id,c3_id,c4_id){
+        async function cargarCombosClasificacion(){
             await cargarCombo(comboTipo,-1);
             await cargarCombo(comboCategoria,comboTipo.value);
             await cargarCombo(comboGrupo,comboCategoria.value);
@@ -205,23 +203,16 @@ async function cargarComboSeccion(){
             onModelUpdated: (event) => {
                 if(true || rowId!==null){
                     console.log('-----------------------------------------CHINGONNKNKN');
-                    //console.log(event)
-                    //const selectedNodes = gridOptions.api.getSelectedNodes();
-                    //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
                     
                     clasesFila='cambioColor';
                     gridOptions.api.redrawRows();
-                    
-                    //botonesModoNuevo(false);
-                    //guardarBtn.disabled=true;
-                    
+
                 }
             },
             onCellValueChanged: (event) => {
                 // Aquí va el código que se ejecutará cuando cambie el valor de una celda
                 console.log('--------------------------------------------PERROS QUE PERRAN');
-                //clasesFila='cambioColor';
-                //gridOptions.api.redrawRows();
+
             },
 
             getRowId: (params) => { return params.data.id; },
@@ -337,7 +328,7 @@ async function cargarComboSeccion(){
                 }
                 //pinCarga('success');
             }catch(error){
-                console.log('Error al obtener los proveedores:', error);
+                console.log('Error al obtener los productos:', error);
                 toast(error.message, "toastColorError");
                 pinCarga('fallo');
 
@@ -379,9 +370,9 @@ async function cargarComboSeccion(){
                         }
                         return response.json()
                     });
-                    // carga los datos de data en los combos y textos de "Datos del Modelo"
+                    // carga los datos de data en los combos y textos de "Datos del Producto"
                     await cargarDatosDesdeSeleccion(data);
-                    //validacionVaciar();
+                    validacionVaciar();
                     if(mouse){
                         pinCarga('successFast')
                         inputCard.forEach(input => {
@@ -400,7 +391,7 @@ async function cargarComboSeccion(){
             }
         }
 
-        //------------------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
+        //------------------------------------------------------------------------------------Cargar Datos a DATOS DEL PRODUCTO
 
         async function cargarDatosDesdeSeleccion(data){
             var producto = data;
@@ -415,7 +406,7 @@ async function cargarComboSeccion(){
             
             //Clasificacion
             console.log('Envio el subgrupo: '+producto.id_subgrupo)
-            const c = await cargarClasificacion(producto.id_subgrupo,true);
+            const c = await cargarClasificacion(producto.id_subgrupo);
             cargarCombos(c);
 
             //Costo
@@ -432,8 +423,12 @@ async function cargarComboSeccion(){
             //Stock
             document.getElementById("Datos-Cantidad").value=producto.cantidad.toFixed(2);
             document.getElementById("Datos-Minimo").value=producto.minimo.toFixed(2);
+            //Codigos
+            document.getElementById("Datos-Cod1").value=producto.cod1.toUpperCase();
+            document.getElementById("Datos-Cod2").value=producto.cod2.toUpperCase();
+            document.getElementById("Datos-Cod3").value=producto.cod3.toUpperCase();
             
-            const obs_producto = producto.obs_prodcuto;
+            const obs_producto = producto.obs_producto;
             ocultarInputObs(obs_producto===null);
             document.getElementById("Datos-Obs").value=  (obs_producto===null?'':obs_producto);
 
@@ -442,27 +437,11 @@ async function cargarComboSeccion(){
 
 
 
-        //Borrar fue reemplazado por seleccionCombo
-        //-----------------------------------------------------Seteamos el comboProveedor desde su Id
-        async function seleccionComboProveedor(id_proveedor){
-            //ComboMarca es un elemento tipo select que almacena varios elementos tipo option
-            //Buscamos en el comboMarca .value(id de cada marca) el que corresponda al id_marca del auto seleccionado
-            for(i=0;i<comboProveedor.options.length;i++){
-                if(comboProveedor.options[i].value == id_proveedor){
-                    //una vez encontrado mostramos en el comboTipo dicho tipo
-                    comboProveedor.selectedIndex=i;
-                    break;
-                }
-            }
-        }
-
-
         function seleccionCombo(id, combo){
-            //ComboMarca es un elemento tipo select que almacena varios elementos tipo option
-            //Buscamos en el comboMarca .value(id de cada marca) el que corresponda al id_marca del auto seleccionado
+
             for(i=0;i<combo.options.length;i++){
                 if(combo.options[i].value == id){
-                    //una vez encontrado mostramos en el comboTipo dicho tipo
+                    //una vez encontrado mostramos en el combo correspondiente
                     combo.selectedIndex=i;
                     return;
                 }
@@ -472,8 +451,8 @@ async function cargarComboSeccion(){
 
 
         async function cargarCombos(c){
-            console.log('Aqui esta c:')
-            console.log(c)
+            //console.log('Aqui esta c:')
+            //console.log(c)
             //Combo tipo
             seleccionCombo(c[3].columna,comboTipo)
             //Combo Categoria
@@ -494,7 +473,6 @@ async function cargarComboSeccion(){
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ OBTENER DATOS
         function obtenerDatos(){
             
-            //const costoSinIvaCorregido = corregirFlotante(document.getElementById("Datos-Cilindraje").value)
             const noObs = document.getElementById('Datos-NoObs').checked
 
             const idSeleccionado = getSelectedRowId();
@@ -522,8 +500,12 @@ async function cargarComboSeccion(){
                 //Stock
                 cantidad: document.getElementById('Datos-Cantidad').value,
                 minimo: document.getElementById('Datos-Minimo').value,
+                //Codigos
+                cod1: document.getElementById('Datos-Cod1').value,
+                cod2: document.getElementById('Datos-Cod2').value,
+                cod3: document.getElementById('Datos-Cod3').value,
                 //Obs
-                obs_prodcuto: noObs?null:document.getElementById('Datos-Obs').value.trim().toLowerCase(),
+                obs_producto: noObs?null:document.getElementById('Datos-Obs').value.trim().toLowerCase(),
                 //Seccion
                 id_seccion: comboSeccion.value
 
@@ -533,36 +515,19 @@ async function cargarComboSeccion(){
         }
 
 
-        function corregirFlotante(floatString){
-            try{
-                const numero = parseFloat(floatString);
-                const numCorregido = numero.toFixed(2);
-                return numCorregido
-            }catch(error){
-    
-                console.log(error.Error);
-            }
-            return floatString;
-        }
-
-
-
         function botonesModoNuevo(bloquear){
             const modoActual = nuevoBtn.textContent;
             const bg_new = document.getElementById('datosModeloCard')
             if(bloquear && modoActual!='Agregar'){
                 //Bloqueado
-                //mostrarTextoModelo(true);
-                //guardarNomAutoBtn.disabled=true;
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Agregar';
                 bg_new.classList.add('bg_new');
                 nuevoBtn.classList.add('btn-success');
                 nuevoBtn.classList.remove('btn-outline-success');
-                toast("Ingrese la nueva placa a agregar", "toastColorInfo");
+                toast("Ingrese el nuevo producto a agregar", "toastColorInfo");
             }else if(!bloquear && modoActual!='Nuevo'){
                 //Desbloqueado
-                //mostrarTextoModelo(false);
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Nuevo';
                 bg_new.classList.remove('bg_new');
@@ -580,7 +545,7 @@ async function cargarComboSeccion(){
             if(nuevoBtn.textContent === 'Nuevo'){
                 vaciarDatosProducto()
                 botonesModoNuevo(true);
-                //validacionVaciar();
+                validacionVaciar();
                 return false;
             }else{
                 return true;
@@ -604,6 +569,9 @@ async function cargarComboSeccion(){
             document.getElementById("Datos-Pvp3").value='';
             document.getElementById("Datos-Cantidad").value='';
             document.getElementById("Datos-Minimo").value='';
+            document.getElementById("Datos-Cod1").value='';
+            document.getElementById("Datos-Cod2").value='';
+            document.getElementById("Datos-Cod3").value='';
             document.getElementById("Datos-Obs").value='';
             
             ocultarInputObs(true);
@@ -650,8 +618,8 @@ async function cargarComboSeccion(){
             //INPUT: elemento P
             const textoP = document.createElement('P');
             textoP.classList.add('card-title');
-            if(numeroModal == 1)textoP.textContent='Guardar cambios a proveedor existente';
-            if(numeroModal == 2)textoP.textContent='Guardar como nuevo proveedor';
+            if(numeroModal == 1)textoP.textContent='Guardar cambios a producto existente';
+            if(numeroModal == 2)textoP.textContent='Guardar como nuevo producto';
             modalBody.insertBefore(textoP,modalBody.firstChild);
 
             //BUTTON 1
@@ -716,7 +684,7 @@ async function cargarComboSeccion(){
         modal.addEventListener('click', (e)=>{
             //console.log(e.target.parentNode)
             if(e.target.parentNode.id=="fondo" ||
-                e.target.parentNode.id=="contVehiculos1" ||
+                //e.target.parentNode.id=="contVehiculos1" ||
                 e.target.parentNode.tagName === 'BODY' ){
                     cerrarModal();
                 }
@@ -726,75 +694,8 @@ async function cargarComboSeccion(){
         
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
 
-        const costoSinIvaInput = document.getElementById('Datos-CostoSinIva');
-        const IvaInput = document.getElementById('Datos-Iva');
-        const costoConIvaInput = document.getElementById('Datos-CostoConIva');
-        const G1Input = document.getElementById('Datos-G1');
-        const G2Input = document.getElementById('Datos-G2');
-        const G3Input = document.getElementById('Datos-G3');
-        const pvp1Input = document.getElementById('Datos-Pvp1')
-        const pvp2Input = document.getElementById('Datos-Pvp2')
-        const pvp3Input = document.getElementById('Datos-Pvp3')
-
-        costoSinIvaInput.addEventListener('input',()=>{
-            //Calculo de iva y subtotalConIva
-            const subtotalSinIva = parseFloat(costoSinIvaInput.value)
-            const iva = 0.12*subtotalSinIva;
-            const subtotalConIva = (subtotalSinIva+iva).toFixed(2)
-                //Value
-                IvaInput.value = iva.toFixed(2);
-                costoConIvaInput.value=  subtotalConIva;
-            //Calculamos el pvp
-            calculoPVP(subtotalConIva);
-            
-        });
-
-        costoConIvaInput.addEventListener('input',()=>{
-            //Calculo de iva y subtotalSinIva
-            const subtotalConIva = parseFloat(costoConIvaInput.value).toFixed(2)
-            const subtotalSinIva = (subtotalConIva/1.12).toFixed(2)
-            const iva = subtotalConIva-subtotalSinIva;
-                //Value
-                IvaInput.value = iva.toFixed(2);
-                costoSinIvaInput.value=  subtotalSinIva;
-            //Calculamos el pvp
-            calculoPVP(subtotalConIva);
-            
-        });
-
-        G1Input.addEventListener('input',()=>{
-            const subtotalConIva = parseFloat(costoConIvaInput.value).toFixed(2)
-            calculoPVP(subtotalConIva);
-        });
-        G2Input.addEventListener('input',()=>{
-            const subtotalConIva = parseFloat(costoConIvaInput.value).toFixed(2)
-            calculoPVP(subtotalConIva);
-        });
-        G3Input.addEventListener('input',()=>{
-            const subtotalConIva = parseFloat(costoConIvaInput.value).toFixed(2)
-            calculoPVP(subtotalConIva);
-        });
-
-
-
-        function calculoPVP(subtotalConIva){
-            //Calculo de pvp1
-            const g1 = parseFloat(G1Input.value)
-            const pvp1 = subtotalConIva*(1+(g1/100))
-                //Value
-                pvp1Input.value = pvp1.toFixed(2);
-            //Calculo de pvp2
-            const g2 = parseFloat(G2Input.value)
-            const pvp2 = subtotalConIva*(1+(g2/100))
-                //Value
-                pvp2Input.value = pvp2.toFixed(2);
-            //Calculo de pvp3
-            const g3 = parseFloat(G3Input.value)
-            const pvp3 = subtotalConIva*(1+(g3/100))
-                //Value
-                pvp3Input.value = pvp3.toFixed(2);
-        }
-
+        
+        /*
 
         async function presionarEnter(event){
             if (event.code === "Enter" || event.which === 13) {
@@ -813,22 +714,6 @@ async function cargarComboSeccion(){
                 }
             }
         }
-
-        /*identificacionInput.addEventListener('keyup', async (event)=>{
-            
-            if(identificacionInput.value.length>9){
-                presionarEnter(event);
-            }
-        });
-
-        const proveedorInput = document.getElementById('Datos-Nom-Proveedor');
-        proveedorInput.addEventListener('keyup', async (event)=>{
-            
-            if(identificacionInput.value.length>1){
-                presionarEnter(event);
-            }
-        });
-
         */
 
 //-------------------------BTN modificar Modelo
@@ -839,7 +724,7 @@ async function cargarComboSeccion(){
         guardarBtn.addEventListener('click',(e)=>{
             e.preventDefault();
             if(rowId!== null){
-                if(true || validacionGuardar()){
+                if(validacionGuardar()){
                     //Construimos aqui el modal
                     construirModal(1);
                     //Una vez que tenemos las dimensiones construidas, lanzamos la animacion y mostramos
@@ -859,7 +744,7 @@ async function cargarComboSeccion(){
 
         nuevoBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if( (modoNuevoModelo() && true /*|| validacionNuevo()*/) ){
+            if( (modoNuevoModelo() && validacionNuevo()) ){
 
                 //Construimos aqui el modal
                 construirModal(2);
@@ -873,7 +758,7 @@ async function cargarComboSeccion(){
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FUNCIONES PRINCIPALES
 
-
+        /*
 
         //--------------------------------------------- PROVEEDOR REPETIDOS
 
@@ -895,16 +780,16 @@ async function cargarComboSeccion(){
 
             return res.respuesta;
         }
-
+        */
         //---------------------------------------------- NUEVO PRODUCTO
 
         async function nuevoProducto(){
             const data = obtenerDatos();
             delete data.id;
             console.log(data)
-            if(false && await productosRepetidos(0,data.identificacion,data.nom_proveedor)){
+            if(false && await productosRepetidos(0,data.identificacion,data.nom_producto)){
                 //Si devuelve true significa que encontro una identificacion
-                toast("El cliente ya existe!", "toastColorError");
+                toast("El producto ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{
                 pinCarga('cargando');
@@ -949,9 +834,9 @@ async function cargarComboSeccion(){
         async function modificarProducto(){
             const data = obtenerDatos();
 
-            if(false && await proveedoresRepetidos(data.id,data.identificacion,data.nom_proveedor)){
+            if(false && await productosRepetidos(data.id,data.identificacion,data.nom_producto)){
                 //Si devuelve true significa que encontro una proveedor igual
-                toast("El proveedor ya existe!", "toastColorError");
+                toast("El producto ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{
                 await fetch(`/producto/${data.id}`,{
@@ -984,21 +869,12 @@ async function cargarComboSeccion(){
         }
 
 
-
-        async function cargarClasificacion(id,mouse) {
+        //Devuelve todos los ids de la clasificacion
+        async function cargarClasificacion(id) {
             try{
                 const inputCard = document.querySelectorAll('.form-group input');
                 const buttonCard = document.querySelectorAll('.form-group button');
-                if(mouse){
-                    pinCarga('cargando')
-                    inputCard.forEach(input => {
-                        input.disabled=true;
-                    });
-                    buttonCard.forEach(button => {
-                        button.disabled=true;
-                    });
-                    comboTipo.disabled=true;
-                }
+                
                 if(conectado()){
                     const data = await fetch('/clasificacion/'+id)
                     .then(response => {
@@ -1007,19 +883,7 @@ async function cargarComboSeccion(){
                         }
                         return response.json()
                     });
-                    // carga los datos de data en los combos y textos de "Datos del Modelo"
                     
-                    //validacionVaciar();
-                    if(mouse){
-                        pinCarga('successFast')
-                        inputCard.forEach(input => {
-                            input.disabled=false;
-                        });
-                        buttonCard.forEach(button => {
-                            button.disabled=false;
-                        });
-                        comboTipo.disabled=false;
-                    };
                     return data;
                 }
             }catch(error){

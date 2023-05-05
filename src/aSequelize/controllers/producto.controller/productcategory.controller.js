@@ -1,5 +1,5 @@
 import {tablaProductCategory} from '../../models/Productos/tablaProductCategory';
-
+import {tablaProducto} from '../../models/Productos/tablaProducto';
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CATEGORIAS
 
@@ -40,7 +40,8 @@ export const getCategorias = async (req,res) =>{
         let {id}= req.params;
         id=id==-1?null:id;
         const categorias = await tablaProductCategory.findAll({
-            where: {parentCategoryId:id}
+            where: {parentCategoryId:id},
+            order:[['name','ASC']]
         })
         res.json(categorias);
     }catch(error){
@@ -94,9 +95,8 @@ export const getCategoriasTabla = async (req,res) =>{
     }
 }
 
+const { Op } = require("sequelize");
 
-
-//Este devuelve todos los datos, mediante una funcion en el front End se ordena los datos.
 export const getCategoriasAll = async (req,res) =>{
     try{
         const categoriasAll = await tablaProductCategory.findAll({
@@ -104,7 +104,34 @@ export const getCategoriasAll = async (req,res) =>{
                 exclude:['createdAt','updatedAt']
             }
         })
-        res.json(categoriasAll);
+        const filaSubgrupos = clasificacionTabla(categoriasAll)[0];
+        const idSubgrupos = clasificacionTabla(categoriasAll)[1];
+
+        const productos = await tablaProducto.findAll({
+            where: {
+                id_subgrupo: {
+                  [Op.in]: idSubgrupos
+                }
+            },
+            attributes:['id','nom_producto','id_subgrupo'],
+        });
+
+        // Recorrer el array idSubgrupos
+        productos.forEach((producto) => {
+            // Buscar el objeto correspondiente en filaSubgrupos
+            filaSubgrupos.forEach((subgrupo) => {
+            if(subgrupo.id!== undefined){
+                if (subgrupo.id == producto.id_subgrupo) {
+                    console.log('ya taaaaaaaaaaaaaaaaaa')
+                    // Agregar el valor de nom_producto al objeto
+                    subgrupo.nom_producto = producto.nom_producto;
+                }
+            }
+            });
+        });
+        
+
+        res.json([filaSubgrupos,productos]);
     }catch(error){
         return res.status(500).json({ message: error.message });
     }
@@ -133,4 +160,83 @@ export const getCategoriasById = async (req,res)=>{
     catch(error){
         return res.status(500).json({message: error.message});
     }
+}
+
+
+
+function clasificacionTabla(data){
+    const listaIds=[];
+    let filas=[];
+
+    let c1=[],c2=[],c3=[],c4=[];
+    data.forEach(tipo =>{
+        if(null === tipo.parentCategoryId){
+            c1.push({"id":tipo.id,"parentCategoryId":tipo.parentCategoryId,"name":tipo.name})
+            
+        }
+    });
+    //console.log('Este es c1: ');
+    //console.log(c1);
+    let band=0;
+    c1.forEach(tipo =>{
+        data.forEach(categoria =>{
+            if(categoria.parentCategoryId==tipo.id){
+                c2.push({"id":categoria.id,"c1":categoria.parentCategoryId,"c1_name":tipo.name,"name":categoria.name})
+                band=1;
+            }
+        });
+        if(band==0){
+            //console.log('No encontro ninguno de:');
+            //console.log(tipo.name);
+            filas.push({"c1":tipo.name,"c2":"","c3":"","c4":""})
+        }
+        band=0;
+    });
+    //console.log('Este es c2: ');
+    //console.log(c2);
+    band=0;
+    c2.forEach(categoria =>{
+        data.forEach(grupo =>{
+            if(grupo.parentCategoryId==categoria.id){
+                c3.push({"id":grupo.id,
+                            "c2":grupo.parentCategoryId, "c2_name":categoria.name,
+                            "c1":categoria.c1,"c1_name":categoria.c1_name,
+                            "name":grupo.name})
+                band=1;
+            }
+        });
+        if(band==0){
+            //console.log('No encontro ninguno de:');
+            //console.log(categoria.name);
+            filas.push({"c1":categoria.c1_name,"c2":categoria.name,"c3":"","c4":""})
+        }
+        band=0;
+    });
+    //console.log('Este es c3: ');
+    //console.log(c3);
+    band=0;
+    c3.forEach(grupo =>{
+        data.forEach(subgrupo =>{
+            if(subgrupo.parentCategoryId==grupo.id){
+                c4.push({"id":subgrupo.id,
+                            "c3":subgrupo.parentCategoryId, "c3_name":grupo.name,
+                            "c2":grupo.c2,"c2_name":grupo.c2_name,
+                            "c1":grupo.c1,"c1_name":grupo.c1_name,
+                            "name":subgrupo.name})
+                band=1;
+                filas.push({"c1":grupo.c1_name,"c2":grupo.c2_name,"c3":grupo.name,"c4":subgrupo.name,"id":subgrupo.id})    
+                listaIds.push(subgrupo.id)
+            }
+        });
+        if(band==0){
+            //console.log('No encontro ninguno de:');
+            //console.log(grupo.name);
+            filas.push({"c1":grupo.c1_name,"c2":grupo.c2_name,"c3":grupo.name,"c4":""})
+        }
+        band=0;
+    });
+    //console.log('Este es c4: ');
+    //console.log(c4);
+
+    return [filas,listaIds]
 }

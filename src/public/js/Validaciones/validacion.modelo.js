@@ -1,9 +1,4 @@
 const expresiones = {
-    usuario: /^[a-zA-Z0-9\_\-]{1,16}$/, // Letras, numeros, guion y guion_bajo
-    nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
-    password: /^.{4,12}$/, // 4 a 12 digitos.
-    correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-    telefono: /^\d{7,14}$/, // 7 a 14 numeros.
     alias: /^[a-zA-Z0-9\ \_\-]{1,16}$/, // Letras, numeros, guion y guion_bajo
     modelo: /^[a-zA-Z0-9\ \_\-]{1,32}$/, // Letras, numeros, guion y guion_bajo
     ano: /^\d{4,6}$/, // 7 a 14 numeros.
@@ -160,7 +155,6 @@ const expresiones = {
             if(comboModelo.value == null || comboModelo.value.trim()=="0"){
                 comboModelo.classList.add('is-invalid');
                 comboModelo.classList.remove('is-valid');
-                //toast("Campo combo modelo no valido", "toastColorError");
                 return false;
             }else{
                 comboModelo.classList.add('is-valid');
@@ -168,7 +162,7 @@ const expresiones = {
                 return true;
             }
         }
-
+        /*
         function validacionDatos(){
             let validado= true;
             idElementos.forEach((idElemento)=>{
@@ -180,6 +174,29 @@ const expresiones = {
                 }
 
             });
+            return validado;
+        }
+        */
+
+
+        function validacionDatos(){
+            let validado= true;
+            let band =0;
+            let mensaje ="";
+            idElementos.forEach((idElemento)=>{
+                let elemento = document.getElementById(idElemento);
+                
+                if(elemento.name!='Alias' && elemento.name!='Modelo' && !validarVehiculos(elemento)) {
+                    mensaje = mensaje +' - '+elemento.name+''
+                    band=1;
+                }
+        
+            });
+            if(band==1){
+                toast("Ingrese correctamente los sgts. campos: \n"+mensaje+"!", "toastColorError");
+                validado = false;
+                band=0;
+            }
             return validado;
         }
 

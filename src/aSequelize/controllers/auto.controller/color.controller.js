@@ -36,7 +36,8 @@ export const createColor = async (req,res) =>{
     
 }
 
-
+/*
+Borrar
 export const updatePlaca = async (req,res)=>{
     const {id} = req.params;
     const {nom_placa,color1,color2,clave,obs_placa,id_auto} = req.body;
@@ -67,3 +68,4 @@ export const updatePlaca = async (req,res)=>{
 
 
 }
+*/

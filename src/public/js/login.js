@@ -1,6 +1,6 @@
 //Login
 window.addEventListener('load',()=>{
-    //Solo se ejecuta cada vez que se recargue la pagina y sea Agentes
+    //Solo se ejecuta cada vez que se recargue la pagina y sea Login
     const pagina = window.location.pathname;
     if(pagina == '/login'){
         console.log("Cargo login");

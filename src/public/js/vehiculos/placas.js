@@ -1,3 +1,5 @@
+
+//Placas
 window.addEventListener('load',()=>{
 
     //Solo se ejecuta cada vez que se recargue la pagina y sea Placa
@@ -24,11 +26,11 @@ window.addEventListener('load',()=>{
                 .then(response => response.json());
 
     
-                console.log("Numero de colores en el combo color: "+color.length); // Imprime la lista de marcas de vehículos en la consola
+                console.log("Numero de colores en el combo color: "+color.length); // Imprime la lista de colores de vehículos en la consola
                 //Creamos el elemento temporal
                 const fragmento = document.createDocumentFragment();
                 for(i=0;i<color.length;i++){
-                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
+                    //Creamos la etiqueta option con su value y texto de cada color al combobox color
                     const item = document.createElement("OPTION");
                     //item.innerHTML = color[i].nom_color.toUpperCase();
                     item.innerHTML = '';//color[i].nom_color;
@@ -39,13 +41,12 @@ window.addEventListener('load',()=>{
                 const fragmento2 = document.createDocumentFragment();
                 for(i=0;i<color.length;i++){
                     const item = document.createElement("OPTION");
-                    //item.innerHTML = color[i].nom_color.toUpperCase();
-                    item.innerHTML = '';//color[i].id+'-'+color[i].nom_color;
+                    item.innerHTML = '';
                     item.value =color[i].id;
                     item.style.background= color[i].hex_color;
                     fragmento2.appendChild(item);
                 }
-    
+
                 //Vaciamos el combo primero
                 for(i=comboColor1.options.length-1;i>=0;i--){
                     comboColor1.remove(i);
@@ -55,7 +56,7 @@ window.addEventListener('load',()=>{
                     comboColor2.remove(i);
                 }
 
-                //Se agrega al combobox comboMarca
+                //Se agrega al combobox comboColor
                 comboColor1.appendChild(fragmento);
                 comboColor2.appendChild(fragmento2);
                
@@ -102,9 +103,6 @@ window.addEventListener('load',()=>{
                 
                 let marcas = await fetch('/comboMarcas')
                 .then(response => response.json());
-
-                // Almacena la lista de marcas de vehículos en un objeto en el archivo 'vehiculos.js'
-                //var marcas = data;
     
                 console.log("Numero de marcas en el combo marca: "+marcas.length); // Imprime la lista de marcas de vehículos en la consola
                 //Creamos el elemento temporal
@@ -156,7 +154,6 @@ window.addEventListener('load',()=>{
                             comboModelo.remove(i);
                         }
 
-                        // Almacena la lista de Modelos en un objeto en el archivo 'vehiculos.js'
                         var modelos = data;
                         //En el caso de que sea una nueva marca sin modelos
                         if(modelos.length!== 0){
@@ -239,6 +236,7 @@ window.addEventListener('load',()=>{
 
                         params.node.setSelected(true);
                         seleccionTabla(params.data.id,false);
+                        console.log('soy getRowClass')
                         return clasesFila;
                     }
                 }
@@ -248,9 +246,7 @@ window.addEventListener('load',()=>{
             onModelUpdated: (event) => {
                 if(true || rowId!==null){
                     console.log('-----------------------------------------CHINGONNKNKN');
-                    //console.log(event)
-                    //const selectedNodes = gridOptions.api.getSelectedNodes();
-                    //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
+
                     clasesFila='cambioColor';
                     gridOptions.api.redrawRows();
                     botonesModoNuevo(false);
@@ -259,9 +255,8 @@ window.addEventListener('load',()=>{
             },
             onCellValueChanged: (event) => {
                 // Aquí va el código que se ejecutará cuando cambie el valor de una celda
-                console.log('--------------------------------------------PERROS QUE PERRAN');
-                //clasesFila='cambioColor';
-                //gridOptions.api.redrawRows();
+                console.log('--------------------------------------------ONCELLVALUECHANGED');
+
             },
 
             getRowId: (params) => { return params.data.id; },
@@ -280,6 +275,7 @@ window.addEventListener('load',()=>{
 
             // example event handler
             onCellClicked: params => {
+                placaInput.disabled=true;
                 if(params.data!== undefined){
                     //console.log('cell was clicked', params.data);
                     rowId = params.data.id;
@@ -302,44 +298,26 @@ window.addEventListener('load',()=>{
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID: ACTUALIZACION Y NUEVA FILA
 
-
 //---------------------------------------------------------------------Convierte los datos en una fila para AG-GRID
-function datosAFilaGrid(data,n) {
-    //n es el tipo de fila
-    //0: todos los datos
-    //1: todos los datos menos marca y modelo
-    //2: solo nom_auto
-    
-    if (gridOptions.api) {
-        //var newRow = [{ id: data.id, marca: data.Marca.nom_marca.toUpperCase(), modelo: data.nom_auto.toUpperCase(), año: data.ano, cilindraje: data.cilindraje, 
-        //combustible: data.combustible? 'DIESEL.':'GAS.' }];
-        switch(n){
-            case 0:
-                console.log('pase por aqui')
-                return [{ id: data.id,
-                            placa: data.nom_placa.toUpperCase(), 
-                            marca: data.Auto.Marca.alias.toUpperCase(), 
-                            modelo: data.Auto.nom_auto.toUpperCase(), 
-                            año: data.Auto.ano, 
-                            cilindraje: parseFloat(data.Auto.cilindraje).toFixed(1),
-                            combustible: data.Auto.combustible? 'DIESEL.':'GAS.'}];
-            case 1:
-                return [{ id: data.id, año: data.ano, cilindraje: parseFloat(data.Auto.cilindraje).toFixed(1), 
-                    combustible: data.combustible? 'DIESEL.':'GAS.' }];
-            break;
-            case 2:
-                return [{ modelo: data.nom_auto.toUpperCase() }];
-            break;
+function datosAFilaGrid(data) {
 
-        }
-        return null;
+    if (gridOptions.api) {
+        
+        return [{   id: data.id,
+                    placa: data.nom_placa.toUpperCase(), 
+                    marca: data.Auto.Marca.alias.toUpperCase(), 
+                    modelo: data.Auto.nom_auto.toUpperCase(), 
+                    año: data.Auto.ano, 
+                    cilindraje: parseFloat(data.Auto.cilindraje).toFixed(1),
+                    combustible: data.Auto.combustible? 'DIESEL.':'GAS.'
+                }];
     }
 }
 
 
 //---------------------------------------------------------------------Actualiza la fila a la tabla AG-GRID
-function actualizarFilaAgGrid(data,n) {
-    const filaActualizada = datosAFilaGrid(data,n); //n es el tipo de fila: 1 o 2
+function actualizarFilaAgGrid(data) {
+    const filaActualizada = datosAFilaGrid(data); 
     //Actualiza la fila
     const selectedNodes = gridOptions.api.getSelectedNodes();
     if (selectedNodes.length > 0) {
@@ -358,7 +336,7 @@ function actualizarFilaAgGrid(data,n) {
 
 //---------------------------------------------------------------------Agrega una nueva fila a la tabla AG-GRID
 function nuevaFilaAgGrid(data) {
-    const filaNueva = datosAFilaGrid(data,0); //n es el tipo de fila: 0
+    const filaNueva = datosAFilaGrid(data);
     const res = gridOptions.api.applyTransaction({ add: filaNueva });
     if (res.add) {
         const addedRow = res.add[0];
@@ -384,12 +362,12 @@ function nuevaFilaAgGrid(data) {
                 const Placas = data;
                 //mediante un for vamos cargando fila por fila
                 for(i=0;i<Placas.length;i++){
-                    let newRow = datosAFilaGrid(Placas[i],0);
+                    let newRow = datosAFilaGrid(Placas[i]);
                     gridOptions.api.applyTransaction({ add: newRow });
                 }
                 //pinCarga('success');
             }catch(error){
-                console.log('Error al obtener el auto:', error);
+                console.log('Error al obtener las placas:', error);
                 toast(error.message, "toastColorError");
                 pinCarga('fallo');
 
@@ -433,7 +411,7 @@ function nuevaFilaAgGrid(data) {
                         }
                         return response.json()
                     });
-                    // carga los datos de data en los combos y textos de "Datos del Modelo"
+                    // carga los datos de data en los combos y textos de "Datos de Placa"
                     await cargarDatosDesdeSeleccion(data);
                     validacionVaciar();
                     if(mouse){
@@ -445,6 +423,7 @@ function nuevaFilaAgGrid(data) {
                             button.disabled=false;
                         });
                         comboMarca.disabled=false;
+                        placaInput.disabled=true;
                     };
                 }
             }catch(error){
@@ -453,18 +432,13 @@ function nuevaFilaAgGrid(data) {
             }
         }
 
-//------------------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
+//------------------------------------------------------------------------------------Cargar Datos a DATOS DE PLACA
 
         async function cargarDatosDesdeSeleccion(data){
             var placa = data;
             await seleccionComboMarca(placa.Auto.id_marca);
             seleccionComboModelo(placa.id_auto);
-            //Una vez seleccionado el comboMarca y cargado el comboModelo
-            //se selecciona el modelo mediante el id
-            //seleccionComboModelo(modelo.id);
-            //se selecciona el modelo mediante el nom_auto
-            //En la db esta todo en minusculas, pero en el front end esta en mayuscula
-            
+
             //Cargamos el resto de datos
             document.getElementById("Datos-Placa").value=placa.nom_placa.toUpperCase();
             //Valida si es un mismo color
@@ -592,6 +566,7 @@ function nuevaFilaAgGrid(data) {
                 //mostrarTextoModelo(true);
                 //guardarNomAutoBtn.disabled=true;
                 guardarBtn.disabled=true;
+                placaInput.disabled=false;
                 nuevoBtn.textContent = 'Agregar';
                 bg_new.classList.add('bg_new');
                 nuevoBtn.classList.add('btn-success');
@@ -601,6 +576,7 @@ function nuevaFilaAgGrid(data) {
                 //Desbloqueado
                 //mostrarTextoModelo(false);
                 guardarBtn.disabled=true;
+                placaInput.disabled=true;
                 nuevoBtn.textContent = 'Nuevo';
                 bg_new.classList.remove('bg_new');
                 nuevoBtn.classList.remove('btn-success');
@@ -680,14 +656,6 @@ function nuevaFilaAgGrid(data) {
             if(numeroModal == 2)textoP.textContent='Guardar como una nueva placa';
             modalBody.insertBefore(textoP,modalBody.firstChild);
 
-            if(numeroModal==10){
-                const colorPicker = document.createElement('input');
-                colorPicker.type="color"
-                colorPicker.id="Datos-Color1"
-                colorPicker.classList.add('form-control');
-                colorPicker.classList.add('form-control-color');
-                colorPicker.classList.add('form-input');
-            }
             //BUTTON 1
             const boton1 = document.getElementById('confirmar');
             boton1.value= numeroModal;
@@ -801,11 +769,13 @@ btnVerificar.addEventListener('click',async ()=>{
 
 
 
-//-------------------------BTN modificar Modelo
+//-------------------------BTN modificar Placa
 
         const guardarBtn = document.getElementById("btn-Guardar");
+        const placaInput = document.getElementById('Datos-Placa')
 
         guardarBtn.disabled=true;
+        placaInput.disabled=true;
         guardarBtn.addEventListener('click',(e)=>{
             e.preventDefault();
             if(rowId!== null){
@@ -822,7 +792,7 @@ btnVerificar.addEventListener('click',async ()=>{
             
         });
 
-//-------------------------BTN nuevo Modelo
+//-------------------------BTN nueva Placa
 
         const nuevoBtn = document.getElementById("btn-Nuevo");
 
@@ -895,11 +865,10 @@ btnVerificar.addEventListener('click',async ()=>{
                 })
                 .then(async res =>{
                     data.id = res.id
-                    //await cambioComboMarca(true);
                     botonesModoNuevo(false);
                     cerrarModal();
                     nuevaFilaAgGrid(res)
-                    toast("Modelo agregado", "toastColorSuccess");
+                    toast("Placa agregada", "toastColorSuccess");
                     pinCarga('success');
                     rowId=res.id;
                 }).catch(error =>{
@@ -951,15 +920,11 @@ btnVerificar.addEventListener('click',async ()=>{
                         toast(response.status, "toastColorError");
                         throw new Error('Servidor - '+response.status+': '+response.statusText);
                     }else{
-                        //const filaActualizada = datosAFilaGrid(data);
-                        
                         guardarBtn.disabled=true;
                         cerrarModal();
                         const res = await response.json();
                         actualizarFilaAgGrid(res,0);
                         await cambioComboMarca(true);
-                        //seleccionComboModelo(data.id)
-                        //seleccionComboModeloNombre(data.nom_auto);
                         toast("Placa guardada", "toastColorSuccess");
                         pinCarga('success');
                     }

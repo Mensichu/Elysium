@@ -1,7 +1,7 @@
 
-//Clientes
+//Clasificacion
 window.addEventListener('load',()=>{
-    //Solo se ejecuta cada vez que se recargue la pagina y sea Agentes
+    //Solo se ejecuta cada vez que se recargue la pagina y sea Clasificacion
     const pagina = window.location.pathname;
     if(pagina == '/productos/clasificacion'){
         console.log("Cargo clasificacion");
@@ -11,19 +11,18 @@ document.querySelector('#fondo').classList.add('showNow');
 
 let rowId = null;
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO TIPO
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO
         
         //Funcion para cargar un combo dependiendo de su categoriaPadre
         async function cargarCombo(combo, id){
             try{
-                //const data = await fetch('/comboAutos/'+comboMarca.value)
                 const tipos = await fetch('/categorias/'+id)
                 .then(response => response.json());
-                //console.log("Numero de tipos en el combo tipo: "+tipos.length); 
+                //console.log("Numero de tipos en el combo: "+tipos.length); 
                 //Creamos el elemento temporal
                 const fragmento = document.createDocumentFragment();
                 for(i=0;i<tipos.length;i++){
-                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de tipos
+                    //Creamos la etiqueta option con su value y texto de cada clasificacion al combobox correspondiente
                     const item = document.createElement("OPTION");
                     item.textContent = tipos[i].name.toUpperCase();
                     item.value =tipos[i].id;
@@ -40,7 +39,7 @@ let rowId = null;
                     item.value = 0;
                     fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
                 }
-                //Se agrega al combobox comboMarca
+                //Se agrega al combobox correspondiente
                 combo.appendChild(fragmento);
                 combo.selectedIndex=0;
 
@@ -49,27 +48,41 @@ let rowId = null;
             }
         }
 
+        //Eventos listener click
+
         const comboTipo = document.getElementById('comboTipo');
-        cargarCombo(comboTipo,0);
         
         const comboCategoria = document.getElementById('comboCategoria');
-        comboTipo.addEventListener('click',()=>{
-            cargarCombo(comboCategoria,comboTipo.value);
-        })
+        comboTipo.addEventListener('change',async ()=>{
+            await cargarCombo(comboCategoria,comboTipo.value);
+            await cargarCombo(comboGrupo,comboCategoria.value);
+            await cargarCombo(comboSubgrupo,comboGrupo.value);
+        });
 
         const comboGrupo = document.getElementById('comboGrupo');
-        comboCategoria.addEventListener('click',()=>{
-            cargarCombo(comboGrupo,comboCategoria.value);
-        })
+        comboCategoria.addEventListener('change',async ()=>{
+            await cargarCombo(comboGrupo,comboCategoria.value);
+            await cargarCombo(comboSubgrupo,comboGrupo.value);
+        });
 
         const comboSubgrupo = document.getElementById('comboSubgrupo');
-        comboGrupo.addEventListener('click',()=>{
-            cargarCombo(comboSubgrupo,comboGrupo.value);
-        })
+        comboGrupo.addEventListener('change',async ()=>{
+            await cargarCombo(comboSubgrupo,comboGrupo.value);
+        });
+
+        //Carga inicial
+        cargarCombosClasificacion();
+        async function cargarCombosClasificacion(c1_id,c2_id,c3_id,c4_id){
+            await cargarCombo(comboTipo,-1);
+            await cargarCombo(comboCategoria,comboTipo.value);
+            await cargarCombo(comboGrupo,comboCategoria.value);
+            await cargarCombo(comboSubgrupo,comboGrupo.value);
+        }
+        
 
         //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID
         let clasesFila='';
-
+        const myCellRenderer = params => '<span style="width: 10px;">' + params.value + '</span>';
         // configurar la instancia de ag-Grid
         const gridOptions = {
 
@@ -78,82 +91,89 @@ let rowId = null;
                 
                 {headerName: "Tipo", 
                         field: "tipo",
-                        minWidth: 150,maxWidth:200
+                        minWidth: 150,maxWidth:200, 
+                        /*hideWhenNoChildren: true, */rowGroup:true, hide:true,
                     },
                 {headerName: "Categoria",
                         field: "categoria",sort: 'asc', floatingFilter:true, 
-                        flex:1, minWidth: 150
+                        flex:1, minWidth: 150,
+                        rowGroup:true, hide:true
                     },
                 {headerName: "Grupo", 
                         field: "grupo", floatingFilter:true,
                         minWidth: 150,maxWidth:150
                     },
                 {headerName: "Subgrupo", 
-                        field: "subgrupo", 
-                        minWidth: 150, maxWidth: 150}
+                        field: "subgrupo", floatingFilter:true,
+                        minWidth: 150, maxWidth: 150
+                    },
+                {headerName: "Producto", 
+                    field: "producto", floatingFilter:true,
+                    flex:1
+                }
 
             ],
 
-                    // default col def properties get applied to all columns
-                    defaultColDef: {sortable: true, 
-                        filter: 'agTextColumnFilter', 
-                        enableRowGroup:true,
-                        filterParams:{
-                            buttons: ["apply","reset"]
-                        },
-                        resizable: true,
-                        //autoSizeAllColumns: true
-                    },
+            // default col def properties get applied to all columns
+            defaultColDef: {sortable: true, 
+                filter: 'agTextColumnFilter', 
+                enableRowGroup:true,
+                filterParams:{
+                    buttons: ["apply","reset"]
+                },
+                resizable: true,
+                //autoSizeAllColumns: true
+            },
 
-        getRowClass: (params) => {
-            if(params.data!== undefined){
+            //Usa el ancho maximo disponible
+            //domLayout: 'autoHeight', Esto quita la virtualizacion y los setFocus
 
-                if(rowId === params.data.id){
+            rowHeight: 50, // altura de las filas en píxeles
+            headerHeight: 40, // altura del encabezado en píxeles
+            rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
+            // barra de grupos
+            rowGroupPanelShow: 'always',
+            //popupParent: document.body,
+            rowSelection: 'single', // allow rows to be selected
+            animateRows: true, // have rows animate to new positions when sorted
 
-                    params.node.setSelected(true);
-                    seleccionTabla(params.data.id,false);
-                    return clasesFila;
+
+            // Esto permite los grupos sin que formen partes de la columnas
+            groupDisplayType: 'groupRows',
+
+
+            getRowClass: (params) => {
+                if(params.data!== undefined){
+
+                    if(rowId === params.data.id){
+
+                        params.node.setSelected(true);
+                        seleccionTabla(params.data.id,false);
+                        return clasesFila;
+                    }
+
                 }
+                return '';
+            },
 
-            }
-            return '';
-        },
+            onModelUpdated: (event) => {
+                if(true || rowId!==null){
+                    console.log('-----------------------------------------ON MODEL UPDATED');
 
-        onModelUpdated: (event) => {
-            if(true || rowId!==null){
-                console.log('-----------------------------------------ON MODEL UPDATED');
-                //console.log(event)
-                //const selectedNodes = gridOptions.api.getSelectedNodes();
-                //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
+                    clasesFila='cambioColor';
+                    gridOptions.api.redrawRows();
+                                        
+                }
+            },
+            onCellValueChanged: (event) => {
+                // Aquí va el código que se ejecutará cuando cambie el valor de una celda
+                console.log('--------------------------------------------ON CELL VALUE CHANGED');
                 
-                clasesFila='cambioColor';
-                gridOptions.api.redrawRows();
-                
-                
-            }
-        },
-        onCellValueChanged: (event) => {
-            // Aquí va el código que se ejecutará cuando cambie el valor de una celda
-            console.log('--------------------------------------------ON CELL VALUE CHANGED');
-            //clasesFila='cambioColor';
-            //gridOptions.api.redrawRows();
-        },
+            },
 
-        //getRowId: (params) => { return params.data.id; },
+            //getRowId: (params) => { return params.data.id; },
 
-        //Usa el ancho maximo disponible
-        //domLayout: 'autoHeight', Esto quita la virtualizacion y los setFocus
-
-        rowHeight: 50, // altura de las filas en píxeles
-        headerHeight: 40, // altura del encabezado en píxeles
-        rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
-
-        rowGroupPanelShow: 'always',
-        //popupParent: document.body,
-        rowSelection: 'single', // allow rows to be selected
-        animateRows: true, // have rows animate to new positions when sorted
-
-        
+            
         };
 
         // get div to host the grid
@@ -171,15 +191,12 @@ let rowId = null;
         function datosAFilaGrid(data,n) {
             //console.log(parseFloat(data.Auto.cilindraje));
             if (gridOptions.api) {
-                /*
-                comboTipo.options[i].value == id_Tipo){
-                    //una vez encontrado mostramos en el comboTipo dicho tipo
-                    comboTipo.selectedIndex=i;
-                */
+
                 return [{   tipo:       data.c1.toUpperCase(),
                             categoria:  data.c2.toUpperCase(),
                             grupo:      data.c3.toUpperCase(), 
-                            subgrupo:   data.c4.toUpperCase()}];
+                            subgrupo:   data.c4.toUpperCase(),
+                            producto:   data.nom_producto!==undefined?data.nom_producto.toUpperCase():''}];
             
 
             }
@@ -222,18 +239,19 @@ let rowId = null;
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
-
+        
         cargarTablaCategorias();
         async function cargarTablaCategorias(){
             try{
-                
+                //Descargamos las categorias con su id_subgrupo
                 const data = await fetch('/categoriasAll')
                 .then(response => response.json());
-                
-                const categorias = clasificacionTabla(data);
                 //mediante un for vamos cargando fila por fila
-                for(i=0;i<categorias.length;i++){
-                    let newRow = datosAFilaGrid(categorias[i]);
+                const filaSubgrupos = data[0];
+                const idSubgrupos = data[1];
+                console.log(filaSubgrupos)
+                for(i=0;i<filaSubgrupos.length;i++){
+                    let newRow = datosAFilaGrid(filaSubgrupos[i]);
                     gridOptions.api.applyTransaction({ add: newRow });
                 }
                 
@@ -245,27 +263,6 @@ let rowId = null;
 
             }
 
-            /*
-            try{
-                //pinCarga('cargando');
-                // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/categorias')
-                .then(response => response.json());
-                const categorias = data;
-                console.log(categorias)
-                //mediante un for vamos cargando fila por fila
-                for(i=0;i<categorias.length;i++){
-                    let newRow = datosAFilaGrid(categorias[i]);
-                    gridOptions.api.applyTransaction({ add: newRow });
-                }
-                //pinCarga('success');
-            }catch(error){
-                console.log('Error al obtener los clientes:', error);
-                toast(error.message, "toastColorError");
-                pinCarga('fallo');
-
-            }
-            */
         }
 
 
@@ -303,7 +300,7 @@ let rowId = null;
                         }
                         return response.json()
                     });
-                    // carga los datos de data en los combos y textos de "Datos del Modelo"
+                    // carga los datos de data en los combos y textos de "Datos de clasificacion"
                     await cargarDatosDesdeSeleccion(data);
                     validacionVaciar();
                     if(mouse){
@@ -324,106 +321,20 @@ let rowId = null;
             }
         }
 
-        //------------------------------------------------------------------------------------Cargar Datos a DATOS DEL MODELO
+//------------------------------------------------------------------------------------Cargar Datos a DATOS DE CLASIFICACION
 
         async function cargarDatosDesdeSeleccion(data){
-            var client = data;
-            //console.log(data);
-            seleccionComboTipo(client.tipo);
-            //En la db esta todo en minusculas, pero en el front end esta en mayuscula
             
-            //Cargamos el resto de datos
-            document.getElementById("Datos-Identificacion").value=client.identificacion.toUpperCase();
-            document.getElementById("Datos-Apellidos").value=client.apellidos_empresa.toUpperCase();
-            //Valida si es una persona o una empresa
-            if(client.nombres!==null){
-                ocultarPersona(false);
-                document.getElementById("Datos-Nombres").value=client.nombres.toUpperCase();
-                //Selecciona si es H o M
-                document.getElementById("btnradio1").checked= !client.genero;
-                document.getElementById("btnradio2").checked=  client.genero;
-            }else{
-                ocultarPersona(true);
-                document.getElementById("Datos-Nombres").value='';
-            }
-            
-            //Direccion y correo electronico
-            const direccion = client.direccion;
-            const correo = client.correo;
-            //Telefonos
-            const telefono1 = client.telefono1;
-            const telefono2 = client.telefono2;
-            const telefono3 = client.telefono3;
-            const obs_placa = client.obs_cliente;
-
-            mostrarDireccion(direccion!==null);
-            mostrarCorreo(correo!==null);
-            mostrarInputTelefono1(telefono1!==null);
-            mostrarInputTelefono2(telefono2!==null);
-            mostrarInputTelefono3(telefono3!==null);
-            ocultarInputObs(obs_placa===null);
-
-            document.getElementById("Datos-Direccion").value=(direccion===null?'':direccion.toUpperCase());
-            document.getElementById("Datos-Correo").value=(correo===null?'':correo.toLowerCase());
-
-            document.getElementById("Datos-Telefono1").value=(telefono1===null?'':telefono1);
-            document.getElementById("Datos-Telefono2").value=(telefono2===null?'':telefono2);
-            document.getElementById("Datos-Telefono3").value=(telefono3===null?'':telefono3);
-
-            document.getElementById("Datos-Obs").value=  (obs_placa===null?'':obs_placa);
         }
 
 
-
-
-        //-----------------------------------------------------Seteamos el comboTipo desde su Id
-        async function seleccionComboTipo(id_Tipo){
-            //ComboMarca es un elemento tipo select que almacena varios elementos tipo option
-            //Buscamos en el comboMarca .value(id de cada marca) el que corresponda al id_marca del auto seleccionado
-            for(i=0;i<comboTipo.options.length;i++){
-                if(comboTipo.options[i].value == id_Tipo){
-                    //una vez encontrado mostramos en el comboTipo dicho tipo
-                    comboTipo.selectedIndex=i;
-                    break;
-                }
-            }
-        }
 
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ OBTENER DATOS
 
         function obtenerDatos(){
-            const empresaCheck= checkEmpresa.checked;
-            const direccionCheck= checkDireccion.checked;
-            const correoCheck= checkCorreo.checked;
-
-            const telefono1Check= checkTelefono1.checked;
-            const telefono2Check= checkTelefono2.checked;
-            const telefono3Check= checkTelefono3.checked;
-            const noObs = document.getElementById('Datos-NoObs').checked
-
-            const idSeleccionado = getSelectedRowId();
-            const data = {
-                id: (idSeleccionado!==null)?idSeleccionado:0,// si es que el idSeleccionado no existe
-                identificacion: document.getElementById('Datos-Identificacion').value.trim(),
-                tipo: comboTipo.value,
-                apellidos_empresa: document.getElementById('Datos-Apellidos').value.trim().toLowerCase(),
-                nombres: empresaCheck?null:document.getElementById('Datos-Nombres').value.trim().toLowerCase(),
-                genero: empresaCheck?false:document.getElementById('btnradio2').checked,
-                
-                direccion: direccionCheck?document.getElementById('Datos-Direccion').value.trim().toLowerCase():null,
-                correo: correoCheck?document.getElementById('Datos-Correo').value.trim().toLowerCase():null,
-
-                telefono1: telefono1Check?document.getElementById('Datos-Telefono1').value.trim().toLowerCase():null,
-                telefono2: telefono2Check?document.getElementById('Datos-Telefono2').value.trim().toLowerCase():null,
-                telefono3: telefono3Check?document.getElementById('Datos-Telefono3').value.trim().toLowerCase():null,
-
-                obs_cliente: noObs?null:document.getElementById('Datos-Obs').value.trim().toLowerCase(),
-
-            };
-            
-            return data;
+            //Aun no se usa
         }
 
         
@@ -473,30 +384,6 @@ let rowId = null;
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FUNCIONES PRINCIPALES
-
-
-
-        //--------------------------------------------- PLACAS REPETIDOS
-
-        async function clientesRepetidos(id, identificacion){
-            //No se usa pinCarga cargando
-            const queryParams = new URLSearchParams({id:id, identificacion:identificacion});
-
-            const res = await fetch(`/clientsRepetidos?${queryParams.toString()}`)
-            .then(response => {
-                if(!response.ok){
-                    throw new Error('Servidor - '+response.status+': '+response.statusText);
-                }
-                return response.json();
-            })
-            .catch(error =>{
-                toast(error.message, "toastColorError");
-                return null;
-            });
-
-            return res.respuesta;
-        }
-
 
         
         //-----------------------------------------------------Seteamos el combo desde su Id
@@ -565,7 +452,7 @@ let rowId = null;
                 const data = await fetch('/categoriasAll')
                 .then(response => response.json());
 
-                clasificacionTabla(data);
+                console.log(clasificacionTabla(data));
                 
                 //pinCarga('success');
             }catch(error){
@@ -580,9 +467,10 @@ let rowId = null;
 
         });
 
-
+        const listaIds=[];
         function clasificacionTabla(data){
             let filas=[];
+            
             let c1=[],c2=[],c3=[],c4=[];
             data.forEach(tipo =>{
                 if(null === tipo.parentCategoryId){
@@ -639,7 +527,8 @@ let rowId = null;
                                     "c1":grupo.c1,"c1_name":grupo.c1_name,
                                     "name":subgrupo.name})
                         band=1;
-                        filas.push({"c1":grupo.c1_name,"c2":grupo.c2_name,"c3":grupo.name,"c4":subgrupo.name})    
+                        filas.push({"c1":grupo.c1_name,"c2":grupo.c2_name,"c3":grupo.name,"c4":subgrupo.name,"id":subgrupo.id})    
+                        listaIds.push(subgrupo.id)
                     }
                 });
                 if(band==0){
@@ -652,8 +541,6 @@ let rowId = null;
             //console.log('Este es c4: ');
             //console.log(c4);
 
-            //console.log('ESTA ES LA TABLA FINAL:')
-            //console.log(filas);
             return filas
         }
 

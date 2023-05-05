@@ -3,32 +3,6 @@ import {tablaAuto} from '../../models/Auto/tablaAuto';
 
 
 
-
-
-export const getMarcas = async (req,res) =>{
-    try{
-        const marcas = await tablaMarca.findAll();
-        res.json(marcas);
-    }catch(error){
-        return res.status(500).json({ message: error.message });
-    }
-
-}
-
-export const getComboMarcas = async (req,res) =>{
-    try{
-        const marcas = await tablaMarca.findAll({
-            where:{estado:true},
-            attributes: ['id','nom_marca'],
-            order:[['nom_marca','ASC']]
-        });
-        res.json(marcas);
-    }catch(error){
-        return res.status(500).json({ message: error.message });
-    }
-
-}
-
 export const createMarca = async (req,res) =>{
     try{
         const {nom_marca}= req.body;
@@ -122,6 +96,32 @@ export const getMarcaById = async (req,res) =>{
 
 
 
+export const getMarcas = async (req,res) =>{
+    try{
+        const marcas = await tablaMarca.findAll();
+        res.json(marcas);
+    }catch(error){
+        return res.status(500).json({ message: error.message });
+    }
+
+}
+
+export const getComboMarcas = async (req,res) =>{
+    try{
+        const marcas = await tablaMarca.findAll({
+            where:{estado:true},
+            attributes: ['id','nom_marca'],
+            order:[['nom_marca','ASC']]
+        });
+        res.json(marcas);
+    }catch(error){
+        return res.status(500).json({ message: error.message });
+    }
+
+}
+
+
+
 export const getMarcaAutos = async (req,res) =>{
     const {id} = req.params;
 
@@ -168,93 +168,6 @@ export const getMarcasRepetidas = async (req, res)=>{
 //------------------------------------- AUTO
 
 
-
-export const getAutos = async (req,res) =>{
-    try{
-        const autos = await tablaAuto.findAll({
-            where:{estado:true},
-            attributes:['nom_auto','ano','cilindraje','combustible'],
-            include:{
-                model: tablaMarca,
-                attributes: ['nom_marca']
-            }
-        });
-        res.json(autos);
-    }catch(error){
-        //500 es un error que indica q es error del servidor
-        return res.status(500).json({ message: error.message });
-    }
-}
-
-import Sequelize from 'sequelize';
-
-export const getComboAutosUnico = async (req,res) =>{
-    const {id} = req.params
-    try{
-        const autos = await tablaAuto.findAll({
-            where:{
-                id_marca: id,
-                estado:true
-            },
-            include:{
-                model: tablaMarca,
-                attributes: ['alias']
-            },
-            attributes: [
-                [Sequelize.fn('MIN', Sequelize.col('Auto.id')), 'id'],
-                'nom_auto',
-                [Sequelize.col('Marca.alias'), 'alias']
-            ],
-            group: ['nom_auto', 'Marca.id', 'Marca.alias'],
-            order: [['nom_auto','ASC']]
-        });
-        res.json(autos);
-    }catch(error){
-        //500 es un error que indica q es error del servidor
-        return res.status(500).json({ message: error.message });
-    }
-}
-
-export const getComboAutos = async (req,res) =>{
-    const {id} = req.params
-    try{
-        const autos = await tablaAuto.findAll({
-            where:{
-                id_marca: id,
-                estado:true
-            },
-            include:{
-                model: tablaMarca,
-                attributes: ['alias']
-            },
-            attributes:['id','nom_auto'],
-            order: [['nom_auto','ASC']]
-        });
-        res.json(autos);
-    }catch(error){
-        //500 es un error que indica q es error del servidor
-        return res.status(500).json({ message: error.message });
-    }
-}
-
-export const getTablaAutos = async (req,res) =>{
-    try{
-        const autos = await tablaAuto.findAll({
-            where:{estado:true},
-            attributes:['id','nom_auto','ano','cilindraje','combustible'],
-            include:{
-                model: tablaMarca,
-                attributes: ['nom_marca']
-            },
-            order:[[tablaMarca,'nom_marca','ASC'],['nom_auto','ASC']]
-        });
-        res.json(autos);
-    }catch(error){
-        //500 es un error que indica q es error del servidor
-        return res.status(500).json({ message: error.message });
-    }
-}
-
 export const createAuto = async (req,res) =>{
     try{
         const {nom_auto,ano,cilindraje,consumo_motor,consumo_caja,combustible,id_marca} = req.body;
@@ -276,31 +189,6 @@ export const createAuto = async (req,res) =>{
         //500 es un error que indica q es error del servidor
         return res.status(500).json({ message: error.message });
     }   
-}
-
-
-export const getAutoById = async (req,res)=>{
-    const {id} = req.params;
-    try{
-        const auto = await tablaAuto.findOne({
-            where:{id},
-            attributes:{
-                exclude:['estado','createdAt','updatedAt']
-            },
-            include:{
-                model:tablaMarca,
-                attributes:['alias']
-            }
-        })
-        if (auto!==null){
-            res.json(auto);
-        }else{
-            res.status(404).json({message: 'auto not found'});
-        }
-    }catch(error){
-        return res.status(500).json({message:error.message});
-    }
-    
 }
 
 
@@ -370,6 +258,123 @@ export const deleteAuto = async (req,res)=>{
     }
 
 }
+
+
+export const getAutoById = async (req,res)=>{
+    const {id} = req.params;
+    try{
+        const auto = await tablaAuto.findOne({
+            where:{id},
+            attributes:{
+                exclude:['estado','createdAt','updatedAt']
+            },
+            include:{
+                model:tablaMarca,
+                attributes:['alias']
+            }
+        })
+        if (auto!==null){
+            res.json(auto);
+        }else{
+            res.status(404).json({message: 'auto not found'});
+        }
+    }catch(error){
+        return res.status(500).json({message:error.message});
+    }
+    
+}
+
+export const getAutos = async (req,res) =>{
+    try{
+        const autos = await tablaAuto.findAll({
+            where:{estado:true},
+            attributes:['nom_auto','ano','cilindraje','combustible'],
+            include:{
+                model: tablaMarca,
+                attributes: ['nom_marca']
+            }
+        });
+        res.json(autos);
+    }catch(error){
+        //500 es un error que indica q es error del servidor
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+import Sequelize from 'sequelize';
+
+export const getComboAutosUnico = async (req,res) =>{
+    const {id} = req.params
+    try{
+        const autos = await tablaAuto.findAll({
+            where:{
+                id_marca: id,
+                estado:true
+            },
+            include:{
+                model: tablaMarca,
+                attributes: ['alias']
+            },
+            attributes: [
+                [Sequelize.fn('MIN', Sequelize.col('Auto.id')), 'id'],
+                'nom_auto',
+                [Sequelize.col('Marca.alias'), 'alias']
+            ],
+            group: ['nom_auto', 'Marca.id', 'Marca.alias'],
+            order: [['nom_auto','ASC']]
+        });
+        res.json(autos);
+    }catch(error){
+        //500 es un error que indica q es error del servidor
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+/*
+reemplazada por getComboAutosUnicos
+export const getComboAutos = async (req,res) =>{
+    const {id} = req.params
+    try{
+        const autos = await tablaAuto.findAll({
+            where:{
+                id_marca: id,
+                estado:true
+            },
+            include:{
+                model: tablaMarca,
+                attributes: ['alias']
+            },
+            attributes:['id','nom_auto'],
+            order: [['nom_auto','ASC']]
+        });
+        res.json(autos);
+    }catch(error){
+        //500 es un error que indica q es error del servidor
+        return res.status(500).json({ message: error.message });
+    }
+}
+*/
+
+
+export const getTablaAutos = async (req,res) =>{
+    try{
+        const autos = await tablaAuto.findAll({
+            where:{estado:true},
+            attributes:['id','nom_auto','ano','cilindraje','combustible'],
+            include:{
+                model: tablaMarca,
+                attributes: ['nom_marca']
+            },
+            order:[[tablaMarca,'nom_marca','ASC'],['nom_auto','ASC']]
+        });
+        res.json(autos);
+    }catch(error){
+        //500 es un error que indica q es error del servidor
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+
 
 const { Op } = require("sequelize");
 

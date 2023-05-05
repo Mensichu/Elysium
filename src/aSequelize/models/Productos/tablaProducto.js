@@ -77,7 +77,19 @@ export const tablaProducto = sequelize.define('Producto', {
     allowNull: false
 
   },
-  obs_prodcuto:{
+  cod1:{
+    type: DataTypes.STRING(30),
+    allowNull: true
+  },
+  cod2:{
+    type: DataTypes.STRING(30),
+    allowNull: true
+  },
+  cod3:{
+    type: DataTypes.STRING(30),
+    allowNull: true
+  },
+  obs_producto:{
     type: DataTypes.STRING(200),
     allowNull: true
   },
@@ -91,5 +103,4 @@ export const tablaProducto = sequelize.define('Producto', {
     // deshabilita la pluralización automática del nombre de la tabla
     freezeTableName: true
 });
-
 
