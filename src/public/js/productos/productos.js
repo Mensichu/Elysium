@@ -45,6 +45,125 @@ let rowId = null;
         }
 
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO NOMBRES
+const comboNombres = document.getElementById('comboNombres');
+//cargarComboNombres();
+//Combo Nombres
+let comboSubgrupoSelecc= 0;
+async function comboNombre(forzar){
+    if(nuevoBtn.textContent !== 'Nuevo' && (forzar || comboSubgrupoSelecc!=comboSubgrupo.value) ){
+        
+        if(!forzar)pinCarga('cargando')
+        try{
+                const data = await fetch('/comboProductos/'+comboSubgrupo.value)
+                .then(response => response.json());
+                
+                //Vaciamos el combo primero
+                for(i=comboNombres.options.length-1;i>=0;i--){
+                    comboNombres.remove(i);
+                }
+                var productos = data;
+                //En el caso de que no tenga productos este subgrupo
+                if(productos.length!== 0){
+                    //Actualizamos Datos del producto nuevo
+                    document.getElementById("Datos-Nom-Producto").value=productos[0].nom_producto.toUpperCase();
+                    document.getElementById("Datos-G1").value=productos[0].porcentaje1;
+                    document.getElementById("Datos-G2").value=productos[0].porcentaje2;
+                    document.getElementById("Datos-G3").value=productos[0].porcentaje3;
+                    //Creamos el elemento temporal
+                    const fragmento = document.createDocumentFragment();
+                    for(i=0;i<productos.length;i++){
+                        //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
+                        const item = document.createElement("OPTION");
+                        item.innerHTML = productos[i].nom_producto.toUpperCase();
+                        item.value =productos[i].id;
+                        item.setAttribute('data-G1',productos[i].porcentaje1);
+                        item.setAttribute('data-G2',productos[i].porcentaje2);
+                        item.setAttribute('data-G3',productos[i].porcentaje3);
+                        fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+                    }
+                    
+                    //Se agrega al combobox comboModelo
+                    comboNombres.appendChild(fragmento);
+                }else{
+                    console.log('No se encuentra productos para comboNombre')
+                    document.getElementById("Datos-Nom-Producto").value='';
+                    document.getElementById("Datos-G1").value='';
+                    document.getElementById("Datos-G2").value='';
+                    document.getElementById("Datos-G3").value='';
+                    const item = document.createElement("OPTION");
+                    item.innerHTML = 'No Aplica';
+                    item.value = 0;
+                    comboNombres.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+                }
+                if(!forzar)pinCarga('success')
+                comboSubgrupoSelecc= comboSubgrupo.value;
+        
+        }catch(error){
+            console.log('Error al obtener comboNombres:', error);
+            if(!forzar)pinCarga('fallo');
+        }
+    }else{
+        console.log('no cambio de subgrupo,no hay necesidad de actualizar el combo nombres')
+    }
+    //console.log('termine cambioComboMarca()')
+    
+}
+
+
+
+comboNombres.addEventListener('change',(e)=>{
+    const index = comboNombres.selectedIndex;
+    const comboNombreSeleccionado = comboNombres.options[index];
+    document.getElementById("Datos-Nom-Producto").value=comboNombreSeleccionado.textContent;
+    document.getElementById("Datos-G1").value=comboNombreSeleccionado.getAttribute('data-G1');
+    document.getElementById("Datos-G2").value=comboNombreSeleccionado.getAttribute('data-G2');
+    document.getElementById("Datos-G3").value=comboNombreSeleccionado.getAttribute('data-G3');
+});
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ EDITAR COMBO NOMBRES
+
+
+comboNombres.addEventListener('contextmenu', function(e) {
+    e.preventDefault(); // prevenir el menú contextual predeterminado del navegador
+    console.log(e.target);
+    if(e.target.tagName === 'SELECT' && nuevoBtn.textContent !== 'Nuevo'){
+        formComboNombres.style.display='none';
+        formInputNombres.style.display='block';
+    }
+});
+  
+const inputNombre = document.getElementById('Datos-Nom-Producto')
+inputNombre.addEventListener('contextmenu', function(e) {
+    e.preventDefault(); // prevenir el menú contextual predeterminado del navegador
+    console.log(e.target.tagName);
+    if(e.target.tagName === 'INPUT' && nuevoBtn.textContent !== 'Nuevo'){
+        formComboNombres.style.display='block';
+        formInputNombres.style.display='none';
+    }
+});
+
+
+
+function modoComboNombres(mostrar){
+    console.log('Ejecute estaa')
+    //Vaciamos el combo primero
+    for(i=comboNombres.options.length-1;i>=0;i--){
+        comboNombres.remove(i);
+    }
+    // por defecto
+    const item = document.createElement("OPTION");
+    item.innerHTML = 'No Aplica';
+    item.value = 0;
+    comboNombres.appendChild(item);
+    const formComboNombres = document.getElementById('formComboNombres');
+    const formInputNombres = document.getElementById('formInputNombres');
+    formComboNombres.style.display=mostrar?'block':'none';
+    formInputNombres.style.display=mostrar?'none':'block';
+    comboNombre(true);
+}
+
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO SECCION
 const comboSeccion = document.getElementById('comboSeccion');
@@ -125,17 +244,24 @@ async function cargarComboSeccion(){
             await cargarCombo(comboCategoria,comboTipo.value);
             await cargarCombo(comboGrupo,comboCategoria.value);
             await cargarCombo(comboSubgrupo,comboGrupo.value);
+            await comboNombre(false);
         });
 
         const comboGrupo = document.getElementById('comboGrupo');
         comboCategoria.addEventListener('change',async ()=>{
             await cargarCombo(comboGrupo,comboCategoria.value);
             await cargarCombo(comboSubgrupo,comboGrupo.value);
+            await comboNombre(false);
         });
 
         const comboSubgrupo = document.getElementById('comboSubgrupo');
         comboGrupo.addEventListener('change',async ()=>{
             await cargarCombo(comboSubgrupo,comboGrupo.value);
+            await comboNombre(false);
+        });
+
+        comboSubgrupo.addEventListener('click',async ()=>{
+            await comboNombre(false);
         });
 
         //Carga inicial
@@ -145,6 +271,7 @@ async function cargarComboSeccion(){
             await cargarCombo(comboCategoria,comboTipo.value);
             await cargarCombo(comboGrupo,comboCategoria.value);
             await cargarCombo(comboSubgrupo,comboGrupo.value);
+            
         }
 
 
@@ -395,7 +522,7 @@ async function cargarComboSeccion(){
 
         async function cargarDatosDesdeSeleccion(data){
             var producto = data;
-            //console.log(data);
+            //Seleccionamos el combo proveedor
             seleccionCombo(data.Proveedors[0].id,comboProveedor);
             //En la db esta todo en minusculas, pero en el front end esta en mayuscula
             
@@ -431,8 +558,9 @@ async function cargarComboSeccion(){
             const obs_producto = producto.obs_producto;
             ocultarInputObs(obs_producto===null);
             document.getElementById("Datos-Obs").value=  (obs_producto===null?'':obs_producto);
-
+            //Seleccionamos el comboSeccion
             seleccionCombo(producto.id_seccion, comboSeccion);
+
         }
 
 
@@ -525,6 +653,8 @@ async function cargarComboSeccion(){
                 bg_new.classList.add('bg_new');
                 nuevoBtn.classList.add('btn-success');
                 nuevoBtn.classList.remove('btn-outline-success');
+                //Mostarmos el combo Nombres
+                modoComboNombres(true);
                 toast("Ingrese el nuevo producto a agregar", "toastColorInfo");
             }else if(!bloquear && modoActual!='Nuevo'){
                 //Desbloqueado
@@ -533,7 +663,8 @@ async function cargarComboSeccion(){
                 bg_new.classList.remove('bg_new');
                 nuevoBtn.classList.remove('btn-success');
                 nuevoBtn.classList.add('btn-outline-success');
-                //toast("Nuevo modelo Desactivado", "toastColorInfo");
+                //Ocultamos el combo Nombres
+                modoComboNombres(false);
             }
             
             
@@ -573,7 +704,6 @@ async function cargarComboSeccion(){
             document.getElementById("Datos-Cod2").value='';
             document.getElementById("Datos-Cod3").value='';
             document.getElementById("Datos-Obs").value='';
-            
             ocultarInputObs(true);
         }
 
@@ -692,29 +822,7 @@ async function cargarComboSeccion(){
 
 
         
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
 
-        
-        /*
-
-        async function presionarEnter(event){
-            if (event.code === "Enter" || event.which === 13) {
-                // Código a ejecutar al presionar Enter
-                const data = obtenerDatos();
-                pinCarga('cargando');
-                //Al querer verificar si el cliente existe para agregar uno nuevo
-                //Esta omite el id actual, y busca todos menos los '0000000000'
-                if(await proveedoresRepetidos(0,data.identificacion,data.nom_proveedor)){
-                    //Si devuelve true significa que encontro una modelo año cil igual
-                    toast("El proveedor ya existe!", "toastColorError");
-                    pinCarga('fallo');
-                }else{
-                    toast("Identificacion y proveedor disponible", "toastColorSuccess");
-                    pinCarga('success');
-                }
-            }
-        }
-        */
 
 //-------------------------BTN modificar Modelo
 
@@ -758,29 +866,7 @@ async function cargarComboSeccion(){
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FUNCIONES PRINCIPALES
 
-        /*
 
-        //--------------------------------------------- PROVEEDOR REPETIDOS
-
-        async function proveedoresRepetidos(id, identificacion, nom_proveedor){
-            //No se usa pinCarga cargando
-            const queryParams = new URLSearchParams({id:id, identificacion:identificacion,nom_proveedor:nom_proveedor});
-
-            const res = await fetch(`/proveedoresRepetidos?${queryParams.toString()}`)
-            .then(response => {
-                if(!response.ok){
-                    throw new Error('Servidor - '+response.status+': '+response.statusText);
-                }
-                return response.json();
-            })
-            .catch(error =>{
-                toast(error.message, "toastColorError");
-                return null;
-            });
-
-            return res.respuesta;
-        }
-        */
         //---------------------------------------------- NUEVO PRODUCTO
 
         async function nuevoProducto(){

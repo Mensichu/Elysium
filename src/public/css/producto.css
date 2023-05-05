@@ -89,7 +89,7 @@ body{
   
 
   .tablaModeloBody{
-    height: 698px;
+    height: 80vh;
     min-height: var(--minAnchoDatosModelo);
     background-color: var(--colorBodyCards);
   }

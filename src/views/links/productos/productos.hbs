@@ -77,21 +77,29 @@
                                         </div>
                                         <!-- Marca -->
                                         <div class="form-group mt-2">
-                                            <label id="proveedorLabel" class="form-label " for="inputValid">Marca</label>
+                                            <label id="proveedorLabel" class="form-label " for="inputValid">Marca:</label>
                                             <input type="text" id="Datos-Marca" class="form-control form-input" name="Marca" 
                                             placeholder="Marca del producto" minlength="1"maxlength="200">
                                             <div class="invalid-feedback">Campo incorrecto!</div>
                                         </div>
                                         <!-- Nom_Producto -->
-                                        <div class="form-group mt-2">
-                                            <label id="representanteLabel" class="form-label " for="inputValid">Nombre</label>
+                                        <div id="formInputNombres" class="form-group mt-2">
+                                            <label id="representanteLabel" class="form-label " for="inputValid">Nombre:</label>
                                             <input type="text" id="Datos-Nom-Producto" class="form-control form-input" name="NomProducto" 
                                             placeholder="Producto" minlength="1"maxlength="200">
                                             <div class="invalid-feedback">Campo incorrecto!</div>
                                         </div>
+                                        <div id="formComboNombres" class="form-group" title="clic derecho para editar" style="display: none;">
+                                            <label for="exampleSelect1" class="form-label mt-2">Combo Nombres:</label>
+                                            <div class="input-group">
+                                                <select class="form-select" id="comboNombres">
+                                                    <option value="0">No aplica</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                         <!-- Nom_Impresion -->    
                                         <div class="form-group mt-2">
-                                            <label id="representanteLabel" class="form-label " for="inputValid">Impresion</label>
+                                            <label id="representanteLabel" class="form-label " for="inputValid">Nombre Comercial:</label>
                                             <input type="text" id="Datos-Nom-Impresion" class="form-control form-input" name="NomImpresion" 
                                             placeholder="Impresion" minlength="1"maxlength="200">
                                             <div class="invalid-feedback">Campo incorrecto!</div>
@@ -154,7 +162,7 @@
                                         <div class="form-group ">
                                             <label class="form-label" for="inputValid">Costo sin iva:</label>
                                             <div class="input-group">
-                                                <span class="input-group-text ">$</span>
+                                                <span class="input-group-text " style="color:rgb(61, 112, 207);">$</span>
                                                 <input type="number" id="Datos-CostoSinIva" class="form-control form-input" name="CostoSinIva" 
                                                 placeholder="0.00" min="0.0" maxlength="10" >
                                             </div>
@@ -164,7 +172,7 @@
                                         <div class="form-group ">
                                             <label class="form-label mt-2" for="inputValid">IVA 12%:</label>
                                             <div class="input-group">
-                                                <span class="input-group-text ">$</span>
+                                                <span class="input-group-text " style="color:rgb(61, 112, 207);">$</span>
                                                 <input type="number" id="Datos-Iva" class="form-control form-input" name="Iva" 
                                                 placeholder="0.00" min="0.0"  maxlength="6" >
                                             </div>
@@ -174,7 +182,7 @@
                                         <div class="form-group ">
                                             <label class="form-label mt-2" for="inputValid">Costo con iva:</label>
                                             <div class="input-group mb-2">
-                                                <span class="input-group-text ">$</span>
+                                                <span class="input-group-text " style="color:rgb(61, 112, 207);">$</span>
                                                 <input type="number" id="Datos-CostoConIva" class="form-control form-input" name="CostoConIva" 
                                                 placeholder="0.00" min="0.0"  maxlength="6" >
                                             </div>
@@ -206,7 +214,7 @@
                                             <div class="form-group col-7 m-1 ">
                                                 <label class="form-label mb-0" for="inputValid">Pvp1:</label>
                                                 <div class="input-group">
-                                                    <span class="input-group-text spanClass">$</span>
+                                                    <span class="input-group-text spanClass" style="color: greenyellow;">$</span>
                                                     <input type="number" id="Datos-Pvp1" class="form-control form-input" name="Pvp1" 
                                                     placeholder="0.00" min="0.0"  maxlength="4" >
                                                 </div>
@@ -230,7 +238,7 @@
                                             <div class="form-group col-7 m-1 ">
                                                 <label class="form-label mb-0" for="inputValid">Pvp2:</label>
                                                 <div class="input-group">
-                                                    <span class="input-group-text spanClass">$</span>
+                                                    <span class="input-group-text spanClass" style="color: greenyellow;">$</span>
                                                     <input type="number" id="Datos-Pvp2" class="form-control form-input" name="Pvp2" 
                                                     placeholder="0.00" min="0.0"  maxlength="4" >
                                                 </div>
@@ -252,9 +260,9 @@
                                             </div>
                                             <!-- Pvp -->
                                             <div class="form-group col-7 m-1 ">
-                                                <label class="form-label mb-0" for="inputValid">Pvp3:</label>
+                                                <label class="form-label mb-0" for="inputValid" >Pvp3:</label>
                                                 <div class="input-group">
-                                                    <span class="input-group-text spanClass">$</span>
+                                                    <span class="input-group-text spanClass" style="color: greenyellow;">$</span>
                                                     <input type="number" id="Datos-Pvp3" class="form-control form-input" name="Pvp3" 
                                                     placeholder="0.00" min="0.0"  maxlength="4" >
                                                 </div>

@@ -104,7 +104,7 @@ let rowId = null;
                         minWidth: 150,maxWidth:150
                     },
                 {headerName: "Subgrupo", 
-                        field: "subgrupo", floatingFilter:true,
+                        field: "subgrupo", floatingFilter:true, sort: 'asc',
                         minWidth: 150, maxWidth: 150
                     },
                 {headerName: "Producto", 
@@ -247,8 +247,7 @@ let rowId = null;
                 const data = await fetch('/categoriasAll')
                 .then(response => response.json());
                 //mediante un for vamos cargando fila por fila
-                const filaSubgrupos = data[0];
-                const idSubgrupos = data[1];
+                const filaSubgrupos = data;
                 console.log(filaSubgrupos)
                 for(i=0;i<filaSubgrupos.length;i++){
                     let newRow = datosAFilaGrid(filaSubgrupos[i]);

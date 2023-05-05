@@ -204,7 +204,7 @@ function validarCampo(elemento,tipoDeDato,cambiaPvp){
         }
         //G2
         if(elemento.name== 'G2'){
-            if(cambiaPvp)cambiaG();
+            if(cambiaPvp)cambiaG2();
             if(!comprobarPorcentaje(elemento)){
                 return false;
             }
@@ -212,7 +212,7 @@ function validarCampo(elemento,tipoDeDato,cambiaPvp){
         }
         //G3
         if(elemento.name== 'G3'){
-            if(cambiaPvp)cambiaG();
+            if(cambiaPvp)cambiaG3();
             if(!comprobarPorcentaje(elemento)){
                 return false;
             }
@@ -406,6 +406,8 @@ function cambiaCostoSinIva(){
         costoConIvaInput.value=  subtotalConIva;
     //Calculamos el pvp
     calculoPVP(subtotalConIva);
+    validarElemento(IvaInput,true);
+    validarElemento(costoConIvaInput,true);
     
 }
 
@@ -426,21 +428,41 @@ function cambiaCostoConIva(){
 function cambiaG1(){
     G2Input.value=G1Input.value;
     G3Input.value=G1Input.value;
-    cambiaG();
-}
-
-function cambiaG(){
+    //Preguntamos si se efectuo el calculo, si no mandamos no valido
+    validarElemento(G2Input,true);
+    validarElemento(G3Input,true);
     const subtotalConIva = parseFloat(costoConIvaInput.value).toFixed(2)
     calculoPVP(subtotalConIva);
+}
+
+function cambiaG2(){
+    const subtotalConIva = parseFloat(costoConIvaInput.value).toFixed(2)
+    calculoPVP2(subtotalConIva);
+}
+
+function cambiaG3(){
+    const subtotalConIva = parseFloat(costoConIvaInput.value).toFixed(2)
+    calculoPVP3(subtotalConIva);
 }
 
 
 function cambiaCod1(){
     cod2.value= cod1.value;
     cod3.value= cod1.value;
+    validarElemento(cod2,true);
+    validarElemento(cod3,true);
 }
 
 function calculoPVP(subtotalConIva){
+    //Calculo de pvp1
+    calculoPVP1(subtotalConIva);
+    //Calculo de pvp2
+    calculoPVP2(subtotalConIva);
+    //Calculo de pvp3
+    calculoPVP3(subtotalConIva);
+}
+
+function calculoPVP1(subtotalConIva){
     //Calculo de pvp1
     const g1 = parseFloat(G1Input.value)
     const pvp1 = subtotalConIva*(1+(g1/100))
@@ -448,17 +470,38 @@ function calculoPVP(subtotalConIva){
         pvp1Input.value = redondearA5o0(pvp1).toFixed(2);
         //Corrige a dos decimales si es necesario
         comprobarNumDosDecimales(pvp1Input);
+        //Preguntamos si se efectuo el calculo, si no mandamos no valido
+        const validar = isNaN(parseFloat(pvp1));
+        if(!validar)validarElemento(pvp1Input,true);
+}
+
+function calculoPVP2(subtotalConIva){
     //Calculo de pvp2
     const g2 = parseFloat(G2Input.value)
     const pvp2 = subtotalConIva*(1+(g2/100))
         //Value
         pvp2Input.value = redondearA5o0(pvp2).toFixed(2);
+        comprobarNumDosDecimales(pvp2Input);    
+        //Preguntamos si se efectuo el calculo, si no mandamos no valido
+        const validar = isNaN(parseFloat(pvp2));
+        if(!validar)validarElemento(pvp2Input,true);
+}
+
+function calculoPVP3(subtotalConIva){
     //Calculo de pvp3
     const g3 = parseFloat(G3Input.value)
     const pvp3 = subtotalConIva*(1+(g3/100))
         //Value
         pvp3Input.value = pvp3.toFixed(2);
+        comprobarNumDosDecimales(pvp3Input);
+        //Preguntamos si se efectuo el calculo, si no mandamos no valido
+        const validar = isNaN(parseFloat(pvp3));
+        if(!validar)validarElemento(pvp3Input,true);
 }
+
+
+
+
 
 function redondearA5o0(numero) {
     let numeroMultiplicado = Math.round(numero*2*100);

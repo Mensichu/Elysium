@@ -104,7 +104,7 @@ export const getCategoriasAll = async (req,res) =>{
                 exclude:['createdAt','updatedAt']
             }
         })
-        const filaSubgrupos = clasificacionTabla(categoriasAll)[0];
+        let filaSubgrupos = clasificacionTabla(categoriasAll)[0];
         const idSubgrupos = clasificacionTabla(categoriasAll)[1];
 
         const productos = await tablaProducto.findAll({
@@ -115,23 +115,60 @@ export const getCategoriasAll = async (req,res) =>{
             },
             attributes:['id','nom_producto','id_subgrupo'],
         });
-
-        // Recorrer el array idSubgrupos
-        productos.forEach((producto) => {
-            // Buscar el objeto correspondiente en filaSubgrupos
-            filaSubgrupos.forEach((subgrupo) => {
-            if(subgrupo.id!== undefined){
-                if (subgrupo.id == producto.id_subgrupo) {
-                    console.log('ya taaaaaaaaaaaaaaaaaa')
-                    // Agregar el valor de nom_producto al objeto
-                    subgrupo.nom_producto = producto.nom_producto;
+        
+        /*
+        let arrayTemp =[];
+        filaSubgrupos.forEach((subgrupo)=>{
+            console.log('Este es el subgrupo:');
+            console.log(subgrupo);
+            let filaTemp = {...subgrupo};
+            productos.forEach((producto)=>{
+                if(subgrupo.id!== undefined){
+                    if (subgrupo.id === producto.id_subgrupo) {
+                        if(subgrupo.nom_producto === undefined){
+                            subgrupo.nom_producto= producto.nom_producto;
+                        }else{
+                            filaTemp.nom_producto = producto.nom_producto;
+                            arrayTemp.push(filaTemp);
+                        }
+                    }
                 }
-            }
             });
         });
-        
 
-        res.json([filaSubgrupos,productos]);
+
+        */
+
+        let arrayTemp =[...filaSubgrupos];
+        for(let i=0;i<filaSubgrupos.length;i++){
+            console.log('filaSubgrupo i: '+i);
+            let filaTemp = {...filaSubgrupos[i]};
+            for(let j=0;j<productos.length;j++){
+                console.log('j: '+j);
+                if (filaSubgrupos[i].id === productos[j].id_subgrupo) {
+                    console.log('-------------Este es el subgrupo '+i+':');
+                    console.log(filaSubgrupos[i]);
+                    console.log('Este es producto '+i+':');
+                    console.log(productos[j].id_subgrupo);
+                    console.log(productos[j].nom_producto);
+                    console.log('-------------------------------------------------');
+                    if(filaSubgrupos[i].nom_producto === undefined){
+                        filaSubgrupos[i].nom_producto= productos[j].nom_producto;
+                        arrayTemp[i].nom_producto= productos[j].nom_producto;
+                        console.log('Agregamos el nombre');    
+                    }else{
+                        console.log('++++++++++++++++++++++++++++Ya tiene Nombre+++++++++++++++++++++++++++++');
+                        filaTemp.nom_producto = productos[j].nom_producto;
+                        arrayTemp.splice(i, 0, filaTemp);
+                    }
+                }
+            }
+        }   
+
+        //filaSubgrupos = filaSubgrupos.concat(arrayTemp);
+
+        res.json(arrayTemp);
+
     }catch(error){
         return res.status(500).json({ message: error.message });
     }
