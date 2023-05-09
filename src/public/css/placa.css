@@ -99,3 +99,33 @@ background-position: center;
   /*height: 500px;*/
   overflow: auto;
 }
+
+/*
+.select:checked {
+  border-color: rgb(0, 217, 255) !important;
+}
+
+.select:hover {
+  border-color: rgb(0, 225, 255) !important;
+}
+
+.select:focus {
+  border-color: rgb(0, 247, 255) !important;
+}
+
+select option:checked{
+  background-color: rgb(158, 45, 168) !important;
+  color: white;
+}
+
+
+select option:focus{
+  background-color: rgb(49, 247, 0) !important;
+  color: white;
+}
+
+select option:hover{
+  background-color: rgb(228, 224, 7) !important;
+  color: white;
+}
+*/

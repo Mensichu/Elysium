@@ -7,6 +7,8 @@ import {sequelize} from './aSequelize/database/database'
 //import './aSequelize/models/Productos/tablaProducto'
 //import './aSequelize/models/Productos/tablaRegistroProveedorProducto'
 
+//import './aSequelize/models/Productos/tablaRegistroProductoAuto'
+
 async function main(){
     try{
         //await sequelize.sync({force:false});

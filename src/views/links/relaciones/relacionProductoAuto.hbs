@@ -1,0 +1,185 @@
+<link rel="stylesheet" href="/css/global.css">
+<link rel="stylesheet" href="/css/relacionPC.css">
+
+
+<div id="fondo" class="showDelay mt-4" stylea="padding: 10px; border:2px black solid">
+    <div class="container-fluid">
+        <div class="row" style="justify-content: center;">
+            <!-------------------------------TABLAS------------------------------------>
+            <!------------------------------------------------------------------------->
+            <div class="col-12 col-md-6 contenedor contenedorIzquierdo">
+                <!--TABLA CLIENTES-->
+                <div class="tablaPrincipal">
+                    
+                        <div class="card text-white " style="height: 100%;">
+                        <div class="card-header d-flex justify-content-between align-items-center" style="padding: 0;padding-top: 3px;padding-bottom: 3px;">
+                            <h5 id="tituloHeaderA" style="margin-left: 10px;margin-top: 5px; ">Tabla de Productos</h5>
+                            <div>
+                                <button class="btn btnColor" style="margin-left: 3px;margin-right: 3px; " 
+                                id="btn-ProductoRelacionar">Nueva relacion</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body tablaModeloBodys">
+                            <div class="diseñoTablaGrid" style="height:100%">
+                                    <div id="myGridProductos" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <!--TABLA RELACION-->
+                <div class="tablaRelacion">
+                        <div class="card text-white " style="height: 100%;">
+                            <div class="card-header colorHeaderRelacion d-flex justify-content-between align-items-center" style="padding: 0;padding-top: 3px;padding-bottom: 3px;">
+                                <h6 id="titulo-Producto-Autos" style="margin-left: 10px;margin-top: 5px; ">Producto: autos</h6>
+                                <div>
+                                    <button class="btn btnColor2" style="margin-left: 3px;margin-right: 3px; " 
+                                    id="btn-ProductoEliminarRelacion">Eliminar</button>
+                                </div>
+                            </div>
+                            <div class="card-body colorBodyRelacion tablaModeloBodys">
+                                <div class="diseñoTablaGrid" style="height:100%">
+                                        <div id="myGridRelacionAutos" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+
+            
+            <!-------------------------------TABLAS------------------------------------>
+            <!------------------------------------------------------------------------->
+            <div class="col-12 col-md-6 contenedor">
+                <!--TABLA CLIENTES-->
+                <div class="tablaPrincipal">
+                    
+                        <div class="card text-white " style="height: 100%;">
+                        <div class="card-header d-flex justify-content-between align-items-center" style="padding: 0;padding-top: 3px;padding-bottom: 3px;">
+                            <h5 id="tituloHeaderB" style="margin-left: 10px;margin-top: 5px; ">Tabla de Autos</h5>
+                            <div>
+                                <button class="btn btnColor" style="margin-left: 3px;margin-right: 3px; " 
+                                id="btn-AutoRelacionar">Nueva relacion</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body tablaModeloBodys">
+                            <div class="diseñoTablaGrid" style="height:100%">
+                                    <div id="myGridAutos" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <!--TABLA RELACION-->
+                <div class="tablaRelacion">
+                        <div class="card text-white " style="height: 100%;">
+                            <div class="card-header colorHeaderRelacion d-flex justify-content-between align-items-center" style="padding: 0;padding-top: 3px;padding-bottom: 3px;">
+                                <h6 id="titulo-Auto-Productos" style="margin-left: 10px;margin-top: 5px; ">Auto: productos</h6>
+                                <div>
+                                    <button class="btn btnColor2" style="margin-left: 3px;margin-right: 3px; " 
+                                    id="btn-AutoEliminarRelacion">Eliminar</button>
+                                </div>
+                            </div>
+                            <div class="card-body colorBodyRelacion tablaModeloBodys">
+                                <div class="diseñoTablaGrid" style="height:100%">
+                                        <div id="myGridRelacionProductos" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+<!--
+
+
+            <div class="col-12 col-md-6">
+                <div class="card text-white ">
+                    <div class="card-header d-flex justify-content-between align-items-center" style="padding: 0;padding-top: 3px;padding-bottom: 3px;">
+                        <h6 id="tituloHeader" style="margin-left: 10px;margin-top: 5px; ">Tabla de Placas</h6>
+                        <div>
+                            <div class="orientacionDivs form-group" >
+                                <button class="btn btnColor"  id="btn-PlacasTodos">Todos</button>
+                                <button class="btn btnColor" style="margin-left: 3px;margin-right: 3px; " id="btn-PlacasCancelar">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body tablaModeloBody">
+                        <div class="diseñoTablaGrid" style="height:100%">
+                                <div id="myGridPlacas" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+-->
+
+
+
+        
+
+        <button id="btnPrueba" style="display:none">Prueba</button>
+    
+    
+    
+        <div class="firma" style="display: none;">
+            <figure>
+                <figcaption class="blockquote-footer">
+            Developed by <cite title="Source Title">Alex Carangui</cite>
+            </figcaption>
+            </figure>   
+            
+        </div>
+
+
+    </div>
+
+
+    <div id="myModal" class="modal">
+        <div class="card border-light mb-3 modal-content">
+            <div id="'modalHeader" class="card-header d-flex justify-content-between align-items-center">
+                <h5 id="tituloHeader">Nuevo</h5>
+                <button id="cancelar1" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="modalBody" class="card-body justify-content-center align-items-center text-align-center">
+                <!--input o texto p-->
+                <div id="divBotones" class="d-flex justify-content-center">
+                    <button class="btn btnColor modal-button" id="confirmar">Nueva Marca</button>
+                    <button class="btn btnColor modal-button" id="cancelar">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+<!--                                                            ANIMACION DE BOTON                                                -->
+
+<div id="circulo" class="circuloOrig"></div>
+<div id="pin" class="wait"></div>
+
+
+<script src="../js/relaciones/relacionPA.js"></script>
+<!--<script src="../js/Validaciones/validacion.producto.js"></script>-->
+
+
+
+
+
+
+
+
+
+
+
+
+

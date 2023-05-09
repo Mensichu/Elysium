@@ -94,6 +94,14 @@ router.get('/pagos',isAuthenticated, (req,res)=>{
     res.render('links/pagos');
 });
 
+router.get('/relacionplacacliente', (req,res)=>{
+  res.render('links/relaciones/relacionPlacaCliente');
+});
+
+router.get('/relacionproductoauto', (req,res)=>{
+  res.render('links/relaciones/relacionProductoAuto');
+});
+
 
 
 export default router;

@@ -56,6 +56,8 @@ window.addEventListener('load',()=>{
         if(pagina.includes('/Pedidos'))activos[5].classList.add('active');
         if(pagina.includes('/pedidos/proveedores')){activos[5].classList.add('active');bg_navElysium('#3a1947');};
         if(pagina.includes('/Pagos'))activos[6].classList.add('active');
+        if(pagina.includes('/relacionPlacaCliente')){activos[7].classList.add('active');bg_navElysium('#1a1a1a');};
+        if(pagina.includes('/relacionProductoAuto')){activos[7].classList.add('active');bg_navElysium('#1a1a1a');};
         
 
     }

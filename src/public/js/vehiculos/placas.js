@@ -204,7 +204,7 @@ window.addEventListener('load',()=>{
                         field: "marca",sort: 'asc', floatingFilter:true, 
                         maxWidth: 100,flex: 'auto'},
                 {headerName: "Modelo", 
-                        field: "modelo", floatingFilter:true,
+                        field: "modelo",sort: 'asc', floatingFilter:true,
                         minWidth: 150,flex: 'auto'
                     },
                 {headerName: "Año", 
@@ -563,8 +563,6 @@ function nuevaFilaAgGrid(data) {
             const bg_new = document.getElementById('datosModeloCard')
             if(bloquear && modoActual!='Agregar'){
                 //Bloqueado
-                //mostrarTextoModelo(true);
-                //guardarNomAutoBtn.disabled=true;
                 guardarBtn.disabled=true;
                 placaInput.disabled=false;
                 nuevoBtn.textContent = 'Agregar';
@@ -574,7 +572,6 @@ function nuevaFilaAgGrid(data) {
                 toast("Ingrese la nueva placa a agregar", "toastColorInfo");
             }else if(!bloquear && modoActual!='Nuevo'){
                 //Desbloqueado
-                //mostrarTextoModelo(false);
                 guardarBtn.disabled=true;
                 placaInput.disabled=true;
                 nuevoBtn.textContent = 'Nuevo';
@@ -588,10 +585,10 @@ function nuevaFilaAgGrid(data) {
         }
 
 
-        function modoNuevoModelo(){
+        function modoNuevaPlaca(){
 
             if(nuevoBtn.textContent === 'Nuevo'){
-                vaciarDatosModelo()
+                vaciarDatosPlaca()
                 botonesModoNuevo(true);
                 validacionVaciar();
                 return false;
@@ -601,7 +598,7 @@ function nuevaFilaAgGrid(data) {
             }
         }
 
-        function vaciarDatosModelo(){
+        function vaciarDatosPlaca(){
             document.getElementById("Datos-Placa").value='';
             document.getElementById("Datos-Clave").value='';
             document.getElementById("Datos-Obs").value='';
@@ -687,9 +684,9 @@ function nuevaFilaAgGrid(data) {
 
                 //Nueva marca
                 if(btnConfirmar.value==0)nuevaMarca();
-                // Guardar cambios al modelo
+                // Guardar cambios a la placa
                 if(btnConfirmar.value==1)modificarPlaca();
-                // Nuevo modelo
+                // Nueva placa
                 if(btnConfirmar.value==2)nuevaPlaca();
 
             }
@@ -732,26 +729,50 @@ function nuevaFilaAgGrid(data) {
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
 
+        //-------------------------ENTER verificar
+        const placaInput = document.getElementById('Datos-Placa')
+        placaInput.addEventListener('keyup', async (event)=>{
+                    
+            if(placaInput.value.length>6){
+                if (event.code === "Enter" || event.which === 13) {
+                    // Código a ejecutar al presionar Enter
+                    const data = obtenerDatos();
+                    pinCarga('cargando');
+                    console.log(data.id);
+                    console.log(data.nom_placa);
+                    //Al querer verificar si la placa existe para agregar uno nuevo
+                    //Esta no omite el id actual, y busca todos
+                    if(await placasRepetidas(0,data.nom_placa)){
+                        //Si devuelve true significa que encontro una placa igual
+                        toast("La Placa ya existe!", "toastColorError");
+                        pinCarga('fallo');
+                    }else{
+                        toast("Placa disponible", "toastColorSuccess");
+                        pinCarga('success');
+                    }
+                }
+            }
+        });
 
-//-------------------------BTN NVerificar
-const btnVerificar = document.querySelector("#btn-Verificar");
-btnVerificar.addEventListener('click',async ()=>{
-    const data = obtenerDatos();
-    pinCarga('cargando');
-    console.log(data.id);
-    console.log(data.nom_placa);
-    //Al querer verificar si la placa existe para agregar uno nuevo
-    //Esta no omite el id actual, y busca todos
-    if(await placasRepetidas(0,data.nom_placa)){
-        //Si devuelve true significa que encontro una modelo año cil igual
-        toast("La Placa ya existe!", "toastColorError");
-        pinCarga('fallo');
-    }else{
-        toast("Placa disponible", "toastColorSuccess");
-        pinCarga('success');
-    }
-    
-});
+        //-------------------------BTN NVerificar
+        const btnVerificar = document.querySelector("#btn-Verificar");
+        btnVerificar.addEventListener('click',async ()=>{
+            const data = obtenerDatos();
+            pinCarga('cargando');
+            console.log(data.id);
+            console.log(data.nom_placa);
+            //Al querer verificar si la placa existe para agregar uno nuevo
+            //Esta no omite el id actual, y busca todos
+            if(await placasRepetidas(0,data.nom_placa)){
+                //Si devuelve true significa que encontro unaplaca igual
+                toast("La Placa ya existe!", "toastColorError");
+                pinCarga('fallo');
+            }else{
+                toast("Placa disponible", "toastColorSuccess");
+                pinCarga('success');
+            }
+            
+        });
 
 
 //-------------------------BTN No tiene clave
@@ -772,7 +793,7 @@ btnVerificar.addEventListener('click',async ()=>{
 //-------------------------BTN modificar Placa
 
         const guardarBtn = document.getElementById("btn-Guardar");
-        const placaInput = document.getElementById('Datos-Placa')
+        
 
         guardarBtn.disabled=true;
         placaInput.disabled=true;
@@ -798,7 +819,7 @@ btnVerificar.addEventListener('click',async ()=>{
 
         nuevoBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if( (modoNuevoModelo() && validacionNuevo()) ){
+            if( (modoNuevaPlaca() && validacionNuevo()) ){
 
                 //Construimos aqui el modal
                 construirModal(2);
@@ -844,7 +865,7 @@ btnVerificar.addEventListener('click',async ()=>{
             const data = obtenerDatos();
 
             if(await placasRepetidas(0,data.nom_placa)){
-                //Si devuelve true significa que encontro una modelo año cil igual
+                //Si devuelve true significa que encontro una placa igual
                 toast("La Placa ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{

@@ -20,6 +20,8 @@ import registroPCRoutes from './routes/registroPC.routes';
 import proveedorRoutes from './routes/proveedor.routes';
 import clasificacionRoutes from './routes/clasificacion.routes'
 import productoRoutes from './routes/producto.routes'
+import relacionPCRoutes from './routes/relacionPC.routes'
+import relacionPARoutes from './routes/relacionPA.routes'
 
 
 const app = express();
@@ -77,6 +79,8 @@ app.use(registroPCRoutes);
 app.use(proveedorRoutes);
 app.use(clasificacionRoutes);
 app.use(productoRoutes);
+app.use(relacionPCRoutes);
+app.use(relacionPARoutes);
 app.use(routes);
 
 // Public

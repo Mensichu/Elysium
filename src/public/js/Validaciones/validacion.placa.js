@@ -184,7 +184,9 @@ const expresiones = {
 
         function validacionPlaca(){
             const placa = document.getElementById("Datos-Placa");
-            return validarPlacas(placa);
+            const valido = validarPlacas(placa);
+            if(!valido)toast("Ingrese correctamente la placa", "toastColorError");
+            return valido;
         }
 
         function validacionGuardar(){

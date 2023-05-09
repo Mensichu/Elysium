@@ -1,0 +1,260 @@
+:root{
+  --ancho:200px;
+  --minAnchoDatosModelo:200px;
+  --color1:#4e4e4e;
+  --color2:#3a3a3a;
+  
+  --borderColorGroup:#292929;
+  --colorHeaderCards: #1a1a1a;
+
+  --colorBodyCards: #35363679;
+/*--colorHeaderCards: #293558;*/
+  --backgroundColorGroup:#807a7a49;
+
+  --color3:#404964;
+  --color4:#333a4e;
+  --colorHeaderCardsRelacion:#4a5472;/*#4a5472;*/
+  --colorBodyCardsRelacion:#5353535e;
+}
+
+  .labelsColor{
+    -webkit-text-stroke: 0.3px rgb(179, 179, 179);
+    color: white;
+  }
+
+  .btnColor{
+    background: var(--color1);
+    border-color: var(--color2);
+  }
+
+  .btnColor2{
+    background: var(--color1);
+    border-color: var(--color2);
+  }
+
+  .btnColor:hover {
+    background-color: var(--color2) !important;/* cambia a color rojo al hacer hover */
+  }
+
+  .form-check-input:checked {
+      background-color: var(--color1);
+      border-color: var(--color2);
+    }
+  
+
+    .formGroupBorder{
+        border: 1px dashed transparent;
+        background-color: var(--backgroundColorGroup);
+        
+    }
+  
+
+  
+  
+    .card .card-header {
+      background: var(--colorHeaderCards);
+      border: 1px solid;
+      border-color: var(--borderColorGroup);
+
+    }
+
+    .colorHeaderRelacion{
+      background: var(--colorHeaderCards)!important;
+      border-radius: 0 0 0 0 !important;
+      border-top-left-radius: 0 !important;
+      border-top-right-radius: 0 !important;
+      border: 1px solid;
+      border-color: var(--borderColorGroup);
+
+    }
+
+    .colorBodyRelacion{
+      background: var(--colorBodyCardsRelacion)!important;
+      border-radius: 0 0 5px 5px !important;
+      border-bottom-left-radius: 5px !important;
+      border-bottom-right-radius: 5px !important;
+    }
+  
+    .card .card-body {
+      background: transparent;
+      background-color: var(--colorBodyCards);
+      border-radius: 0 0 0 0;
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      backdrop-filter: blur(10px);
+    }
+
+    .card{
+      background: transparent;
+    }
+  
+    
+/*                                               FONDO                    */
+
+body{
+  background: url('../img/black.jfif');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+  
+  
+
+  
+
+  .tablaModeloBody{
+    height: 60vh;
+    min-height: var(--minAnchoDatosModelo);
+    background-color: var(--colorBodyCards);
+  }
+
+  .tablaModeloRelacion{
+    height: 40vh;
+    max-height: 1000px;
+    min-height: var(--minAnchoDatosModelo);
+    background-color: var(--colorBodyCards);
+  }
+
+
+  .diseñoTablaGrid{
+    max-width: 98%;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  
+
+  .contenedorIzquierdo{
+    border-right: 1px solid;
+    border-right-color: #4e4e4e;
+  }
+
+
+
+  .contenedor {
+    position: relative;
+    height: 85vh; /* altura del viewport */
+    
+  }
+
+  .tablaPrincipal{
+    height: 60%;
+  }
+
+  .tablaRelacion{
+    height: 40%;
+  }
+
+
+
+  .tablaModeloBodys{
+    height: 100%;
+    
+    background-color: var(--colorBodyCards);
+  }
+
+
+
+  /* Si es mas alto que 1000px y mas ancho que 1000px*/
+  @media (max-height: 850px) {
+    .tablaPrincipal{
+      height: 50%;
+    }
+  
+    .tablaRelacion{
+      height: 50%;
+    }
+
+
+  }
+
+ 
+
+
+
+
+
+
+  
+/*                                               MODAL                    */
+
+  .modal-content {
+    background-color: var(--colorBodyCards) !important;
+  }
+
+
+  .circuloOrig {
+    background-color: var(--colorBodyCards) !important;
+  }
+
+
+
+  .orientacionDivs {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    
+  }
+
+  .izquierda {
+    flex: none; /* Anula la propiedad "flex: 1" del padre */
+    margin-right: auto; /* Anula la propiedad "margin-left: auto" del padre */
+    margin-left: 0; /* Anula la propiedad "margin-right: 0" del padre */
+    width: 50%;
+
+}
+
+.anchoResp1{
+  display: block;
+}
+.anchoResp2{
+  display: none;
+}
+
+
+
+/* Si es mas alto que 1000px y mas ancho que 1000px*/
+@media (max-width: 1615px) {
+  .anchoResp1{
+    display: none;
+  }
+  .anchoResp2{
+    display: block;
+  }
+}
+
+
+/* SEPARACION DE DIVS*/
+
+
+.divClasProd > div{
+  padding: 4px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+}
+
+
+.spanClass{
+  display: block;
+}
+
+@media (max-width: 1255px) {
+  .spanClass{
+    display: none;
+  }
+}
+
+/* Desactiva las flechas para incrementar y decrementar el input number */
+/* para chrome y safari */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/*
+para firefox
+input[type=number] {
+  -moz-appearance: textfield;
+}
+*/

@@ -81,11 +81,11 @@ let rowId = null;
                         minWidth: 30,maxWidth:100
                     },
                 {headerName: "Identidad",
-                        field: "identidad",sort: 'asc', floatingFilter:true, 
+                        field: "identidad", floatingFilter:true, 
                         width: 150
                     },
                 {headerName: "Nombre", 
-                        field: "nombre", floatingFilter:true,
+                        field: "nombre", sort: 'asc', floatingFilter:true,
                         flex: 1, minWidth: 150
                     },
                 {headerName: "Genero", 
@@ -339,14 +339,14 @@ let rowId = null;
             const telefono1 = client.telefono1;
             const telefono2 = client.telefono2;
             const telefono3 = client.telefono3;
-            const obs_placa = client.obs_cliente;
+            const obs_cliente = client.obs_cliente;
 
             mostrarDireccion(direccion!==null);
             mostrarCorreo(correo!==null);
             mostrarInputTelefono1(telefono1!==null);
             mostrarInputTelefono2(telefono2!==null);
             mostrarInputTelefono3(telefono3!==null);
-            ocultarInputObs(obs_placa===null);
+            ocultarInputObs(obs_cliente===null);
 
             document.getElementById("Datos-Direccion").value=(direccion===null?'':direccion.toUpperCase());
             document.getElementById("Datos-Correo").value=(correo===null?'':correo.toLowerCase());
@@ -355,7 +355,7 @@ let rowId = null;
             document.getElementById("Datos-Telefono2").value=(telefono2===null?'':telefono2);
             document.getElementById("Datos-Telefono3").value=(telefono3===null?'':telefono3);
 
-            document.getElementById("Datos-Obs").value=  (obs_placa===null?'':obs_placa);
+            document.getElementById("Datos-Obs").value=  (obs_cliente===null?'':obs_cliente);
         }
 
 
@@ -420,7 +420,7 @@ let rowId = null;
                 bg_new.classList.add('bg_new');
                 nuevoBtn.classList.add('btn-success');
                 nuevoBtn.classList.remove('btn-outline-success');
-                toast("Ingrese la nueva placa a agregar", "toastColorInfo");
+                toast("Ingrese el nuevo cliente a agregar", "toastColorInfo");
             }else if(!bloquear && modoActual!='Nuevo'){
                 //Desbloqueado
                 guardarBtn.disabled=true;
@@ -428,17 +428,17 @@ let rowId = null;
                 bg_new.classList.remove('bg_new');
                 nuevoBtn.classList.remove('btn-success');
                 nuevoBtn.classList.add('btn-outline-success');
-                //toast("Nuevo modelo Desactivado", "toastColorInfo");
+                //toast("Nuevo cliente Desactivado", "toastColorInfo");
             }
             
             
         }
 
 
-        function modoNuevoModelo(){
+        function modoNuevoCliente(){
 
             if(nuevoBtn.textContent === 'Nuevo'){
-                vaciarDatosModelo()
+                vaciarDatosCliente()
                 botonesModoNuevo(true);
                 validacionVaciar();
                 return false;
@@ -448,7 +448,7 @@ let rowId = null;
             }
         }
 
-        function vaciarDatosModelo(){
+        function vaciarDatosCliente(){
             document.getElementById("Datos-Identificacion").value='';
             document.getElementById("Datos-Apellidos").value='';
             document.getElementById("Datos-Nombres").value='';
@@ -637,9 +637,9 @@ let rowId = null;
             if(conectado()){
                 pinCarga('cargando');
 
-                // Guardar cambios al modelo
+                // Guardar cambios al cliente
                 if(btnConfirmar.value==1)modificarCliente();
-                // Nuevo modelo
+                // Nuevo cliente
                 if(btnConfirmar.value==2)nuevoCliente();
 
             }
@@ -693,7 +693,7 @@ let rowId = null;
                     //Al querer verificar si el cliente existe para agregar uno nuevo
                     //Esta omite el id actual, y busca todos menos los '0000000000'
                     if(await clientesRepetidos(0,data.identificacion)){
-                        //Si devuelve true significa que encontro una modelo año cil igual
+                        //Si devuelve true significa que encontro un cliente igual
                         toast("El cliente ya existe!", "toastColorError");
                         pinCarga('fallo');
                     }else{
@@ -734,7 +734,7 @@ let rowId = null;
 
         nuevoBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if( (modoNuevoModelo() && validacionNuevo()) ){
+            if( (modoNuevoCliente() && validacionNuevo()) ){
 
                 //Construimos aqui el modal
                 construirModal(2);
@@ -824,7 +824,7 @@ let rowId = null;
             const data = obtenerDatos();
 
             if(await clientesRepetidos(data.id,data.identificacion)){
-                //Si devuelve true significa que encontro una placa igual
+                //Si devuelve true significa que encontro una cliente igual
                 toast("El cliente ya existe!", "toastColorError");
                 pinCarga('fallo');
             }else{

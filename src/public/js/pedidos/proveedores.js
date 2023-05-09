@@ -326,7 +326,7 @@ let rowId = null;
             const telefono1 = proveedor.telefono1;
             const telefono2 = proveedor.telefono2;
             const telefono3 = proveedor.telefono3;
-            const obs_placa = proveedor.obs_proveedor;
+            const obs_proveedor = proveedor.obs_proveedor;
 
             mostrarCuenta1(cuenta1_nombre!==null || cuenta1_numero!==null)
             mostrarCuenta2(cuenta2_nombre!==null || cuenta2_numero!==null)
@@ -335,7 +335,7 @@ let rowId = null;
             mostrarInputTelefono1(telefono1!==null);
             mostrarInputTelefono2(telefono2!==null);
             mostrarInputTelefono3(telefono3!==null);
-            ocultarInputObs(obs_placa===null);
+            ocultarInputObs(obs_proveedor===null);
 
             document.getElementById("Datos-Cuenta1-Nombre").value=(cuenta1_nombre===null?'':cuenta1_nombre.toUpperCase());
             document.getElementById("Datos-Cuenta1-Numero").value=(cuenta1_numero===null?'':cuenta1_numero.toUpperCase());
@@ -349,7 +349,7 @@ let rowId = null;
             document.getElementById("Datos-Telefono2").value=(telefono2===null?'':telefono2);
             document.getElementById("Datos-Telefono3").value=(telefono3===null?'':telefono3);
 
-            document.getElementById("Datos-Obs").value=  (obs_placa===null?'':obs_placa);
+            document.getElementById("Datos-Obs").value=  (obs_proveedor===null?'':obs_proveedor);
         }
 
 
@@ -416,8 +416,6 @@ let rowId = null;
             const bg_new = document.getElementById('datosModeloCard')
             if(bloquear && modoActual!='Agregar'){
                 //Bloqueado
-                //mostrarTextoModelo(true);
-                //guardarNomAutoBtn.disabled=true;
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Agregar';
                 bg_new.classList.add('bg_new');
@@ -426,7 +424,6 @@ let rowId = null;
                 toast("Ingrese el nuevo proveedor a agregar", "toastColorInfo");
             }else if(!bloquear && modoActual!='Nuevo'){
                 //Desbloqueado
-                //mostrarTextoModelo(false);
                 guardarBtn.disabled=true;
                 nuevoBtn.textContent = 'Nuevo';
                 bg_new.classList.remove('bg_new');
@@ -439,10 +436,10 @@ let rowId = null;
         }
 
 
-        function modoNuevoModelo(){
+        function modoNuevoProveedor(){
 
             if(nuevoBtn.textContent === 'Nuevo'){
-                vaciarDatosModelo()
+                vaciarDatosProveedor()
                 botonesModoNuevo(true);
                 validacionVaciar();
                 return false;
@@ -452,7 +449,7 @@ let rowId = null;
             }
         }
 
-        function vaciarDatosModelo(){
+        function vaciarDatosProveedor(){
             document.getElementById("Datos-Identificacion").value='';
             document.getElementById("Datos-Nom-Proveedor").value='';
             document.getElementById("Datos-Representante").value='';
@@ -651,9 +648,9 @@ let rowId = null;
             if(conectado()){
                 pinCarga('cargando');
 
-                // Guardar cambios al modelo
+                // Guardar cambios al proveedor
                 if(btnConfirmar.value==1)modificarProvedor();
-                // Nuevo modelo
+                // Nuevo proveedor
                 if(btnConfirmar.value==2)nuevoProveedor();
 
             }
@@ -700,10 +697,10 @@ let rowId = null;
                 // Código a ejecutar al presionar Enter
                 const data = obtenerDatos();
                 pinCarga('cargando');
-                //Al querer verificar si el cliente existe para agregar uno nuevo
+                //Al querer verificar si el proveedor existe para agregar uno nuevo
                 //Esta omite el id actual, y busca todos menos los '0000000000'
                 if(await proveedoresRepetidos(0,data.identificacion,data.nom_proveedor)){
-                    //Si devuelve true significa que encontro una modelo año cil igual
+                    //Si devuelve true significa que encontro un proveedor igual
                     toast("El proveedor ya existe!", "toastColorError");
                     pinCarga('fallo');
                 }else{
@@ -730,7 +727,7 @@ let rowId = null;
 
 
 
-//-------------------------BTN modificar Modelo
+//-------------------------BTN modificar Proveedor
 
         const guardarBtn = document.getElementById("btn-Guardar");
 
@@ -752,13 +749,13 @@ let rowId = null;
 
 
 
-//-------------------------BTN nuevo Modelo
+//-------------------------BTN nuevo Proveedor
 
         const nuevoBtn = document.getElementById("btn-Nuevo");
 
         nuevoBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if( (modoNuevoModelo() && validacionNuevo()) ){
+            if( (modoNuevoProveedor() && validacionNuevo()) ){
 
                 //Construimos aqui el modal
                 construirModal(2);
