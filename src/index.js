@@ -8,6 +8,7 @@ import {sequelize} from './aSequelize/database/database'
 //import './aSequelize/models/Productos/tablaRegistroProveedorProducto'
 
 //import './aSequelize/models/Productos/tablaRegistroProductoAuto'
+//import './aSequelize/models/tablaPagination'
 
 async function main(){
     try{

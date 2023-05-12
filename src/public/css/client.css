@@ -102,9 +102,14 @@ background-position: center;
   padding-right:10px;
 }
 
+.tablaPrincipal{
+  height: 100%;
+}
+
+
 .tablaModeloBody{
-  height: 698px;
-  min-height: var(--minAnchoDatosModelo);
+  height: 80vh;
+  min-height: 698px;
 }
 
 .diseñoTablaGrid{
@@ -119,3 +124,104 @@ background-position: center;
   /*height: 500px;*/
   overflow: auto;
 }
+
+
+
+/* Combo Identificacion e Input */
+
+
+.respIdentificacionCombo{
+  min-width: 85px;
+}
+
+
+.respIdentificacionLabel{
+  display: flex;
+}
+
+
+@media ((max-width: 1097px) and (min-width: 768px)) {
+  
+  .respIdentificacionCombo{
+    border-top-right-radius:     0.375rem !important;
+    border-bottom-right-radius:  0.375rem !important;
+  }
+
+  .respIdentificacionLabel{
+    display: block;
+    border-top-left-radius:     0.375rem !important;
+    border-bottom-left-radius:  0.375rem !important;
+    
+  }
+
+  
+}
+
+@media (max-width: 365px) {
+  
+  .respIdentificacionCombo{
+    border-top-right-radius:     0.375rem !important;
+    border-bottom-right-radius:  0.375rem !important;
+  }
+
+  .respIdentificacionLabel{
+    display: block;
+    border-top-left-radius:     0.375rem !important;
+    border-bottom-left-radius:  0.375rem !important;
+    
+  }
+
+  
+}
+
+
+
+/* -----------------------------PAGINATION -----------------------------*/
+
+
+
+
+
+
+
+@media (max-width: 890px)and (min-width: 768px) {
+
+  #filtro2{
+    display: none !important;
+  }
+
+  
+}
+
+
+@media (max-width: 593px) {
+
+  #filtro2{
+    display: none !important;
+  }
+
+  
+}
+
+
+@media ( (max-width: 490px) ) {
+
+  .groupPagination div label{
+      display: none !important;
+  }
+}
+
+
+
+@media ( (max-width: 405px)) {
+  .groupPaginationFilter{
+      display: none !important;
+  }
+  #filtroCheckGroup{
+      display: none;
+  }
+  .groupPagination div label{
+      display: none !important;
+  }
+}
+

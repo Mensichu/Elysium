@@ -1,20 +1,112 @@
-
 //Placas
 window.addEventListener('load',()=>{
 
     //Solo se ejecuta cada vez que se recargue la pagina y sea Placa
     const pagina = window.location.pathname;
 
-    if(pagina == '/vehiculos/placas'){
+    if(pagina.toLowerCase() == '/vehiculos/placas'){console.log("Cargo placas");
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA PLACAS
 
         document.querySelector('#fondo').classList.add('showNow');
 
-        let rowId = null;
+        //let rowId = null;
+        let size = 20;
+        let lastPage = 1;
+        let actualPage = 1;
+        let filtro1 = ''
+        let filtro2 = ''
+        let filtro3 = ''
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO COLOR
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ RESPONSIVE CONTAINER
+        
+        const containerDiv = document.getElementById('containerDiv');
+                
+        function comprobarAncho() {
+            if (window.innerWidth < 1200) {
+                // La página tiene menos de 1200px de ancho
+                containerDiv.classList.remove('container');
+            }else{
+                // La página tiene 1200px o más de ancho
+                containerDiv.classList.add('container');
+            }
+        }
+        let temporizador;
+        comprobarAncho();
+        //Este retardo sirve para no hacer una cte. revision del ancho de la pantalla
+        window.addEventListener("resize", function() {
+            // Si el temporizador está activo, cancelarlo
+            if (temporizador) {
+                clearTimeout(temporizador);
+            }
+            // Iniciar un nuevo temporizador para ejecutar la función después de 200ms
+            temporizador = setTimeout(comprobarAncho, 200);
+        });
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBOBOX
+
+        //------------------------------------------------------------------------------ ComboPagination
+        const comboPagination = document.getElementById('page-size');
+        cargarComboPagination();
+        //Combo Pagination
+        async function cargarComboPagination(){
+            try{
+                
+                let paginations = await fetch('/paginations')
+                .then(response => response.json());
+
+                console.log("Numero de sizes en el combo pagination: "+paginations.length);
+                //Creamos el elemento temporal
+                const fragmento = document.createDocumentFragment();
+                for(i=0;i<paginations.length;i++){
+                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
+                    const item = document.createElement("OPTION");
+                    item.innerHTML = paginations[i].num_pagination;
+                    item.value =paginations[i].num_pagination;
+                    fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+                    //Se setea el size por defecto
+                    size= paginations[i].default?paginations[i].num_pagination:size;
+                }
+
+                //Vaciamos el combo primero
+                for(i=comboPagination.options.length-1;i>=0;i--){
+                    comboPagination.remove(i);
+                }
+
+                //Se agrega al combobox comboPagination
+                comboPagination.appendChild(fragmento);
+                //Se agrega la opcion Todos (-1)
+                const item = document.createElement("OPTION");
+                item.innerHTML = 'Todos';
+                item.value = -1;
+                comboPagination.appendChild(item);
+                //Seleccionamos el por defecto:
+                seleccionCombo(size,comboPagination);
+                cargarTablaPlacas(actualPage,size,filtro1,filtro2,filtro3);
+            }catch(error){
+                console.log(error.message);
+            }
+
+        }
+
+        function seleccionCombo(id, combo){
+
+            for(i=0;i<combo.options.length;i++){
+                if(combo.options[i].value == id){
+                    //una vez encontrado mostramos en el combo correspondiente
+                    combo.selectedIndex=i;
+                    return;
+                }
+            }
+            console.log('No encontre seleccionCombo');
+        }
+
+
+
+        //------------------------------------------------------------------------------ Combo Color
         const comboColor1 = document.getElementById('comboColor1');
         const comboColor2 = document.getElementById('comboColor2');
         cargarComboColor();
@@ -197,25 +289,25 @@ window.addEventListener('load',()=>{
                 {headerName: "Id", 
                         field: "id", hide: true},
                 {headerName: "Placa", 
-                        field: "placa", floatingFilter:true,
+                        field: "placa",//filtro3
                         width: 120
                     },
                 {headerName: "Marca",
-                        field: "marca",sort: 'asc', floatingFilter:true, 
-                        maxWidth: 100,flex: 'auto'},
+                        field: "marca",sort: 'asc',//filtro1
+                        width: 110},
                 {headerName: "Modelo", 
-                        field: "modelo",sort: 'asc', floatingFilter:true,
-                        minWidth: 150,flex: 'auto'
+                        field: "modelo",sort: 'asc', //filtro2
+                        minWidth: 150,flex: 1
                     },
                 {headerName: "Año", 
-                        field: "año", filter: 'agNumberColumnFilter', flex: 110,
-                        minWidth: 75, maxWidth: 115},
-                {headerName: "Cilindraje", 
-                        field: "cilindraje", flex: 110,
-                        minWidth: 75,maxWidth: 120},
-                {headerName: "Combustible", 
-                        field: "combustible", flex: 140,
-                        minWidth: 100,maxWidth: 140}
+                        field: "año", filter: 'agNumberColumnFilter',
+                        width: 80},
+                {headerName: "Cil.", 
+                        field: "cilindraje",
+                        width: 80},
+                {headerName: "Comb.", 
+                        field: "combustible",
+                        width: 100}
 
             ],
 
@@ -232,11 +324,9 @@ window.addEventListener('load',()=>{
 
             getRowClass: (params) => {
                 if(params.data!== undefined){
-                    if(rowId === params.data.id){
-
+                    if(getSelectedRowId() === params.data.id){
                         params.node.setSelected(true);
                         seleccionTabla(params.data.id,false);
-                        console.log('soy getRowClass')
                         return clasesFila;
                     }
                 }
@@ -244,11 +334,10 @@ window.addEventListener('load',()=>{
             },
 
             onModelUpdated: (event) => {
-                if(true || rowId!==null){
+                if(getSelectedRowId!==null){
                     console.log('-----------------------------------------CHINGONNKNKN');
 
                     clasesFila='cambioColor';
-                    gridOptions.api.redrawRows();
                     botonesModoNuevo(false);
                     guardarBtn.disabled=true;
                 }
@@ -269,24 +358,30 @@ window.addEventListener('load',()=>{
             rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
 
             rowGroupPanelShow: 'always',
-            //popupParent: document.body,
             rowSelection: 'single', // allow rows to be selected
             animateRows: true, // have rows animate to new positions when sorted
+            overlayLoadingTemplate: 'Cargando tabla...',
+            overlayNoRowsTemplate: 'Registros no encontrados',
 
             // example event handler
             onCellClicked: params => {
                 placaInput.disabled=true;
                 if(params.data!== undefined){
                     //console.log('cell was clicked', params.data);
-                    rowId = params.data.id;
                     botonesModoNuevo(false);
                     guardarBtn.disabled=false;
-                    seleccionTabla(rowId,true);
+                    seleccionTabla(params.data.id,true);
 
                 }else{
                     guardarBtn.disabled=true;
                 }
-            }
+            },
+
+            onGridReady: function(params) {
+                params.api.sizeColumnsToFit();
+            },
+
+            onGridSizeChanged: onGridSizeChanged
         };
 
         // get div to host the grid
@@ -296,76 +391,167 @@ window.addEventListener('load',()=>{
 
         const gridApi = gridOptions.api;
 
+        function onGridSizeChanged(params) {
+            // get the current grids width
+            var gridWidth = document.getElementById('grid-wrapper').offsetWidth;
+            console.log('gridWidth: ')
+            console.log(gridWidth)
+
+            // keep track of which columns to hide/show
+            var columnsToShow = [];
+            var columnsToHide = ['id'];
+
+            if(gridWidth< 675){
+                columnsToHide.push('combustible');
+            }else{
+                columnsToShow.push('combustible');
+            }
+
+            if(gridWidth< 600){
+                columnsToHide.push('cilindraje');
+            }else{
+                columnsToShow.push('cilindraje');
+            }
+
+            if(gridWidth< 500){
+                columnsToHide.push('año');
+            }else{
+                columnsToShow.push('año');
+            }
+
+
+            // iterate over all columns (visible or not) and work out
+            // now many columns can fit (based on their minWidth)
+            
+            
+            
+
+            // show/hide columns based on current grid width
+            params.columnApi.setColumnsVisible(columnsToShow, true);
+            params.columnApi.setColumnsVisible(columnsToHide, false);
+
+            // fill out any available space to ensure there are no gaps
+            params.api.sizeColumnsToFit();
+        }
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID: ACTUALIZACION Y NUEVA FILA
 
-//---------------------------------------------------------------------Convierte los datos en una fila para AG-GRID
-function datosAFilaGrid(data) {
+        //---------------------------------------------------------------------Convierte los datos en una fila para AG-GRID
+        function datosAFilaGrid(data) {
 
-    if (gridOptions.api) {
-        
-        return [{   id: data.id,
-                    placa: data.nom_placa.toUpperCase(), 
-                    marca: data.Auto.Marca.alias.toUpperCase(), 
-                    modelo: data.Auto.nom_auto.toUpperCase(), 
-                    año: data.Auto.ano, 
-                    cilindraje: parseFloat(data.Auto.cilindraje).toFixed(1),
-                    combustible: data.Auto.combustible? 'DIESEL.':'GAS.'
-                }];
-    }
-}
+            if (gridOptions.api) {
+                
+                return [{   id: data.id,
+                            placa: data.nom_placa.toUpperCase(), 
+                            marca: data.Auto.Marca.alias.toUpperCase(), 
+                            modelo: data.Auto.nom_auto.toUpperCase(), 
+                            año: data.Auto.ano, 
+                            cilindraje: parseFloat(data.Auto.cilindraje).toFixed(1),
+                            combustible: data.Auto.combustible? 'DIESEL.':'GAS.'
+                        }];
+            }
+        }
 
 
-//---------------------------------------------------------------------Actualiza la fila a la tabla AG-GRID
-function actualizarFilaAgGrid(data) {
-    const filaActualizada = datosAFilaGrid(data); 
-    //Actualiza la fila
-    const selectedNodes = gridOptions.api.getSelectedNodes();
-    if (selectedNodes.length > 0) {
-        const selectedNode = selectedNodes[0];
-        const newData = Object.assign({}, selectedNode.data, filaActualizada[0]);
-        selectedNode.setData(newData);
-        //Se encargan de activar la animacion
-        clasesFila = 'cambioColor';
-        gridOptions.api.redrawRows();
-        // Lo enfoca
-        gridOptions.api.ensureNodeVisible(selectedNode);
+        //---------------------------------------------------------------------Actualiza la fila a la tabla AG-GRID
+        function actualizarFilaAgGrid(data) {
+            const filaActualizada = datosAFilaGrid(data); 
+            //Actualiza la fila
+            const selectedNodes = gridOptions.api.getSelectedNodes();
+            if (selectedNodes.length > 0) {
+                const selectedNode = selectedNodes[0];
+                const newData = Object.assign({}, selectedNode.data, filaActualizada[0]);
+                selectedNode.setData(newData);
+                //Se encargan de activar la animacion
+                clasesFila = 'cambioColor';
+                gridOptions.api.redrawRows();
+                // Lo enfoca
+                gridOptions.api.ensureNodeVisible(selectedNode);
 
-    }
+            }
 
-}
+        }
 
-//---------------------------------------------------------------------Agrega una nueva fila a la tabla AG-GRID
-function nuevaFilaAgGrid(data) {
-    const filaNueva = datosAFilaGrid(data);
-    const res = gridOptions.api.applyTransaction({ add: filaNueva });
-    if (res.add) {
-        const addedRow = res.add[0];
-        rowId = addedRow.rowId;
-        //Selecciona la fila nueva
-        gridOptions.api.deselectAll();
-        addedRow.setSelected(true);
-        //Enfoca la nueva fila
-        gridOptions.api.ensureNodeVisible(addedRow);
-    }
-}
+        //---------------------------------------------------------------------Agrega una nueva fila a la tabla AG-GRID
+        function nuevaFilaAgGrid(data) {
+            const filaNueva = datosAFilaGrid(data);
+            const res = gridOptions.api.applyTransaction({ add: filaNueva });
+            if (res.add) {
+                const addedRow = res.add[0];
 
+                //Selecciona la fila nueva
+                gridOptions.api.deselectAll();
+                addedRow.setSelected(true);
+                //Enfoca la nueva fila
+                gridOptions.api.ensureNodeVisible(addedRow);
+            }
+        }
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA MODO CARGA
+
+        let tiempoCargaExcedido = true;
+        function paginaModoCarga(activar){
+                const inputCard = document.querySelectorAll('.form-group input');
+                const buttonCard = document.querySelectorAll('.form-group button');
+                const cardBody = document.getElementById('cardBodyTodo');
+                const cardBodyCargando = document.getElementById('cardBodyCargando');
+                if(activar){
+                    tiempoCargaExcedido=true;
+                    gridApi.showLoadingOverlay();
+                    pinCarga('cargando')
+                    inputCard.forEach(input => {
+                        input.disabled=true;
+                    });
+                    buttonCard.forEach(button => {
+                        button.disabled=true;
+                    });
+                    comboMarca.disabled=true;
+                    setTimeout(()=>{
+                        if(tiempoCargaExcedido){
+                            cardBody.classList.add('invisible');
+                            cardBodyCargando.classList.add('blockLoadingBody');
+                        }
+                    },500);
+                }else{
+                    tiempoCargaExcedido=false;
+                    gridApi.hideOverlay();
+                    pinCarga('success')
+                    inputCard.forEach(input => {
+                        input.disabled=false;
+                    });
+                    buttonCard.forEach(button => {
+                        button.disabled=false;
+                    });
+                    comboMarca.disabled=false;
+                    placaInput.disabled=true;
+                    cardBody.classList.remove('invisible');
+                    cardBodyCargando.classList.remove('blockLoadingBody');
+                }
+                
+        }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
-
-        cargarTablaPlacas();
-        async function cargarTablaPlacas(){
+        //Cargamos una vez acabe de cargar el size por defecto del comboPagination
+        async function cargarTablaPlacas(page,size,search1,search2,search3){
             try{
-                //pinCarga('cargando');
+                gridOptions.api.setRowData([])
+                paginaModoCarga(true);
                 // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/tablaPlacas')
+                const queryParams = new URLSearchParams({page:page-1,size:size,search1:search1,search2:search2,search3:search3});
+
+                const data = await fetch(`/tablaPlacas?${queryParams.toString()}`)
                 .then(response => response.json());
-                const Placas = data;
-                //mediante un for vamos cargando fila por fila
-                for(i=0;i<Placas.length;i++){
-                    let newRow = datosAFilaGrid(Placas[i]);
-                    gridOptions.api.applyTransaction({ add: newRow });
-                }
-                //pinCarga('success');
+                console.log(size)
+                lastPage = size!=-1?Math.ceil(data.count/size):1;
+                pagesLabel.textContent= size!=-1?('Pagina '+actualPage+' de '+lastPage):'Todos';
+                registrosLabel.textContent= data.count+' registros';
+                actualPageInput.value = page
+                const Placas = data.rows;
+                //Dom: Map debe usarse para cambiar la estructura de los elementos de una colección
+                const filasDeTabla = Placas.map((modelo) => datosAFilaGrid(modelo,0));
+                gridOptions.api.applyTransaction({ add: [...filasDeTabla.flat()] });
+                paginaModoCarga(false);
             }catch(error){
                 console.log('Error al obtener las placas:', error);
                 toast(error.message, "toastColorError");
@@ -374,6 +560,7 @@ function nuevaFilaAgGrid(data) {
             }
         }
 
+        
 
         function getSelectedRowId() {
             const selectedRows = gridOptions.api.getSelectedRows();
@@ -391,17 +578,9 @@ function nuevaFilaAgGrid(data) {
                 
         async function seleccionTabla(id,mouse) {
             try{
-                const inputCard = document.querySelectorAll('.form-group input');
-                const buttonCard = document.querySelectorAll('.form-group button');
+                
                 if(mouse){
-                    pinCarga('cargando')
-                    inputCard.forEach(input => {
-                        input.disabled=true;
-                    });
-                    buttonCard.forEach(button => {
-                        button.disabled=true;
-                    });
-                    comboMarca.disabled=true;
+                    paginaModoCarga(true);
                 }
                 if(conectado()){
                     const data = await fetch('/placa/'+id)
@@ -415,15 +594,8 @@ function nuevaFilaAgGrid(data) {
                     await cargarDatosDesdeSeleccion(data);
                     validacionVaciar();
                     if(mouse){
-                        pinCarga('successFast')
-                        inputCard.forEach(input => {
-                            input.disabled=false;
-                        });
-                        buttonCard.forEach(button => {
-                            button.disabled=false;
-                        });
-                        comboMarca.disabled=false;
-                        placaInput.disabled=true;
+                        paginaModoCarga(false);
+                        
                     };
                 }
             }catch(error){
@@ -799,7 +971,7 @@ function nuevaFilaAgGrid(data) {
         placaInput.disabled=true;
         guardarBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if(rowId!== null){
+            if(getSelectedRowId()!== null){
                 if(validacionGuardar()){
                     //Construimos aqui el modal
                     construirModal(1);
@@ -891,7 +1063,6 @@ function nuevaFilaAgGrid(data) {
                     nuevaFilaAgGrid(res)
                     toast("Placa agregada", "toastColorSuccess");
                     pinCarga('success');
-                    rowId=res.id;
                 }).catch(error =>{
                     toast(error.message, "toastColorError");
                     pinCarga('fallo');
@@ -903,20 +1074,6 @@ function nuevaFilaAgGrid(data) {
             },600);
             
         }
-
-
-
-        var btnPrueba = document.querySelector('#btnPrueba');
-        btnPrueba.addEventListener('click', function(e) {
-            e.preventDefault();
-            //obtenerDatos();
-
-            document.querySelector("#Datos-Color1").setAttribute('disabled','true');
-            document.querySelector("#Datos-Color2").setAttribute('disabled','true');
-
-            
-
-        });
 
 
         //---------------------------------------------- MODIFICAR PLACA
@@ -960,7 +1117,222 @@ function nuevaFilaAgGrid(data) {
         }
 
 
+        
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++      PAGINATION     +++++++++++++++++++++++++++++
+        
+        const registrosLabel = document.getElementById('registrosLabel');
+        const pageSize = document.getElementById('page-size');
+        const pagesLabel = document.getElementById('pagesLabel');
+        const actualPageInput = document.getElementById('actualPageInput');
 
+        const firstPageBtn = document.getElementById('firstPageBtn')
+        const nextPageBtn = document.getElementById('nextPageBtn')
+        const previousPageBtn = document.getElementById('previousPageBtn')
+        const lastPageBtn = document.getElementById('lastPageBtn')
+
+
+        function onPageSizeChanged(){
+            size = document.getElementById('page-size').value;
+            //actualPage=1; vaciarFiltro ya lo hace
+            vaciarFiltro();
+            cargarTablaPlacas(1,size,filtro1,filtro2,filtro3);
+        }
+
+        function onFirstPage(){
+            actualPageInput.value=1
+            if(actualPage!=1){
+                actualPage= 1
+                cargarTablaPlacas(actualPage,size,filtro1,filtro2,filtro3);
+            }
+        }
+        function onPreviousPage(){
+            actualPageInput.value=actualPage
+            if(actualPage>1){
+                actualPage-=1
+                cargarTablaPlacas(actualPage,size,filtro1,filtro2,filtro3);
+            }
+        }
+
+
+        function onNextPage(){
+            actualPageInput.value=actualPage
+            if(actualPage<lastPage){
+                actualPage+=1
+                cargarTablaPlacas(actualPage,size,filtro1,filtro2,filtro3);
+            }
+        }
+
+
+        function onLastPage(){
+            actualPageInput.value=lastPage
+            if(actualPage!=lastPage){
+                actualPage= lastPage
+                cargarTablaPlacas(actualPage,size,filtro1,filtro2,filtro3);
+            }
+        }
+
+        function presionarEnterPage(event,page){
+            if (event.code === "Enter" || event.which === 13) {
+                console.log('presiono enter');
+                if(page>=lastPage)onLastPage();
+                if(page<=1)onFirstPage();
+                if(page<lastPage && page>1){
+                    actualPage=page
+                    cargarTablaPlacas(actualPage,size,filtro1,filtro2,filtro3);
+                }
+            }
+        }
+
+
+        firstPageBtn.addEventListener('click',()=>{
+            onFirstPage();
+        });
+
+        previousPageBtn.addEventListener('click',()=>{
+            onPreviousPage();
+        });
+
+        nextPageBtn.addEventListener('click',()=>{
+            onNextPage();
+        });
+
+        lastPageBtn.addEventListener('click',()=>{
+            onLastPage();
+        });
+
+        pageSize.addEventListener('change',()=>{
+            onPageSizeChanged();
+        });
+
+        actualPageInput.addEventListener('keyup',(event)=>{
+            try{
+                actualPageInput.value=actualPageInput.value.trim();
+                const texto = actualPageInput.value;
+                const num = parseInt(texto);
+                if(!isNaN(num)){
+                    actualPageInput.value=num;
+                    presionarEnterPage(event,num);
+                }
+            }catch(error){
+                console.log(error)
+            }
+            
+        });
+
+
+
+        //-----------------------------------------------------------------FILTROS
+
+                
+        //-------------------------BTN CHECK filtros
+        const pagSupDiv = document.getElementById('paginationSupDiv');
+        const filtroCheck = document.getElementById('filtroCheck');
+        filtroCheck.addEventListener('change',function(){
+            if (this.checked) {
+                console.log("El checkbox ha sido marcado");
+                pagSupDiv.style.display='flex';
+                // Aquí puedes agregar cualquier acción que quieras que se ejecute cuando se marque el checkbox
+            } else {
+                console.log("El checkbox ha sido desmarcado");
+                pagSupDiv.style.display='none';
+                // Aquí puedes agregar cualquier acción que quieras que se ejecute cuando se desmarque el checkbox
+            }
+        });
+
+        function presionarEnterFilter(){
+            filtro1=filtro1Input.value;
+            filtro2=filtro2Input.value;
+            filtro3=filtro3Input.value;
+            actualPage=1
+            actualPageInput.value=1;
+            cargarTablaPlacas(actualPage,size,filtro1,filtro2,filtro3);
+        }
+
+
+        function vaciarFiltro(){
+            vaciarFiltro1();
+            vaciarFiltro2();
+            vaciarFiltro3();
+        }
+
+        function vaciarFiltro1(){
+            filtro1 = '';
+            filtro1Input.value='';
+            actualPage=1;
+        }
+        function vaciarFiltro2(){
+            filtro2 = '';
+            filtro2Input.value='';
+            actualPage=1;
+        }
+        function vaciarFiltro3(){
+            filtro3 = '';
+            filtro3Input.value='';
+            actualPage=1;
+        }
+
+        const filtro1Input = document.getElementById('filtro1Input');
+        filtro1Input.addEventListener('keyup',(event)=>{
+            if (event.code === "Enter" || event.which === 13) {
+                presionarEnterFilter();
+            }
+        });
+        const filtro2Input = document.getElementById('filtro2Input');
+        filtro2Input.addEventListener('keyup',(event)=>{
+            if (event.code === "Enter" || event.which === 13) {
+                presionarEnterFilter();
+            }
+            
+        });
+        const filtro3Input = document.getElementById('filtro3Input');
+        filtro3Input.addEventListener('keyup',(event)=>{
+            if (event.code === "Enter" || event.which === 13) {
+                presionarEnterFilter();
+            }
+            
+        });
+
+        const filtro1Label = document.getElementById('filtro1Label');
+        filtro1Label.addEventListener('click',(event)=>{
+            vaciarFiltro1();
+            cargarTablaPlacas(actualPage,size,filtro1,filtro2,filtro3);
+        });
+        const filtro2Label = document.getElementById('filtro2Label');
+        filtro2Label.addEventListener('click',(event)=>{
+            vaciarFiltro2();
+            cargarTablaPlacas(actualPage,size,filtro1,filtro2,filtro3);
+        });
+        const filtro3Label = document.getElementById('filtro3Label');
+        filtro3Label.addEventListener('click',(event)=>{
+            vaciarFiltro3();
+            cargarTablaPlacas(actualPage,size,filtro1,filtro2,filtro3);
+        });
+
+
+
+
+
+
+
+
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++      FIN     +++++++++++++++++++++++++++++
+
+
+
+        var btnPrueba = document.querySelector('#btnPrueba');
+        btnPrueba.addEventListener('click', function(e) {
+            e.preventDefault();
+            //obtenerDatos();
+
+            //document.querySelector("#Datos-Color1").setAttribute('disabled','true');
+            //document.querySelector("#Datos-Color2").setAttribute('disabled','true');
+
+            
+
+        });
 
 
 

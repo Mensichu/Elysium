@@ -161,11 +161,36 @@ export const getComboAutosInfo = async (req,res) =>{
 }
 
 
+import Sequelize from 'sequelize';
 
 export const getTablaPlacas = async (req,res) =>{
     try{
-        const placas = await tablaPlaca.findAll({
-            where:{estado:true},
+        let {page,size,search3,search1,search2}= req.query;
+        
+        page=page!==undefined?page:'';
+        size=size!==undefined?size:'';
+        search3=search3!==undefined?search3:'';
+        search1=search1!==undefined?search1:'';
+        search2=search2!==undefined?search2:'';
+        size = size!=-1 ? size : '';//Envia todos los registros si es -1
+        const searchString3 = search3 ? search3.toUpperCase() : '';
+        const searchString1 = search1 ? search1.toUpperCase() : '';
+        const searchString2 = search2 ? search2.toUpperCase() : '';
+
+        console.log('valores: '+page+' '+size+' '+search1+' '+search2)
+
+        const placas = await tablaPlaca.findAndCountAll({
+            limit: parseInt(size),
+            offset: parseInt(page)*parseInt(size),
+            where:
+                {
+                    estado:true,
+                    [Op.and]: [
+                        Sequelize.where(Sequelize.fn('upper', Sequelize.col('nom_placa')), 'LIKE', `%${searchString3}%`),
+                        Sequelize.where(Sequelize.fn('upper', Sequelize.col('Auto.Marca.nom_marca')), 'LIKE', `%${searchString1}%`),
+                        Sequelize.where(Sequelize.fn('upper', Sequelize.col('Auto.nom_auto')), 'LIKE', `%${searchString2}%`)
+                    ],
+                },
             attributes:['id','nom_placa'],
             include:{
                 model: tablaAuto,

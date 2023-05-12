@@ -1,18 +1,109 @@
+//Autos
 window.addEventListener('load',()=>{
-    
-    
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA MODELOS
 
     //Solo se ejecuta cada vez que se recargue la pagina y sea Vehiculos
     const pagina = window.location.pathname;
+    
+    if(pagina.toLowerCase() == '/vehiculos/autos'){console.log("Cargo autos");
 
-    if(pagina == '/vehiculos/modelos'){
-        document.querySelector('#fondo').classList.add('showNow')
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA AUTOS
+
+        document.querySelector('#fondo').classList.add('showNow');
+
+        //let rowId = null;
+        let size = 20;
+        let lastPage = 1;
+        let actualPage = 1;
+        let filtro1 = ''
+        let filtro2 = ''
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ RESPONSIVE CONTAINER
+        
+        const containerDiv = document.getElementById('containerDiv');
+        
+        function comprobarAncho() {
+            if (window.innerWidth < 1200) {
+                // La página tiene menos de 1200px de ancho
+                containerDiv.classList.remove('container');
+            }else{
+                // La página tiene 1200px o más de ancho
+                containerDiv.classList.add('container');
+            }
+        }
+        let temporizador;
+        comprobarAncho();
+        //Este retardo sirve para no hacer una cte. revision del ancho de la pantalla
+        window.addEventListener("resize", function() {
+            // Si el temporizador está activo, cancelarlo
+            if (temporizador) {
+                clearTimeout(temporizador);
+            }
+            // Iniciar un nuevo temporizador para ejecutar la función después de 200ms
+            temporizador = setTimeout(comprobarAncho, 200);
+        });
  
 
         
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBOBOX
+
+        //------------------------------------------------------------------------------ ComboPagination
+        const comboPagination = document.getElementById('page-size');
+        cargarComboPagination();
+        //Combo Pagination
+        async function cargarComboPagination(){
+            try{
+                
+                let paginations = await fetch('/paginations')
+                .then(response => response.json());
+
+                console.log("Numero de sizes en el combo pagination: "+paginations.length);
+                //Creamos el elemento temporal
+                const fragmento = document.createDocumentFragment();
+                for(i=0;i<paginations.length;i++){
+                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
+                    const item = document.createElement("OPTION");
+                    item.innerHTML = paginations[i].num_pagination;
+                    item.value =paginations[i].num_pagination;
+                    fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+                    //Se setea el size por defecto
+                    size= paginations[i].default?paginations[i].num_pagination:size;
+                }
+
+                //Vaciamos el combo primero
+                for(i=comboPagination.options.length-1;i>=0;i--){
+                    comboPagination.remove(i);
+                }
+
+                //Se agrega al combobox comboPagination
+                comboPagination.appendChild(fragmento);
+                //Se agrega la opcion Todos (-1)
+                const item = document.createElement("OPTION");
+                item.innerHTML = 'Todos';
+                item.value = -1;
+                comboPagination.appendChild(item);
+                //Seleccionamos el por defecto:
+                seleccionCombo(size,comboPagination);
+                cargarTablaModelos(actualPage,size,filtro1,filtro2);
+            }catch(error){
+                console.log(error.message);
+            }
+
+        }
+
+        
+        function seleccionCombo(id, combo){
+
+            for(i=0;i<combo.options.length;i++){
+                if(combo.options[i].value == id){
+                    //una vez encontrado mostramos en el combo correspondiente
+                    combo.selectedIndex=i;
+                    return;
+                }
+            }
+            console.log('No encontre seleccionCombo');
+        }
 
 
 //------------------------------------------------------------------------------ ComboMarca: Cargar datos
@@ -144,6 +235,7 @@ window.addEventListener('load',()=>{
         }
 
 
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID
         let clasesFila='';
 
@@ -155,32 +247,28 @@ window.addEventListener('load',()=>{
                 {headerName: "ID", 
                         field: "id", hide: true},
                 {headerName: "Marca",
-                        field: "marca", sort: 'asc',floatingFilter:true, 
+                        field: "marca", sort: 'asc',
                         width:130,
-                        
                     },
                 {headerName: "Modelo", 
-                        field: "modelo", sort: 'asc',floatingFilter:true,
-                        minWidth: 150,flex: 'auto',
+                        field: "modelo", sort: 'asc',
+                        minWidth: 150,flex: 1,
                         //type: 'miEstilo',
                         //editable: true
-                        
                     },
-
                 {headerName: "Año", 
-                        field: "año", filter: 'agNumberColumnFilter', flex: 110,
-                        minWidth: 75, maxWidth: 115},
-                {headerName: "Cilindraje", 
-                        field: "cilindraje", flex: 110,
-                        minWidth: 75,maxWidth: 120},
-                {headerName: "Combustible", 
-                        field: "combustible", flex: 140,
-                        minWidth: 100,maxWidth: 140}
+                        field: "año",
+                        width:80},
+                {headerName: "Cil.", 
+                        field: "cilindraje",
+                        width:80},
+                {headerName: "Comb.", 
+                        field: "combustible",
+                        width:110}
             ],
 
             // default col def properties get applied to all columns
             defaultColDef: {sortable: true, 
-                            filter: 'agTextColumnFilter', 
                             enableRowGroup:true,
                             filterParams:{
                                 buttons: ["apply","reset"]
@@ -203,27 +291,34 @@ window.addEventListener('load',()=>{
             },
             getRowClass: (params) => {
                 if(params.data!== undefined){
-                    if(rowId === params.data.id){
-                        //console.log('rowId:  '+rowId);
-                        //console.log('params.data.id:  '+params.data.id);
+                    if(getSelectedRowId() === params.data.id){
                         params.node.setSelected(true);
                         seleccionTabla(params.data.id,false);
                         return clasesFila;
                     }
                 }
                 return '';
-            }
-            ,
+            },
+
             onModelUpdated: (event) => {
-                if(rowId!==null){
+                if(getSelectedRowId()!==null){
                     console.log('-----------------------------------------CHINGONNKNKN');
-                    //console.log(event.data)
-                    //const selectedNodes = gridOptions.api.getSelectedNodes();
-                    //gridOptions.api.ensureNodeVisible(selectedNodes[0]);
+                    /*
+                    gridOptions.api.addEventListener('animationCompleted', function() {
+                        clasesFila='cambioColor';
+                        gridOptions.api.redrawRows();
+                        botonesModoNuevo(false);
+                        guardarBtn.disabled=true;    
+                    });
+                    */
                     clasesFila='cambioColor';
-                    gridOptions.api.redrawRows();
                     botonesModoNuevo(false);
-                    guardarBtn.disabled=true;
+                    guardarBtn.disabled=true;    
+
+                    setTimeout(()=>{
+                        //gridOptions.api.redrawRows();
+                    },1000);
+                    
                 }
             },
             onCellValueChanged: (event) => {
@@ -243,35 +338,75 @@ window.addEventListener('load',()=>{
             rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
 
             rowGroupPanelShow: 'always',
-            //popupParent: document.body,
             rowSelection: 'single', // allow rows to be selected
             animateRows: true, // have rows animate to new positions when sorted
+            overlayLoadingTemplate: 'Cargando tabla...',
+            overlayNoRowsTemplate: 'Registros no encontrados',
 
             // example event handler
             onCellClicked: params => {
                 if(params.data!== undefined){
                     //console.log('cell was clicked', params.data);
-                    rowId = params.data.id;
                     botonesModoNuevo(false);
                     guardarBtn.disabled=false;
-                    seleccionTabla(rowId,true);
+                    seleccionTabla(params.data.id,true);
 
                 }else{
                     guardarBtn.disabled=true;
                 }
             },
+
             onGridReady: function(params) {
                 params.api.sizeColumnsToFit();
-            }
+            },
+
+            onGridSizeChanged: onGridSizeChanged
         };
 
         // get div to host the grid
         const eGridDiv = document.getElementById("myGrid");
         // new grid instance, passing in the hosting DIV and Grid Options
         var grid = new agGrid.Grid(eGridDiv, gridOptions);
-        
+
         const gridApi = gridOptions.api;
 
+        function onGridSizeChanged(params) {
+            // get the current grids width
+            var gridWidth = document.getElementById('grid-wrapper').offsetWidth;
+            console.log('gridWidth: ')
+            console.log(gridWidth)
+
+            // keep track of which columns to hide/show
+            var columnsToShow = [];
+            var columnsToHide = ['id'];
+
+            if(gridWidth< 600){
+                columnsToHide.push('combustible');
+            }else{
+                columnsToShow.push('combustible');
+            }
+
+            if(gridWidth< 475){
+                columnsToHide.push('año');
+                columnsToHide.push('cilindraje');
+            }else{
+                columnsToShow.push('año');
+                columnsToShow.push('cilindraje');
+            }
+
+            // iterate over all columns (visible or not) and work out
+            // now many columns can fit (based on their minWidth)
+            
+            
+            
+
+            // show/hide columns based on current grid width
+            params.columnApi.setColumnsVisible(columnsToShow, true);
+            params.columnApi.setColumnsVisible(columnsToHide, false);
+
+            // fill out any available space to ensure there are no gaps
+            params.api.sizeColumnsToFit();
+        }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID: ACTUALIZACION Y NUEVA FILA
 
@@ -331,7 +466,7 @@ window.addEventListener('load',()=>{
             const res = gridOptions.api.applyTransaction({ add: filaNueva });
             if (res.add) {
                 const addedRow = res.add[0];
-                rowId = addedRow.rowId;
+
                 //Selecciona la fila nueva
                 gridOptions.api.deselectAll();
                 addedRow.setSelected(true);
@@ -341,22 +476,68 @@ window.addEventListener('load',()=>{
             }
         }
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA MODO CARGA
 
-        cargarTablaModelos();
-        async function cargarTablaModelos(){
-            try{
-                //pinCarga('cargando');
-                // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/tablaAutos')
-                .then(response => response.json());
-                const Modelos = data;
-                //mediante un for vamos cargando fila por fila
-                for(i=0;i<Modelos.length;i++){
-                    let newRow = datosAFilaGrid(Modelos[i],0);
-                    gridOptions.api.applyTransaction({ add: newRow });
+        let tiempoCargaExcedido = true;
+        function paginaModoCarga(activar){
+                const inputCard = document.querySelectorAll('.form-group input');
+                const buttonCard = document.querySelectorAll('.form-group button');
+                const cardBody = document.getElementById('cardBodyTodo');
+                const cardBodyCargando = document.getElementById('cardBodyCargando');
+                if(activar){
+                    tiempoCargaExcedido=true;
+                    gridApi.showLoadingOverlay();
+                    pinCarga('cargando')
+                    inputCard.forEach(input => {
+                        input.disabled=true;
+                    });
+                    buttonCard.forEach(button => {
+                        button.disabled=true;
+                    });
+                    comboMarca.disabled=true;
+                    setTimeout(()=>{
+                        if(tiempoCargaExcedido){
+                            cardBody.classList.add('invisible');
+                            cardBodyCargando.classList.add('blockLoadingBody');
+                        }
+                    },500);
+                }else{
+                    tiempoCargaExcedido=false;
+                    gridApi.hideOverlay();
+                    pinCarga('success')
+                    inputCard.forEach(input => {
+                        input.disabled=false;
+                    });
+                    buttonCard.forEach(button => {
+                        button.disabled=false;
+                    });
+                    comboMarca.disabled=false;
+                    cardBody.classList.remove('invisible');
+                    cardBodyCargando.classList.remove('blockLoadingBody');
                 }
-                //pinCarga('success');
+                
+        }
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
+        //Cargamos una vez acabe de cargar el size por defecto del comboPagination
+        async function cargarTablaModelos(page,size,search1,search2){
+            try{
+                gridOptions.api.setRowData([])
+                paginaModoCarga(true);
+                // Hace una llamada fetch y trae el arreglo de datos para la tabla
+                const queryParams = new URLSearchParams({page:page-1,size:size,search1:search1,search2:search2});
+
+                const data = await fetch(`/tablaAutos?${queryParams.toString()}`)
+                .then(response => response.json());
+                lastPage = size!=-1?Math.ceil(data.count/size):1;
+                pagesLabel.textContent= size!=-1?('Pagina '+actualPage+' de '+lastPage):'Todos';
+                registrosLabel.textContent= data.count+' registros';
+                actualPageInput.value = page
+                const Modelos = data.rows;
+                //Dom: Map debe usarse para cambiar la estructura de los elementos de una colección
+                const filasDeTabla = Modelos.map((modelo) => datosAFilaGrid(modelo,0));
+                gridOptions.api.applyTransaction({ add: [...filasDeTabla.flat()] });
+                paginaModoCarga(false);
             }catch(error){
                 console.log('Error al obtener el auto:', error);
                 toast(error.message, "toastColorError");
@@ -365,7 +546,6 @@ window.addEventListener('load',()=>{
             }
         }
 
-        let rowId = null;
         
         function getSelectedRowId() {
             const selectedRows = gridOptions.api.getSelectedRows();
@@ -374,25 +554,17 @@ window.addEventListener('load',()=>{
                 return selectedRows[0].id;
             }
             return null;
-          }
+        }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ SELECCION TABLA AG-GRID
 
-          
+        
           
         async function seleccionTabla(id,mouse) {
                 try{
-                    const inputCard = document.querySelectorAll('.form-group input');
-                    const buttonCard = document.querySelectorAll('.form-group button');
+                    
                     if(mouse){
-                        pinCarga('cargando')
-                        inputCard.forEach(input => {
-                            input.disabled=true;
-                        });
-                        buttonCard.forEach(button => {
-                            button.disabled=true;
-                        });
-                        comboMarca.disabled=true;
+                        paginaModoCarga(true);
                     }
                     if(conectado()){
                         const data = await fetch('/auto/'+id)
@@ -406,14 +578,8 @@ window.addEventListener('load',()=>{
                         await cargarDatosDesdeSeleccion(data);
                         validacionVaciar();
                         if(mouse){
-                            pinCarga('successFast')
-                            inputCard.forEach(input => {
-                                input.disabled=false;
-                            });
-                            buttonCard.forEach(button => {
-                                button.disabled=false;
-                            });
-                            comboMarca.disabled=false;
+                            paginaModoCarga(false);
+                            //pinCarga('successFast')
                         };
                     }
             }catch(error){
@@ -821,7 +987,7 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
         guardarBtn.disabled=true;
         guardarBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if(rowId!== null){
+            if(getSelectedRowId()!== null){
                 if(validacionGuardar()){
                     //Construimos aqui el modal
                     construirModal(1);
@@ -1104,7 +1270,6 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
                     nuevaFilaAgGrid(data)
                     toast("Modelo agregado", "toastColorSuccess");
                     pinCarga('success');
-                    rowId=res.id;
                 }).catch(error =>{
                     toast(error.message, "toastColorError");
                     pinCarga('fallo');
@@ -1123,14 +1288,215 @@ guardarNomAutoBtn.addEventListener('click', (e)=>{
 
 
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++      PAGINATION     +++++++++++++++++++++++++++++
+                
+        const registrosLabel = document.getElementById('registrosLabel');
+        const pageSize = document.getElementById('page-size');
+        const pagesLabel = document.getElementById('pagesLabel');
+        const actualPageInput = document.getElementById('actualPageInput');
+
+        const firstPageBtn = document.getElementById('firstPageBtn')
+        const nextPageBtn = document.getElementById('nextPageBtn')
+        const previousPageBtn = document.getElementById('previousPageBtn')
+        const lastPageBtn = document.getElementById('lastPageBtn')
+
+
+        function onPageSizeChanged(){
+            size = document.getElementById('page-size').value;
+            //actualPage=1; vaciarFiltro ya lo hace
+            vaciarFiltro();
+            cargarTablaModelos(1,size,filtro1,filtro2);
+        }
+
+        function onFirstPage(){
+            actualPageInput.value=1
+            if(actualPage!=1){
+                actualPage= 1
+                cargarTablaModelos(actualPage,size,filtro1,filtro2);
+            }
+        }
+        function onPreviousPage(){
+            actualPageInput.value=actualPage
+            if(actualPage>1){
+                actualPage-=1
+                cargarTablaModelos(actualPage,size,filtro1,filtro2);
+            }
+        }
+
+        function onNextPage(){
+            actualPageInput.value=actualPage
+            if(actualPage<lastPage){
+                actualPage+=1
+                cargarTablaModelos(actualPage,size,filtro1,filtro2);
+            }
+        }
+
+
+        function onLastPage(){
+            actualPageInput.value=lastPage
+            if(actualPage!=lastPage){
+                actualPage= lastPage
+                cargarTablaModelos(actualPage,size,filtro1,filtro2);
+            }
+        }
+
+        function presionarEnterPage(event,page){
+            if (event.code === "Enter" || event.which === 13) {
+                console.log('presiono enter');
+                if(page>=lastPage)onLastPage();
+                if(page<=1)onFirstPage();
+                if(page<lastPage && page>1){
+                    actualPage=page
+                    cargarTablaModelos(actualPage,size,filtro1,filtro2);
+                }
+            }
+        }
+        
+
+        firstPageBtn.addEventListener('click',()=>{
+            onFirstPage();
+        });
+        
+        previousPageBtn.addEventListener('click',()=>{
+            onPreviousPage();
+        });
+
+        nextPageBtn.addEventListener('click',()=>{
+            onNextPage();
+        });
+        
+        lastPageBtn.addEventListener('click',()=>{
+            onLastPage();
+        });
+
+        pageSize.addEventListener('change',()=>{
+            onPageSizeChanged();
+        });
+
+        actualPageInput.addEventListener('keyup',(event)=>{
+            try{
+                actualPageInput.value=actualPageInput.value.trim();
+                const texto = actualPageInput.value;
+                const num = parseInt(texto);
+                if(!isNaN(num)){
+                    actualPageInput.value=num;
+                    presionarEnterPage(event,num);
+                }
+            }catch(error){
+                console.log(error)
+            }
+            
+        });
+
+
+
+        //-----------------------------------------------------------------FILTROS
+
+                
+        //-------------------------BTN CHECK filtros
+        const pagSupDiv = document.getElementById('paginationSupDiv');
+        const filtroCheck = document.getElementById('filtroCheck');
+        filtroCheck.addEventListener('change',function(){
+            if (this.checked) {
+                console.log("El checkbox ha sido marcado");
+                pagSupDiv.style.display='flex';
+                // Aquí puedes agregar cualquier acción que quieras que se ejecute cuando se marque el checkbox
+            } else {
+                console.log("El checkbox ha sido desmarcado");
+                pagSupDiv.style.display='none';
+                // Aquí puedes agregar cualquier acción que quieras que se ejecute cuando se desmarque el checkbox
+            }
+        });
+
+
+        function presionarEnterFilter1(){
+            filtro1=filtro1Input.value;
+            filtro2=filtro2Input.value;
+            actualPage=1
+            actualPageInput.value=1;
+            cargarTablaModelos(actualPage,size,filtro1,filtro2);
+        }
+
+
+        function presionarEnterFilter2(){
+            filtro1=filtro1Input.value;
+            filtro2=filtro2Input.value;
+            actualPage=1
+            actualPageInput.value=1;
+            cargarTablaModelos(actualPage,size,filtro1,filtro2);
+        }
+
+        function vaciarFiltro(){
+            vaciarFiltro1();
+            vaciarFiltro2();
+        }
+
+        function vaciarFiltro1(){
+            filtro1 = '';
+            filtro1Input.value='';
+            actualPage=1;
+        }
+        function vaciarFiltro2(){
+            filtro2 = '';
+            filtro2Input.value='';
+            actualPage=1;
+        }
+
+        const filtro1Input = document.getElementById('filtro1Input');
+        filtro1Input.addEventListener('keyup',(event)=>{
+            if (event.code === "Enter" || event.which === 13) {
+                presionarEnterFilter1();
+            }
+        });
+
+        const filtro2Input = document.getElementById('filtro2Input');
+        filtro2Input.addEventListener('keyup',(event)=>{
+            if (event.code === "Enter" || event.which === 13) {
+                presionarEnterFilter2();
+            }
+            
+        });
+
+        const filtro1Label = document.getElementById('filtro1Label');
+        filtro1Label.addEventListener('click',(event)=>{
+            vaciarFiltro1();
+            cargarTablaModelos(actualPage,size,filtro1,filtro2);
+        });
+
+        const filtro2Label = document.getElementById('filtro2Label');
+        filtro2Label.addEventListener('click',(event)=>{
+            vaciarFiltro2();
+            cargarTablaModelos(actualPage,size,filtro1,filtro2);
+        });
+
+
+
+        
+
+
+
+
+
+
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++      FIN     +++++++++++++++++++++++++++++
+
+
+
+
+
 
         // agregar una fila a la tabla cuando se hace clic en el botón
         var btnPrueba = document.querySelector('#btnPrueba');
         btnPrueba.addEventListener('click', async function(e) {
             e.preventDefault();
 
-            //corregirFlotante('2');
+            /*gridOptions.api.paginationGoToNextPage((e)=>{
+                e.preventDefault();
+                console.log(e);
+            });*/
+
+            gridOptions.api.setServerSideDatasource(dataSource);
 
 
         });

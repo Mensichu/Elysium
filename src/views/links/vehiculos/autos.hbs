@@ -1,0 +1,242 @@
+<link rel="stylesheet" href="/css/global.css">
+<link rel="stylesheet" href="/css/auto.css">
+<!--
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a id="excepcion" class="nav-link" data-bs-toggle="tab" href="/vehiculos/placas" tabindex="-1" aria-selected="false" role="tab">Placas</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a id="excepcion" class="nav-link active" href="#" data-bs-toggle="tab" aria-selected="true"  role="tab">Modelos</a>
+  </li>
+  
+</ul>
+-->
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item"><a href="/vehiculos/placas">Placas</a></li>
+  <li class="breadcrumb-item active">Autos</li>
+</ol>
+
+
+<div id="fondo" class="showDelay mt-2" stylea="padding: 10px; border:2px black solid">
+    <div id="containerDiv" class="container-fluid">
+        <div class="row ">
+            <div class="col-12 col-md-4" >
+                <div class="card text-white ">
+                    <div class="card-header">Datos del Auto</div>
+                    <div id="datosModeloCard" class="card-body datosModeloBody">
+                        <div id="cardBodyCargando" class="loadingBody"></div>
+                        <div id="cardBodyTodo" class="visible">
+                            <div class="form-group">
+                                <label id="labelMarca" for="comboMarca" class="form-label">Marca:</label>
+                                <div class="input-group">
+                                    <select class="form-select " id="comboMarca" >
+                                        <option value="0">No aplica</option>
+                                    </select>
+                                    <button class="btn btn-info" type="button" id="btn-Agregar" style="z-index: 0;">Agregar</button>
+                                </div>
+                            </div>
+                                
+                            <div id="formTextAlias" class="form-group hidden" >
+                                <fieldset>
+                                    <label class="form-label mt-2" for="Datos-Alias">Alias(Marca):</label>
+                                    <div class="input-group">
+                                        <input type="text" id="Datos-Alias" class="form-control form-input" name="Alias" placeholder="Alias" minlength="1"maxlength="60">
+                                        <button class="btn btn-info " type="button" id="btn-GuardarAlias" style="z-index: 0;">Guardar</button>
+                                    </div>
+                                    <div class="invalid-feedback">Alias incorrecto!</div>
+                                </fieldset>
+                                
+                            </div>
+
+                            <div id="formComboModelo" class="form-group" title="clic derecho para editar" >
+                                <label for="comboModelo" class="form-label mt-2">Modelo:</label>
+                                <div class="input-group">
+                                    <select class="form-select" id="comboModelo">
+                                        <option value="0">No aplica</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div id="formTextModelo" class="form-group" title="clic derecho para regresar" style="display: none;">
+                                <fieldset>
+                                    <label class="form-label mt-2" for="Datos-Modelo">Modelo (editable):</label>
+                                    <div class="input-group">
+                                        <input type="text" id="Datos-Modelo" class="form-control form-input" name="Modelo" placeholder="Modelo" maxlength="60">
+                                        <button class="btn btn-info " type="button" id="btn-GuardarNomAuto" style="z-index: 0;">Guardar</button>
+                                    </div>
+                                    <div class="invalid-feedback">Modelo incorrecto!</div>
+                                </fieldset>
+                            </div>
+
+                            <form id="formulario" class="formGroupBorder mt-2" >
+
+                                <div class="form-group orientacionDivs">
+
+                                    <div class="elementoOrientacion">
+                                        <fieldset>
+                                            <label class="form-label mt-2" for="Datos-Año">Año:</label>
+                                            <input type="number" id="Datos-Año" class="form-control form-input" name="Año" placeholder="Año" min="1900" max="2050" maxlength="4" >
+                                        </fieldset>
+                                        <div class="invalid-feedback">Año incorrecto!</div>
+                                    </div>
+                                    <div class="elementoOrientacion">
+                                        <fieldset>
+                                            <label class="form-label mt-2" for="Datos-Cilindraje">Cilindraje:</label>
+                                            <input type="number" step="0.1" id="Datos-Cilindraje" class="form-control form-input" name="Cilindraje" placeholder="Cilindraje" min="0" max="10" maxlength="3">
+                                        </fieldset>
+                                        <div class="invalid-feedback">Cilindraje incorrecto!</div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group row" >
+                                    <label class="form-label mt-2" for="btnradio1">Tipo de combustible:</label>
+                                    <div class="form-group btn-group" role="group" aria-label="Basic radio toggle button group">
+                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked="">
+                                        <label class="btn btn-outline-info" for="btnradio1">Gas.</label>
+                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" >
+                                        <label class="btn btn-outline-info" for="btnradio2">Diesel</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" style="padding-top: 4px; ">
+                                    <label class="form-label mt-2" for="Datos-CMotor">Capacidad de aceite:</label>
+                                    <div style="border: 2px solid rgba(63, 67, 77, 0.774); border-radius:6px; padding:4px;">
+                                        <div class="" style="display: flex; justify-content: center; align-items:center">
+                                            <label class="form-label col-6" for="Datos-CMotor"> Cap. Motor:</label>
+                                            <div class="col-6">
+                                                <input type="number" step="1" style="text-align:center;" id="Datos-CMotor" class="form-control form-input" name="CapMotor" placeholder="(Litros)" min="0" max="20">
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="" style="display: flex; justify-content: center; align-items:center; margin-top:4px;">
+                                            <label class="form-label col-6" for="Datos-CCaja"> Cap. Caja:</label>
+                                            <div class="col-6">
+                                                <input type="number" step="1" style="text-align:center;" id="Datos-CCaja" class="form-control form-input" name="CapCaja" placeholder="(Litros)" min="0" max="20">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="form-group" style="padding-top: 10px; text-align: center;">
+                                    <button class="btn btn-info  btnHover1" style="width:100%;" id="btn-Guardar">Guardar cambios</button>
+                                </div>
+                            </form>
+
+                            <div class="form-group" style="padding-top: 20px;">                        
+                                    <div class="orientacionDivsBotones" >
+                                        
+                                        <button class="btn btn-outline-success  btnHover2" style="margin-left: 2px;" id="btn-Nuevo">Nuevo</button>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                </div>
+            </div>
+
+            <!-------------------------------TABLAS------------------------------------>
+            <!------------------------------------------------------------------------->
+            <div class="col-12 col-md-8">
+                <div class="card text-white ">
+                    <!--<div class="card-header">Tabla de Modelos</div>-->
+                    <div class="card-header colorHeaderRelacion d-flex justify-content-between align-items-center" style="">
+                        <h6 style="margin-left: 10px;margin-top: 5px; ">Tabla de Autos</h6>
+                        <div id="filtroCheckGroup" class="form-check form-switch ">
+                            <input class="form-check-input" type="checkbox" id="filtroCheck" >
+                            <label id="tieneCuenta1Label"class="form-check-label" for="filtroCheck">filtros</label>
+                        </div>
+                    </div>
+                    <div class="card-body tablaModeloBody" style="display: flex;flex-direction:column">
+                        <div id="paginationSupDiv" class="groupPaginationFilter" style="display: none;">
+                            <div class="filtros" style="display:flex">
+                                <div id="filtro3" style="display: flex;">
+                                    <label for="filtro3Input">Filtro3:</label>
+                                    <input id="filtro3Input" type="search" class="">
+                                </div>
+                                <div id="filtro1" style="display: flex;">
+                                    <label id="filtro1Label" for="filtro1Input">Marca:</label>
+                                    <input id="filtro1Input" type="search" class="">
+                                </div>
+                                <div id="filtro2" style="display: flex;">
+                                    <label id="filtro2Label" for="filtro2Input">Modelo:</label>
+                                    <input id="filtro2Input" type="search" class="">
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex;">
+                                <label for="page-size">Filas:</label>
+                                <select id="page-size" class="" >
+                                        <!--<option value="10">10</option>-->
+                                        <option value="-1">Todos</option>
+                                    </select>
+                            </div>
+                        </div>
+
+                        <!---------------------------Tabla------------------------->
+                        <div id="grid-wrapper" classe="diseñoTablaGrid" style="flex-grow: 1;">
+                            <div id="myGrid" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                        </div>
+
+                        <div class="groupPagination">
+                            <div>
+                                <label id="registrosLabel" class="registrosLabel">Registros</label>
+                            </div>
+                            <div id="pagination" class="myPagination">
+                                <a id="firstPageBtn" class="page-link aLeft" href="#">
+                                    <i class="fa-solid fa-backward-step"></i>
+                                </a>
+                                <a id="previousPageBtn" class="page-link aLeft" href="#">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </a>
+                                <input id="actualPageInput"type="search" class="" maxlength="2" value="1">
+                                
+                                <a id="nextPageBtn" class="page-link aRight" href="#">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </a>
+                                <a id="lastPageBtn" class="page-link aRight" href="#">
+                                    <i class="fa-solid fa-forward-step"></i>
+                                </a>
+                            </div>
+                            <div>
+                                <label id="pagesLabel">Pagina 1 de 25</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="btnPrueba" style="display:none">Prueba</button>
+
+        </div>
+    </div>
+
+
+    <div id="myModal" class="modal">
+        <div class="card border-light mb-3 modal-content">
+            <div id="'modalHeader" class="card-header d-flex justify-content-between align-items-center">
+                <h5 id="tituloHeader">Nuevo</h5>
+                <button id="cancelar1" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="modalBody" class="card-body justify-content-center align-items-center text-align-center">
+                <!--input o texto p-->
+                <div id="divBotones" class="d-flex justify-content-center">
+                    <button value="" class="btn btn-info modal-button" id="confirmar">Nueva Marca</button>
+                    <button class="btn btn-info modal-button" id="cancelar">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- ANIMACION DE BOTON                                                       -->
+
+<div id="circulo" class="circuloOrig"></div>
+<div id="pin" class="wait"></div>
+
+
+<script src="../js/vehiculos/autos.js"></script>
+<script src="../js/Validaciones/validacion.modelo.js"></script>

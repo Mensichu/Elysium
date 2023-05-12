@@ -330,24 +330,38 @@ export const getComboAutosUnico = async (req,res) =>{
     }
 }
 
+
+
 /*
-reemplazada por getComboAutosUnicos
-export const getComboAutos = async (req,res) =>{
-    const {id} = req.params
+export const getTablaAutos = async (req,res) =>{
     try{
-        const autos = await tablaAuto.findAll({
-            where:{
-                id_marca: id,
-                estado:true
+        const {page,size,search}= req.query;
+        const searchString = search ? search.toUpperCase() : '';
+        const autos = await tablaAuto.findAndCountAll({
+            limit: parseInt(size),
+            offset: parseInt(page)*parseInt(size),
+            where:
+            {
+                estado:true,
+                [Op.or]: [
+                    Sequelize.where(Sequelize.fn('upper', Sequelize.col('nom_auto')), 'LIKE', `%${searchString}%`),
+                ],
             },
+            attributes:
+                [
+                    'id',
+                    [Sequelize.fn('upper', Sequelize.col('nom_auto')), 'modelo'],
+                    ['ano','año'],
+                    'cilindraje',
+                    [Sequelize.literal("CASE WHEN combustible=1 THEN 'DIESEL' ELSE 'GAS.' END"), 'combustible']
+                ],
             include:{
                 model: tablaMarca,
-                attributes: ['alias']
+                attributes: [[Sequelize.fn('upper',Sequelize.col('nom_marca')),'nom_marca']]
             },
-            attributes:['id','nom_auto'],
-            order: [['nom_auto','ASC']]
+            order:[[tablaMarca,'nom_marca','ASC'],['nom_auto','ASC']]
         });
-        res.json(autos);
+        res.json({rows: autos.rows, count: autos.count});
     }catch(error){
         //500 es un error que indica q es error del servidor
         return res.status(500).json({ message: error.message });
@@ -356,10 +370,32 @@ export const getComboAutos = async (req,res) =>{
 */
 
 
+
 export const getTablaAutos = async (req,res) =>{
     try{
-        const autos = await tablaAuto.findAll({
-            where:{estado:true},
+        let {page,size,search1,search2}= req.query;
+        
+        page=page!==undefined?page:'';
+        size=size!==undefined?size:'';
+        search1=search1!==undefined?search1:'';
+        search2=search2!==undefined?search2:'';
+        size = size!=-1 ? size : '';//Envia todos los registros si es -1
+        const searchString1 = search1 ? search1.toUpperCase() : '';
+        const searchString2 = search2 ? search2.toUpperCase() : '';
+
+        console.log('valores: '+page+' '+size+' '+search1+' '+search2)
+
+        const autos = await tablaAuto.findAndCountAll({
+            limit: parseInt(size),
+            offset: parseInt(page)*parseInt(size),
+            where:
+                {
+                    estado:true,
+                    [Op.and]: [
+                        Sequelize.where(Sequelize.fn('upper', Sequelize.col('Marca.nom_marca')), 'LIKE', `%${searchString1}%`),
+                        Sequelize.where(Sequelize.fn('upper', Sequelize.col('nom_auto')), 'LIKE', `%${searchString2}%`)
+                    ],
+                },
             attributes:['id','nom_auto','ano','cilindraje','combustible'],
             include:{
                 model: tablaMarca,
@@ -373,6 +409,10 @@ export const getTablaAutos = async (req,res) =>{
         return res.status(500).json({ message: error.message });
     }
 }
+
+
+
+
 
 
 

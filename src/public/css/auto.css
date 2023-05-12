@@ -157,3 +157,33 @@ background-position: center;
     @media (max-height: 1000px) and (max-width: 1000px) {
         
     }
+
+
+
+/* -----------------------------PAGINATION -----------------------------*/
+
+
+@media ( (max-width: 550px) ) {
+
+  .groupPagination div label{
+      display: none !important;
+  }
+}
+
+
+
+@media (max-width: 826px) and (min-width: 768px) {
+
+  #filtro1{
+    display: none !important;
+  }
+ 
+}
+
+@media (max-width: 550px) {
+  
+  #filtro1{
+    display: none !important;
+  }
+ 
+}

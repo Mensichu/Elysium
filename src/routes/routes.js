@@ -62,21 +62,21 @@ router.post('/logout', function(req, res, next) {
 
 
 
-router.get('/clientes',isAuthenticated, (req,res)=>{
+router.get('/clientes', (req,res)=>{
     res.render('links/clientes');
 });
 
-router.get('/vehiculos/modelos',isAuthenticated, (req,res)=>{
-    res.render('links/vehiculos/modelos');
+router.get('/vehiculos/autos', (req,res)=>{
+    res.render('links/vehiculos/autos');
 });
 
 router.get('/vehiculos/placas', (req,res)=>{
     res.render('links/vehiculos/placas');
 });
-
-router.get('/vehiculos/autos',isAuthenticated, (req,res)=>{
+/*
+router.get('/vehiculos/autos', (req,res)=>{
     res.render('links/autos');
-});
+});*/
 
 router.get('/productos', (req,res)=>{
   res.render('links/productos/productos');

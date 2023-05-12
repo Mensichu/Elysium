@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="/css/global.css">
 <link rel="stylesheet" href="/css/placa.css">
-
+<!--
 <ul class="nav nav-tabs" role="tablist">
   <li class="nav-item" role="presentation">
     <a id="excepcion" class="nav-link active" href="#" data-bs-toggle="tab" aria-selected="true"  role="tab">Placas</a>
@@ -10,118 +10,127 @@
   </li>
   
 </ul>
+-->
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item active">Placas</li>
+  <li class="breadcrumb-item"><a href="/vehiculos/autos">Autos</a></li>
+</ol>
+
 
 <div id="fondo" class="showDelay mt-2" stylea="padding: 10px; border:2px black solid">
-    <div class="container">
+    <div id="containerDiv" class="container-fluid">
         <div class="row ">
             <div class="col-12 col-md-4" >
                 <div class="card text-white ">
                     <div class="card-header">Datos de la Placa</div>
                     <div id="datosModeloCard" class="card-body datosModeloBody">
-                        <form id="formulario" class="formDatosPlaca" ></form>
-                            <div class="form-group" >
-                                <fieldset>
-                                    <label class="form-label mt-2" for="inputValid">Placa:</label>
+                        <div id="cardBodyCargando" class="loadingBody"></div>
+                        <div id="cardBodyTodo" class="visible">
+                            <form id="formulario" class="formDatosPlaca" ></form>
+                                <div class="form-group" >
+                                    <fieldset>
+                                        <label class="form-label mt-2" for="Datos-Placa">Placa:</label>
+                                        <div class="input-group">
+                                            <input type="search" id="Datos-Placa" class="form-control form-input" name="Placa" placeholder="Placa" minlength="1"maxlength="10">
+                                            <button class="btn btn-info " type="button" id="btn-Verificar" >Verificar</button>
+                                        </div>
+                                        <div class="invalid-feedback">Placa incorrecto!</div>
+                                    </fieldset>
+                                </div>
+
+                                <div class="form-group">
+                                    <label id="labelMarca" for="comboMarca" class="form-label">Marca:</label>
                                     <div class="input-group">
-                                        <input type="text" id="Datos-Placa" class="form-control form-input" name="Placa" placeholder="Placa" minlength="1"maxlength="10">
-                                        <button class="btn btn-info " type="button" id="btn-Verificar" >Verificar</button>
+                                        <select class="form-select " id="comboMarca" >
+                                            <option value="0">No aplica</option>
+                                        </select>
+                                        <button onclick="window.location.href='../vehiculos/modelos'"
+                                        class="btn btn-info " type="button" id="btn-ModeloPage" >+</button>
                                     </div>
-                                    <div class="invalid-feedback">Placa incorrecto!</div>
-                                </fieldset>
-                            </div>
-
-                            <div class="form-group">
-                                <label id="labelMarca" for="exampleSelect1" class="form-label">Marca:</label>
-                                <div class="input-group">
-                                    <select class="form-select " id="comboMarca" >
-                                        <option value="0">No aplica</option>
-                                    </select>
-                                    <button onclick="window.location.href='../vehiculos/modelos'"
-                                    class="btn btn-info " type="button" id="btn-ModeloPage" >+</button>
-                                </div>
-                            </div>
-                            
-                            <div id="formComboModelo" class="form-group" >
-                                <label for="exampleSelect1" class="form-label mt-2">Modelo:</label>
-                                <div class="input-group">
-                                    <select class="form-select" id="comboModelo">
-                                        <option value="0">No aplica</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group mt-2">
-                                <div class="input-group">
-                                    <fieldset>
-                                        <div class="form-check form-switch mt-2">
-                                            <input class="form-check-input" type="checkbox" id="Datos-NoClave" checked="">
-                                            <label id="noTieneClaveLabel"class="form-check-label" for="flexSwitchCheckDefault">No tiene clave</label>
-                                        </div>
-                                    </fieldset>
-                                </div>
-                                <div id="formClave" class="input-group" style="display: none;">
-                                    <!--<label class="form-label mt-2" for="inputValid">Clave:</label>-->
-                                    <fieldset>
-                                        <input type="text" id="Datos-Clave" class="form-control form-input" name="Clave" placeholder="Clave" minlength="1"maxlength="10">
-                                        <div class="invalid-feedback">Formato incorrecto!</div>
-                                    </fieldset>
                                 </div>
                                 
-                            </div>
-
-                            <div class="form-group ">
-                                <div class="input-group">
-                                    <fieldset>
-                                        <div class="form-check form-switch mt-2">
-                                            <input class="form-check-input" type="checkbox" id="Datos-NoObs" checked="">
-                                            <label id="noTieneObsLabel"class="form-check-label" for="flexSwitchCheckDefault">No tiene observaciones</label>
-                                        </div>
-                                    </fieldset>
-                                </div>
-
-                                <div id="formObs" class="input-group" style="display: none;">
-                                    <!--<label class="form-label mt-2" for="inputValid">Observaciones:</label>-->
-                                    <fieldset>
-                                        <textarea class="form-control form-input" id="Datos-Obs" rows="5" cols="50" placeholder="Observaciones..." name="Observacion" minlength="1" maxlength="100"></textarea>
-                                        <div class="invalid-feedback">Formato incorrecto!</div>
-                                    </fieldset>
+                                <div id="formComboModelo" class="form-group" >
+                                    <label for="comboModelo" class="form-label mt-2">Modelo:</label>
+                                    <div class="input-group">
+                                        <select class="form-select" id="comboModelo">
+                                            <option value="0">No aplica</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 
-                            </div>
-
-                
-
-                            <label class="form-label mt-2" for="inputValid">Color principal y secundario:</label>
-                            <div class="form-group orientacionDivs">
-                                <div class="elementoOrientacion input-group" >
-                                    <input disabled="true" type="color" id="Datos-Color1" class="form-control form-control-color form-input" style="width:60%;" value="#FFFFFF" name="Color1">
-                                    <select class="form-select " id="comboColor1" style="width: 10%;">
-                                        <option value="0">No aplica</option>
-                                    </select>
+                                <div class="form-group mt-2">
+                                    <div class="input-group">
+                                        <fieldset>
+                                            <div class="form-check form-switch mt-2">
+                                                <input class="form-check-input" type="checkbox" id="Datos-NoClave" checked="">
+                                                <label id="noTieneClaveLabel"class="form-check-label" for="Datos-NoClave">No tiene clave</label>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div id="formClave" class="input-group" style="display: none;">
+                                        <!--<label class="form-label mt-2" for="inputValid">Clave:</label>-->
+                                        <fieldset>
+                                            <input type="text" id="Datos-Clave" class="form-control form-input" name="Clave" placeholder="Clave" minlength="1"maxlength="10">
+                                            <div class="invalid-feedback">Formato incorrecto!</div>
+                                        </fieldset>
+                                    </div>
                                     
                                 </div>
-                                <div class="elementoOrientacion input-group">
-                                    <input disabled="true" type="color" id="Datos-Color2" class="form-control form-control-color form-input" style="width:60%;" value="#FFFFFF" name="Color2">
-                                    <select class="form-select " id="comboColor2" style="width: 10%;">
-                                        <option value="0" >No aplica</option>
-                                    </select>
+
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <fieldset>
+                                            <div class="form-check form-switch mt-2">
+                                                <input class="form-check-input" type="checkbox" id="Datos-NoObs" checked="">
+                                                <label id="noTieneObsLabel"class="form-check-label" for="Datos-NoObs">No tiene observaciones</label>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+
+                                    <div id="formObs" class="input-group" style="display: none;">
+                                        <!--<label class="form-label mt-2" for="inputValid">Observaciones:</label>-->
+                                        <fieldset>
+                                            <textarea class="form-control form-input" id="Datos-Obs" rows="5" cols="50" placeholder="Observaciones..." name="Observacion" minlength="1" maxlength="100"></textarea>
+                                            <div class="invalid-feedback">Formato incorrecto!</div>
+                                        </fieldset>
+                                    </div>
+                                    
                                 </div>
 
-                            </div>
-                            <!--<span class="color-box" style="background-color: red;"></span>-->
+                    
 
-                            <div class="form-group" style="padding-top: 10px; text-align: center;">
-                                <button class="btn btn-info  btnHover1" style="width:100%;" id="btn-Guardar">Guardar cambios</button>
-                            </div>
-
-                            <div class="form-group" style="padding-top: 20px; text-align: center;">
-                                    <div class="orientacionDivsBotones" >
+                                <label class="form-label mt-2" for="comboColor1">Color principal y secundario:</label>
+                                <div class="form-group orientacionDivs">
+                                    <div class="elementoOrientacion input-group" >
+                                        <input disabled="true" type="color" id="Datos-Color1" class="form-control form-control-color form-input" style="width:60%;" value="#FFFFFF" name="Color1">
+                                        <select class="form-select " id="comboColor1" style="width: 10%;">
+                                            <option value="0">No aplica</option>
+                                        </select>
                                         
-                                        <button class="btn btn-outline-success  btnHover2" style="margin-left: 2px; width:100%" id="btn-Nuevo">Nuevo</button>
                                     </div>
-                            </div>
-                        </form>
-                            
+                                    <div class="elementoOrientacion input-group">
+                                        <input disabled="true" type="color" id="Datos-Color2" class="form-control form-control-color form-input" style="width:60%;" value="#FFFFFF" name="Color2">
+                                        <select class="form-select " id="comboColor2" style="width: 10%;">
+                                            <option value="0" >No aplica</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <!--<span class="color-box" style="background-color: red;"></span>-->
+
+                                <div class="form-group" style="padding-top: 10px; text-align: center;">
+                                    <button class="btn btn-info  btnHover1" style="width:100%;" id="btn-Guardar">Guardar cambios</button>
+                                </div>
+
+                                <div class="form-group" style="padding-top: 20px; text-align: center;">
+                                        <div class="orientacionDivsBotones" >
+                                            
+                                            <button class="btn btn-outline-success  btnHover2" style="margin-left: 2px; width:100%" id="btn-Nuevo">Nuevo</button>
+                                        </div>
+                                </div>
+                            </form>
+                        </div>
                         
                     </div>
             
@@ -132,20 +141,70 @@
             <!------------------------------------------------------------------------->
             <div class="col-12 col-md-8">
                 <div class="card text-white ">
-                    <div class="card-header">Tabla de Placas</div>
-                        <div class="card-body tablaModeloBody">
-                            <div id="idTabla" class="tabla-con-scroll" >
-                                <div class="diseñoTablaGrid" style="height:100%">
-                                        <div id="myGrid" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                    <!--<div class="card-header">Tabla de Modelos</div>-->
+                    <div class="card-header colorHeaderRelacion d-flex justify-content-between align-items-center" style="">
+                        <h6 id="titulo-Cliente-Placas" style="margin-left: 10px;margin-top: 5px; ">Tabla de Placas</h6>
+                        <div id="filtroCheckGroup" class="form-check form-switch ">
+                            <input class="form-check-input" type="checkbox" id="filtroCheck" >
+                            <label id="tieneCuenta1Label"class="form-check-label" for="filtroCheck">filtros</label>
+                        </div>
+                    </div>
+                    <div class="card-body tablaModeloBody" style="display: flex;flex-direction:column">
+                        <div id="paginationSupDiv" class="groupPaginationFilter" style="display: none;">
+                            <div class="filtros" style="display:flex">
+                                <div id="filtro3" style="display: flex;">
+                                    <label id="filtro3Label" for="filtro3Input">Placa:</label>
+                                    <input id="filtro3Input" type="search" class="">
                                 </div>
-                                
-                                
+                                <div id="filtro1" style="display: flex;">
+                                    <label id="filtro1Label" for="filtro1Input">Marca:</label>
+                                    <input id="filtro1Input" type="search" class="">
+                                </div>
+                                <div id="filtro2" style="display: flex;">
+                                    <label id="filtro2Label" for="filtro2Input">Modelo:</label>
+                                    <input id="filtro2Input" type="search" class="">
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex;">
+                                <label for="page-size">Filas:</label>
+                                <select id="page-size" class="" >
+                                        <option value="-1">Todos</option>
+                                    </select>
                             </div>
                         </div>
-                    
+
+                        <!---------------------------Tabla------------------------->
+                        <div id="grid-wrapper" classe="diseñoTablaGrid" style="flex-grow: 1;">
+                            <div id="myGrid" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                        </div>
+
+                        <div class="groupPagination">
+                            <div>
+                                <label id="registrosLabel" class="registrosLabel" >Registros</label>
+                            </div>
+                            <div id="pagination" class="myPagination">
+                                <a id="firstPageBtn" class="page-link aLeft" href="#">
+                                    <i class="fa-solid fa-backward-step"></i>
+                                </a>
+                                <a id="previousPageBtn" class="page-link aLeft" href="#">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </a>
+                                <input id="actualPageInput"type="search" class="" maxlength="2" value="1">
+                                
+                                <a id="nextPageBtn" class="page-link aRight" href="#">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </a>
+                                <a id="lastPageBtn" class="page-link aRight" href="#">
+                                    <i class="fa-solid fa-forward-step"></i>
+                                </a>
+                            </div>
+                            <div>
+                                <label id="pagesLabel" >Pagina 1 de 25</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            
             </div>
             <button id="btnPrueba" style="display:none">Prueba</button>
 

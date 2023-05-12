@@ -48,7 +48,7 @@ window.addEventListener('load',()=>{
         console.log(pagina);
         if(pagina==('/'))activos[0].classList.add('active');
         if(pagina.includes('/clientes')){activos[1].classList.add('active');bg_navElysium('#be7e15')};
-        if(pagina.includes('/vehiculos/modelos')){activos[2].classList.add('active');bg_navElysium('#273f83')};
+        if(pagina.includes('/vehiculos/autos')){activos[2].classList.add('active');bg_navElysium('#273f83')};
         if(pagina.includes('/vehiculos/placas')){activos[2].classList.add('active');bg_navElysium('#4a5472')};
         if(pagina.includes('/productos')){activos[3].classList.add('active');bg_navElysium('#4a5472');};
         if(pagina.includes('/productos/clasificacion')){activos[3].classList.add('active');bg_navElysium('#9c342c');};
@@ -218,6 +218,26 @@ function toast(mensaje,colorClass){
         }).showToast();
 }
 
+
+    // Función para ajustar la posición del toast
+    function adjustToastPosition() {
+        // Obtener la altura del viewport
+        var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        
+        // Obtener la altura del body
+        var bodyHeight = document.body.offsetHeight;
+        
+        // Calcular la posición del toast en la parte inferior de la pantalla
+        var toastBottom = viewportHeight - bodyHeight;
+        
+        // Actualizar la posición del toast
+        Toastify.reposition(undefined, toastBottom);
+    }
+    
+    // Detectar cuándo el teclado virtual se abre o se cierra
+    window.addEventListener("resize", function() {
+        adjustToastPosition();
+    });
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ WHATSAPP CONTACTO
 
