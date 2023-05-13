@@ -17,7 +17,7 @@ export const createProducto = async (req,res) =>{
         }
         //Creamos el producto
         const producto = await tablaProducto.create(req.body);
-        //Agregamos la relacion del proveedor con el producto
+        //Agregamos la relacion del proveedor con el producto---------------------------------------registroProductoProveedor
         await proveedor.addProducto(producto, { through: { costosiniva: req.body.costosiniva } });
         res.json(producto);
     }catch(error){
@@ -39,7 +39,7 @@ export const updateProducto = async (req,res)=>{
             res.json(producto);
             
         }else{
-            res.status(404).json({message: 'producto not found'});
+            res.status(404).json({message: 'product not found'});
         }
     }
     catch(error){
@@ -60,15 +60,17 @@ export const getProducto = async (req,res)=>{
             include:[
                 {
                     model:tablaProveedor,
-                    attributes:['id','nom_proveedor'],
+                    attributes:['id'],
                     //excluye los atributos de la tablaProveedorProducto relacional
-                    //through: { attributes: [] }, // Exclude junction table attributes
+                    through: { attributes: [] }, // Exclude junction table attributes
                     
                 },
+                /*
                 {
                     model:tablaProductoSeccion,
                     attributes:['cod_seccion','nom_seccion']
                 }
+                */
                 /*,
                 //No lo necesito, se puede hacer como otra funcion
                 //requiere subgrupo, grupo, categoria y tipo.
@@ -90,12 +92,37 @@ export const getProducto = async (req,res)=>{
 }
 
 
-export const getProductos = async (req,res) =>{
+import Sequelize from 'sequelize';
+const { Op } = require("sequelize");
+
+export const getTablaProductos = async (req,res) =>{
     try{
-        const productos = await tablaProducto.findAll({
-            attributes:{
-                exclude:['createdAt','updatedAt']
-            },
+        let {page,size,search1,search2}= req.query;
+        
+        page=page!==undefined?page:'';
+        size=size!==undefined?size:'';
+        search1=search1!==undefined?search1:'';
+        search2=search2!==undefined?search2:'';
+        size = size!=-1 ? size : '';//Envia todos los registros si es -1
+        const searchString1 = search1 ? search1.toUpperCase() : '';
+        const searchString2 = search2 ? search2.toUpperCase() : '';
+
+        console.log('valores: '+page+' '+size+' '+search1+' '+search2)
+        const productos = await tablaProducto.findAndCountAll({
+            where: 
+                {
+                    estado:true,
+                    [Op.and]: [
+                        Sequelize.where(Sequelize.fn('upper', Sequelize.col('marca')), 'LIKE', `%${searchString1}%`),
+                    ],
+                    [Op.or]: [
+                        Sequelize.where(Sequelize.fn('upper', Sequelize.col('nom_producto')), 'LIKE', `%${searchString2}%`),
+                        Sequelize.where(Sequelize.fn('upper', Sequelize.col('cod1')), 'LIKE', `%${searchString2}%`),
+                        Sequelize.where(Sequelize.fn('upper', Sequelize.col('cod2')), 'LIKE', `%${searchString2}%`),
+                        Sequelize.where(Sequelize.fn('upper', Sequelize.col('cod3')), 'LIKE', `%${searchString2}%`)
+                    ],
+                },
+            attributes:['id','marca','nom_producto'],
             include:[
                 {
                     model:tablaProveedor,
@@ -112,48 +139,17 @@ export const getProductos = async (req,res) =>{
     }
 }
 
-
+//Este combo sirve para obtener una referencia de un producto nuevo a ingresar, con sus %Gan
 export const getComboProductos = async (req,res) =>{
     const {id} = req.params;
     try{
         const productos = await tablaProducto.findAll({
             where:{id_subgrupo:id},
+            
             attributes: ['id','nom_producto','porcentaje1','porcentaje2','porcentaje3']
             
         });
         res.json(productos);
-    }catch(error){
-        return res.status(500).json({ message: error.message });
-    }
-}
-
-
-//No se usa
-const { Op } = require("sequelize");
-
-export const getProductoSubgrupo = async (req,res) =>{
-    const listaIds = JSON.parse(req.query.ids);
-    try{
-        const productos = await tablaProducto.findAll({
-            where: {
-                id_subgrupo: {
-                  [Op.in]: listaIds
-                }
-            },
-            attributes:['id','nom_producto','id_subgrupo'],
-        });
-        res.json(productos);
-    }catch(error){
-        return res.status(500).json({ message: error.message });
-    }
-}
-
-export const createSeccion = async (req,res) =>{
-    try{
-        //Cremos una nueva seccion de la empresa
-        const seccion = await tablaProductoSeccion.create(req.body);
-        
-        res.json(seccion);
     }catch(error){
         return res.status(500).json({ message: error.message });
     }
@@ -175,3 +171,41 @@ export const getComboSeccion = async (req,res) =>{
         return res.status(500).json({ message: error.message });
     }
 }
+
+
+
+//Creamos una nueva clasificacion en Productos/clasificaciones
+export const createSeccion = async (req,res) =>{
+    try{
+        //Cremos una nueva seccion de la empresa
+        const seccion = await tablaProductoSeccion.create(req.body);
+        
+        res.json(seccion);
+    }catch(error){
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+
+
+//No se usa
+
+
+/*
+export const getProductoSubgrupo = async (req,res) =>{
+    const listaIds = JSON.parse(req.query.ids);
+    try{
+        const productos = await tablaProducto.findAll({
+            where: {
+                id_subgrupo: {
+                  [Op.in]: listaIds
+                }
+            },
+            attributes:['id','nom_producto','id_subgrupo'],
+        });
+        res.json(productos);
+    }catch(error){
+        return res.status(500).json({ message: error.message });
+    }
+}
+*/

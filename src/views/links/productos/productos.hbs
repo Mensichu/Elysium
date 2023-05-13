@@ -1,6 +1,11 @@
 <link rel="stylesheet" href="/css/global.css">
 <link rel="stylesheet" href="/css/producto.css">
 
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">Productos</li>
+    <li class="breadcrumb-item"><a href="/productos/clasificacion">Clasificaciones</a></li>
+</ol>
+
 
 <div id="fondo" class="showDelay mt-4" stylea="padding: 10px; border:2px black solid">
     <div class="container-fluid">
@@ -9,357 +14,356 @@
                 <div class="card text-white ">
                     <div class="card-header ">Datos del Producto</div>
                     <div id="datosModeloCard" class="card-body datosModeloBody">
-                        <form id="formulario" class="formDatosProveedor" ></form>
-                            <div class="orientacionDivs divClasProd">
-                                <!-- CLASIFICACION -->
-                                <div class="form-group col-5 " >
-                                    <div class="formGroupBorder">
-                                        <label class="form-label labelsColor mt-2 mb-0" for="inputValid">Clasificacion</label>
-                                        <hr style="margin:0px;margin-bottom: 10px">
-                                        <!-- Tipo -->
-                                        <div class="form-group mt-2">
-                                            <label class="form-label " for="inputValid">Tipo:</label>
-                                            <div class=" input-group">
-                                                <select class="form-select " id="comboTipo">
-                                                    <option value="0">No aplica</option>
-                                                </select>
+                        <div id="cardBodyCargando" class="loadingBody"></div>
+                        <div id="cardBodyTodo" class="visible">
+                            <form id="formulario" class="formDatosProveedor" ></form>
+                                <div class="orientacionDivs divClasProd">
+                                    <!-- CLASIFICACION -->
+                                    <div class="form-group col-5 " >
+                                        <div class="formGroupBorder">
+                                            <label class="form-label labelsColor mt-2 mb-0" for="comboTipo">Clasificacion</label>
+                                            <hr style="margin:0px;margin-bottom: 10px">
+                                            <!-- Tipo -->
+                                            <div class="form-group mt-2">
+                                                <label class="form-label " for="comboTipo">Tipo:</label>
+                                                <div class=" input-group">
+                                                    <select class="form-select " id="comboTipo">
+                                                        <option value="0">No aplica</option>
+                                                    </select>
+                                                </div>
+                                                    <div class="invalid-feedback">Combo incorrecto!</div>
                                             </div>
-                                                <div class="invalid-feedback">Combo incorrecto!</div>
-                                        </div>
-                                        <!-- Categoria -->
-                                        <div class="form-group mt-2">
-                                            <label class="form-label" for="inputValid">Categoria:</label>
-                                            <div class=" input-group">
-                                                <select class="form-select " id="comboCategoria" >
-                                                    <option value="0">No aplica</option>
-                                                </select>
+                                            <!-- Categoria -->
+                                            <div class="form-group mt-2">
+                                                <label class="form-label" for="comboCategoria">Categoria:</label>
+                                                <div class=" input-group">
+                                                    <select class="form-select " id="comboCategoria" >
+                                                        <option value="0">No aplica</option>
+                                                    </select>
+                                                </div>
+                                                    <div class="invalid-feedback">Combo incorrecto!</div>
                                             </div>
-                                                <div class="invalid-feedback">Combo incorrecto!</div>
-                                        </div>
-                                        <!-- Grupo -->
-                                        <div class="form-group mt-2">
-                                            <label class="form-label " for="inputValid">Grupo:</label>
-                                            <div class=" input-group">
-                                                <select class="form-select " id="comboGrupo" >
-                                                    <option value="0">No aplica</option>
-                                                </select>
+                                            <!-- Grupo -->
+                                            <div class="form-group mt-2">
+                                                <label class="form-label " for="comboGrupo">Grupo:</label>
+                                                <div class=" input-group">
+                                                    <select class="form-select " id="comboGrupo" >
+                                                        <option value="0">No aplica</option>
+                                                    </select>
+                                                </div>
+                                                    <div class="invalid-feedback">Combo incorrecto!</div>
                                             </div>
-                                                <div class="invalid-feedback">Combo incorrecto!</div>
-                                        </div>
-                                        <!-- Subgrupo -->
-                                        <div class="form-group mt-2">
-                                            <label class="form-label" for="inputValid">Subgrupo:</label>
-                                            <div class=" input-group">
-                                                <select class="form-select " id="comboSubgrupo" >
-                                                    <option value="0">No aplica</option>
-                                                </select>
+                                            <!-- Subgrupo -->
+                                            <div class="form-group mt-2">
+                                                <label class="form-label" for="comboSubgrupo">Subgrupo:</label>
+                                                <div class=" input-group">
+                                                    <select class="form-select " id="comboSubgrupo" >
+                                                        <option value="0">No aplica</option>
+                                                    </select>
+                                                </div>
+                                                    <div class="invalid-feedback">Combo incorrecto!</div>
                                             </div>
-                                                <div class="invalid-feedback">Combo incorrecto!</div>
-                                        </div>
 
-                                    </div>
-                                    
-                                </div>
-                                <!-- DATOS DE PRODUCTO -->
-                                <div class="form-group col-7 " >
-                                    <div class="formGroupBorder">
-                                        <label class="form-label labelsColor mt-2 mb-0" for="inputValid">Datos de Producto</label>
-                                        <hr style="margin:0px;margin-bottom: 10px">
-                                        <!-- Proveedor -->
-                                        <div class="form-group mt-2">
-                                            <label class="form-label " for="inputValid">Proveedor:</label>
-                                            <div class=" input-group">
-                                                <select class="form-select " id="comboProveedor" >
-                                                    <option value="0">No aplica</option>
-                                                </select>
-                                            </div>
-                                                <div class="invalid-feedback">Id incorrecto!</div>
                                         </div>
-                                        <!-- Marca -->
-                                        <div class="form-group mt-2">
-                                            <label id="proveedorLabel" class="form-label " for="inputValid">Marca:</label>
-                                            <input type="text" id="Datos-Marca" class="form-control form-input" name="Marca" 
-                                            placeholder="Marca del producto" minlength="1"maxlength="200">
-                                            <div class="invalid-feedback">Campo incorrecto!</div>
-                                        </div>
-                                        <!-- Nom_Producto -->
-                                        <div id="formInputNombres" class="form-group mt-2">
-                                            <label id="representanteLabel" class="form-label " for="inputValid">Nombre:</label>
-                                            <input type="text" id="Datos-Nom-Producto" class="form-control form-input" name="NomProducto" 
-                                            placeholder="Producto" minlength="1"maxlength="200">
-                                            <div class="invalid-feedback">Campo incorrecto!</div>
-                                        </div>
-                                        <div id="formComboNombres" class="form-group" title="clic derecho para editar" style="display: none;">
-                                            <label for="exampleSelect1" class="form-label mt-2">Combo Nombres:</label>
-                                            <div class="input-group">
-                                                <select class="form-select" id="comboNombres">
-                                                    <option value="0">No aplica</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <!-- Nom_Impresion -->    
-                                        <div class="form-group mt-2">
-                                            <label id="representanteLabel" class="form-label " for="inputValid">Nombre Comercial:</label>
-                                            <input type="text" id="Datos-Nom-Impresion" class="form-control form-input" name="NomImpresion" 
-                                            placeholder="Impresion" minlength="1"maxlength="200">
-                                            <div class="invalid-feedback">Campo incorrecto!</div>
-                                        </div>
-
-                                    </div>
-                                    
-                                </div>
-                                
-                            </div>
-                            
-                            <div class="orientacionDivs divClasProd">
-                                
-                                <!-- CODIGO DE PRODUCTO -->
-                                <div class="form-group col-12 " >
-                                    <div class="formGroupBorder">
-                                        <label class="form-label labelsColor  mb-0" for="inputValid">Codigos de Producto</label>
-                                        <hr style="margin:0px;margin-bottom: 10px">
-                                        <div class="orientacionDivs divClasProd">
-                                            <!-- Codigo 1 -->
-                                            <div class="form-group  col-4">
-                                                <div class="input-group">
-                                                    <input type="text" id="Datos-Cod1" class="form-control form-input" name="Cod1" 
-                                                    placeholder="Cod 1" minlength="1"maxlength="200">
-                                                </div>
-                                                <div class="invalid-feedback">Codigo incorrecto!</div>
-                                            </div>
-                                            <!-- Codigo 2 -->
-                                            <div class="form-group col-4">
-                                                <div class="input-group">
-                                                    <input type="text" id="Datos-Cod2" class="form-control form-input" name="Cod2" 
-                                                    placeholder="Cod 2" minlength="1"maxlength="200">
-                                                </div>
-                                                <div class="invalid-feedback">Codigo incorrecto!</div>
-                                            </div>
-                                            <!-- Codigo 3 -->
-                                            <div class="form-group  col-4">
-                                                <div class="input-group">
-                                                    <input type="text" id="Datos-Cod3" class="form-control form-input" name="Cod3" 
-                                                    placeholder="Cod 3" minlength="1"maxlength="200">
-                                                </div>
-                                                <div class="invalid-feedback">Codigo incorrecto!</div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    
-                                </div>
-                                
-                            </div>
-                            
-
-                            <div class="form-group orientacionDivs divClasProd">
-                                <!-- COSTO -->
-                                <div class="form-group col-4" >
-                                    <div class="formGroupBorder " style="height: 100%;">
-                                        <label class="form-label labelsColor mt-2 mb-0" for="inputValid">Costos</label>
-                                        <hr style="margin:0px;margin-bottom: 10px">
-                                        <!-- Costo sin iva -->
-                                        <div class="form-group ">
-                                            <label class="form-label" for="inputValid">Costo sin iva:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text " style="color:rgb(61, 112, 207);">$</span>
-                                                <input type="number" id="Datos-CostoSinIva" class="form-control form-input" name="CostoSinIva" 
-                                                placeholder="0.00" min="0.0" maxlength="10" >
-                                            </div>
-                                            <div class="invalid-feedback">Costo incorrecto!</div>
-                                        </div>
-                                        <!-- Iva -->
-                                        <div class="form-group ">
-                                            <label class="form-label mt-2" for="inputValid">IVA 12%:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text " style="color:rgb(61, 112, 207);">$</span>
-                                                <input type="number" id="Datos-Iva" class="form-control form-input" name="Iva" 
-                                                placeholder="0.00" min="0.0"  maxlength="6" >
-                                            </div>
-                                            <div class="invalid-feedback">Iva incorrecto!</div>
-                                        </div>
-                                        <!-- Costo con iva -->
-                                        <div class="form-group ">
-                                            <label class="form-label mt-2" for="inputValid">Costo con iva:</label>
-                                            <div class="input-group mb-2">
-                                                <span class="input-group-text " style="color:rgb(61, 112, 207);">$</span>
-                                                <input type="number" id="Datos-CostoConIva" class="form-control form-input" name="CostoConIva" 
-                                                placeholder="0.00" min="0.0"  maxlength="6" >
-                                            </div>
-                                            <div class="invalid-feedback">Costo incorrecto!</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- PVP -->
-                                <div class="form-group col-5 ">
-                                    <div class="formGroupBorder" style="height: 100%;">
-                                        <label class="form-label labelsColor mt-2 mb-0" for="inputValid">Precios</label>
-                                        <hr style="margin:0px;margin-bottom: 10px">
-
-                                        <!-- PVP1 -->
-                                        <div class="form-group orientacionDivs ">
-                                            <!-- %1 -->
-                                            <div class="form-group col-5 m-1 ">
-                                                <label class="form-label mb-0 anchoResp1" for="inputValid">Gan%:</label>
-                                                <label class="form-label mb-0 anchoResp2" for="inputValid">G%:</label>
-                                                <div class="input-group">
-                                                    <input type="number" id="Datos-G1" class="form-control form-input" name="G1" 
-                                                    min="0.0"  maxlength="4" >
-                                                    <span class="input-group-text spanClass">%</span>
-                                                </div>
-                                                <div class="invalid-feedback">Gan. incorrecto!</div>
-                                            </div>
-                                            <!-- Pvp -->
-                                            <div class="form-group col-7 m-1 ">
-                                                <label class="form-label mb-0" for="inputValid">Pvp1:</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text spanClass" style="color: greenyellow;">$</span>
-                                                    <input type="number" id="Datos-Pvp1" class="form-control form-input" name="Pvp1" 
-                                                    placeholder="0.00" min="0.0"  maxlength="4" >
-                                                </div>
-                                                <div class="invalid-feedback">Pvp1 incorrecto!</div>
-                                            </div>
-                                        </div>
-                                        <!-- PVP2 -->
-                                        <div class="form-group orientacionDivs ">
-                                            <!-- %2 -->
-                                            <div class="form-group col-5 m-1 ">
-                                                <label class="form-label mb-0 anchoResp1" for="inputValid">Gan%:</label>
-                                                <label class="form-label mb-0 anchoResp2" for="inputValid">G%:</label>
-                                                <div class="input-group">
-                                                    <input type="number" id="Datos-G2" class="form-control form-input" name="G2" 
-                                                    min="0.0"  maxlength="4" >
-                                                    <span class="input-group-text spanClass">%</span>
-                                                </div>
-                                                <div class="invalid-feedback">Gan. incorrecto!</div>
-                                            </div>
-                                            <!-- Pvp -->
-                                            <div class="form-group col-7 m-1 ">
-                                                <label class="form-label mb-0" for="inputValid">Pvp2:</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text spanClass" style="color: greenyellow;">$</span>
-                                                    <input type="number" id="Datos-Pvp2" class="form-control form-input" name="Pvp2" 
-                                                    placeholder="0.00" min="0.0"  maxlength="4" >
-                                                </div>
-                                                <div class="invalid-feedback">Pvp2 incorrecto!</div>
-                                            </div>
-                                        </div>
-                                        <!-- PVP3 -->
-                                        <div class="form-group orientacionDivs mb-1">
-                                            <!-- %3 -->
-                                            <div class="form-group col-5 m-1 ">
-                                                <label class="form-label mb-0 anchoResp1" for="inputValid">Gan%:</label>
-                                                <label class="form-label mb-0 anchoResp2" for="inputValid">G%:</label>
-                                                <div class="input-group">
-                                                    <input type="number" id="Datos-G3" class="form-control form-input" name="G3" 
-                                                    min="0.0"  maxlength="4" >
-                                                    <span class="input-group-text spanClass">%</span>
-                                                </div>
-                                                <div class="invalid-feedback">Gan. incorrecto!</div>
-                                            </div>
-                                            <!-- Pvp -->
-                                            <div class="form-group col-7 m-1 ">
-                                                <label class="form-label mb-0" for="inputValid" >Pvp3:</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text spanClass" style="color: greenyellow;">$</span>
-                                                    <input type="number" id="Datos-Pvp3" class="form-control form-input" name="Pvp3" 
-                                                    placeholder="0.00" min="0.0"  maxlength="4" >
-                                                </div>
-                                                <div class="invalid-feedback">Pvp3 incorrecto!</div>
-                                            </div>
-                                        </div>
-                                    </div>
                                         
-                                </div>
+                                    </div>
+                                    <!-- DATOS DE PRODUCTO -->
+                                    <div class="form-group col-7 " >
+                                        <div class="formGroupBorder">
+                                            <label class="form-label labelsColor mt-2 mb-0" for="comboProveedor">Datos de Producto</label>
+                                            <hr style="margin:0px;margin-bottom: 10px">
+                                            <!-- Proveedor -->
+                                            <div class="form-group mt-2">
+                                                <label class="form-label " for="comboProveedor">Proveedor:</label>
+                                                <div class=" input-group">
+                                                    <select class="form-select " id="comboProveedor" >
+                                                        <option value="0">No aplica</option>
+                                                    </select>
+                                                </div>
+                                                    <div class="invalid-feedback">Id incorrecto!</div>
+                                            </div>
+                                            <!-- Marca -->
+                                            <div class="form-group mt-2">
+                                                <label id="proveedorLabel" class="form-label " for="Datos-Marca">Marca:</label>
+                                                <input type="text" id="Datos-Marca" class="form-control form-input" name="Marca" 
+                                                placeholder="Marca del producto" minlength="1"maxlength="200">
+                                                <div class="invalid-feedback">Campo incorrecto!</div>
+                                            </div>
+                                            <!-- Nom_Producto -->
+                                            <div id="formInputNombres" class="form-group mt-2">
+                                                <label id="representanteLabel" class="form-label " for="Datos-Nom-Producto">Nombre:</label>
+                                                <input type="text" id="Datos-Nom-Producto" class="form-control form-input" name="NomProducto" 
+                                                placeholder="Producto" minlength="1"maxlength="200">
+                                                <div class="invalid-feedback">Campo incorrecto!</div>
+                                            </div>
+                                            <div id="formComboNombres" class="form-group" title="clic derecho para editar" style="display: none;">
+                                                <label for="comboNombres" class="form-label mt-2">Combo Nombres:</label>
+                                                <div class="input-group">
+                                                    <select class="form-select" id="comboNombres">
+                                                        <option value="0">No aplica</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!-- Nom_Impresion -->    
+                                            <div class="form-group mt-2">
+                                                <label id="representanteLabel" class="form-label " for="Datos-Nom-Impresion">Nombre Comercial:</label>
+                                                <input type="text" id="Datos-Nom-Impresion" class="form-control form-input" name="NomImpresion" 
+                                                placeholder="Impresion" minlength="1"maxlength="200">
+                                                <div class="invalid-feedback">Campo incorrecto!</div>
+                                            </div>
 
-                                <!-- Stock -->
-                                <div class="form-group col-3">
-                                    <div class="formGroupBorder" style="height: 100%; ">
-                                        <label class="form-label labelsColor mt-2 mb-0" for="inputValid">Stock</label>
-                                        <hr style="margin:0px;margin-bottom: 10px">
-                                        <!-- Cantidad -->
-                                        <div class="form-group ">
-                                            <label class="form-label m-1" for="inputValid">Cantidad:</label>
-                                            <div class="input-group">
-                                                <input type="number" id="Datos-Cantidad" class="form-control form-input" name="Cantidad" 
-                                                placeholder="Cant." min="0.0"  maxlength="4" >
-                                            </div>
-                                            <div class="invalid-feedback">Cantidad incorrecto!</div>
                                         </div>
-                                        <!-- Minimo -->
-                                        <div class="form-group ">
-                                            <label class="form-label mt-2" for="inputValid">Minimo:</label>
-                                            <div class="input-group">
-                                                <input type="number" id="Datos-Minimo" class="form-control form-input" name="Minimo" 
-                                                placeholder="Min." min="0.0"  maxlength="4" >
+                                        
+                                    </div>
+                                    
+                                </div>
+                                
+                                <div class="orientacionDivs divClasProd">
+                                    
+                                    <!-- CODIGO DE PRODUCTO -->
+                                    <div class="form-group col-12 " >
+                                        <div class="formGroupBorder">
+                                            <label class="form-label labelsColor  mb-0" for="Datos-Cod1">Codigos de Producto</label>
+                                            <hr style="margin:0px;margin-bottom: 10px">
+                                            <div class="orientacionDivs divClasProd">
+                                                <!-- Codigo 1 -->
+                                                <div class="form-group  col-4">
+                                                    <div class="input-group">
+                                                        <input type="text" id="Datos-Cod1" class="form-control form-input" name="Cod1" 
+                                                        placeholder="Cod 1" minlength="1"maxlength="200">
+                                                    </div>
+                                                    <div class="invalid-feedback">Codigo incorrecto!</div>
+                                                </div>
+                                                <!-- Codigo 2 -->
+                                                <div class="form-group col-4">
+                                                    <div class="input-group">
+                                                        <input type="text" id="Datos-Cod2" class="form-control form-input" name="Cod2" 
+                                                        placeholder="Cod 2" minlength="1"maxlength="200">
+                                                    </div>
+                                                    <div class="invalid-feedback">Codigo incorrecto!</div>
+                                                </div>
+                                                <!-- Codigo 3 -->
+                                                <div class="form-group  col-4">
+                                                    <div class="input-group">
+                                                        <input type="text" id="Datos-Cod3" class="form-control form-input" name="Cod3" 
+                                                        placeholder="Cod 3" minlength="1"maxlength="200">
+                                                    </div>
+                                                    <div class="invalid-feedback">Codigo incorrecto!</div>
+                                                </div>
                                             </div>
-                                            <div class="invalid-feedback">Minimo incorrecto!</div>
+
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                </div>
+                                
+
+                                <div class="form-group orientacionDivs divClasProd">
+                                    <!-- COSTO -->
+                                    <div class="form-group col-4" >
+                                        <div class="formGroupBorder " style="height: 100%;">
+                                            <label class="form-label labelsColor mt-2 mb-0" for="Datos-CostoSinIva">Costos</label>
+                                            <hr style="margin:0px;margin-bottom: 10px">
+                                            <!-- Costo sin iva -->
+                                            <div class="form-group ">
+                                                <label class="form-label" for="Datos-CostoSinIva">Costo sin iva:</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text " style="color:rgb(61, 112, 207);">$</span>
+                                                    <input type="number" id="Datos-CostoSinIva" class="form-control form-input" name="CostoSinIva" 
+                                                    placeholder="0.00" min="0.0" maxlength="10" >
+                                                </div>
+                                                <div class="invalid-feedback">Costo incorrecto!</div>
+                                            </div>
+                                            <!-- Iva -->
+                                            <div class="form-group ">
+                                                <label class="form-label mt-2" for="Datos-Iva">IVA 12%:</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text " style="color:rgb(61, 112, 207);">$</span>
+                                                    <input type="number" id="Datos-Iva" class="form-control form-input" name="Iva" 
+                                                    placeholder="0.00" min="0.0"  maxlength="6" >
+                                                </div>
+                                                <div class="invalid-feedback">Iva incorrecto!</div>
+                                            </div>
+                                            <!-- Costo con iva -->
+                                            <div class="form-group ">
+                                                <label class="form-label mt-2" for="Datos-CostoConIva">Costo con iva:</label>
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text " style="color:rgb(61, 112, 207);">$</span>
+                                                    <input type="number" id="Datos-CostoConIva" class="form-control form-input" name="CostoConIva" 
+                                                    placeholder="0.00" min="0.0"  maxlength="6" >
+                                                </div>
+                                                <div class="invalid-feedback">Costo incorrecto!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- PVP -->
+                                    <div class="form-group col-5 ">
+                                        <div class="formGroupBorder" style="height: 100%;">
+                                            <label class="form-label labelsColor mt-2 mb-0" for="Datos-G1">Precios</label>
+                                            <hr style="margin:0px;margin-bottom: 10px">
+
+                                            <!-- PVP1 -->
+                                            <div class="form-group orientacionDivs ">
+                                                <!-- %1 -->
+                                                <div class="form-group col-5 m-1 ">
+                                                    <label class="form-label mb-0 anchoResp1" for="Datos-G1">Gan%:</label>
+                                                    <label class="form-label mb-0 anchoResp2" for="Datos-G1">G%:</label>
+                                                    <div class="input-group">
+                                                        <input type="number" id="Datos-G1" class="form-control form-input" name="G1" 
+                                                        min="0.0"  maxlength="4" >
+                                                        <span class="input-group-text spanClass">%</span>
+                                                    </div>
+                                                    <div class="invalid-feedback">Gan. incorrecto!</div>
+                                                </div>
+                                                <!-- Pvp -->
+                                                <div class="form-group col-7 m-1 ">
+                                                    <label class="form-label mb-0" for="Datos-Pvp1">Pvp1:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text spanClass" style="color: greenyellow;">$</span>
+                                                        <input type="number" id="Datos-Pvp1" class="form-control form-input" name="Pvp1" 
+                                                        placeholder="0.00" min="0.0"  maxlength="4" >
+                                                    </div>
+                                                    <div class="invalid-feedback">Pvp1 incorrecto!</div>
+                                                </div>
+                                            </div>
+                                            <!-- PVP2 -->
+                                            <div class="form-group orientacionDivs ">
+                                                <!-- %2 -->
+                                                <div class="form-group col-5 m-1 ">
+                                                    <label class="form-label mb-0 anchoResp1" for="Datos-G2">Gan%:</label>
+                                                    <label class="form-label mb-0 anchoResp2" for="Datos-G2">G%:</label>
+                                                    <div class="input-group">
+                                                        <input type="number" id="Datos-G2" class="form-control form-input" name="G2" 
+                                                        min="0.0"  maxlength="4" >
+                                                        <span class="input-group-text spanClass">%</span>
+                                                    </div>
+                                                    <div class="invalid-feedback">Gan. incorrecto!</div>
+                                                </div>
+                                                <!-- Pvp -->
+                                                <div class="form-group col-7 m-1 ">
+                                                    <label class="form-label mb-0" for="Datos-Pvp2">Pvp2:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text spanClass" style="color: greenyellow;">$</span>
+                                                        <input type="number" id="Datos-Pvp2" class="form-control form-input" name="Pvp2" 
+                                                        placeholder="0.00" min="0.0"  maxlength="4" >
+                                                    </div>
+                                                    <div class="invalid-feedback">Pvp2 incorrecto!</div>
+                                                </div>
+                                            </div>
+                                            <!-- PVP3 -->
+                                            <div class="form-group orientacionDivs mb-1">
+                                                <!-- %3 -->
+                                                <div class="form-group col-5 m-1 ">
+                                                    <label class="form-label mb-0 anchoResp1" for="Datos-G3">Gan%:</label>
+                                                    <label class="form-label mb-0 anchoResp2" for="Datos-G3">G%:</label>
+                                                    <div class="input-group">
+                                                        <input type="number" id="Datos-G3" class="form-control form-input" name="G3" 
+                                                        min="0.0"  maxlength="4" >
+                                                        <span class="input-group-text spanClass">%</span>
+                                                    </div>
+                                                    <div class="invalid-feedback">Gan. incorrecto!</div>
+                                                </div>
+                                                <!-- Pvp -->
+                                                <div class="form-group col-7 m-1 ">
+                                                    <label class="form-label mb-0" for="Datos-Pvp3" >Pvp3:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text spanClass" style="color: greenyellow;">$</span>
+                                                        <input type="number" id="Datos-Pvp3" class="form-control form-input" name="Pvp3" 
+                                                        placeholder="0.00" min="0.0"  maxlength="4" >
+                                                    </div>
+                                                    <div class="invalid-feedback">Pvp3 incorrecto!</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                            
+                                    </div>
+
+                                    <!-- Stock -->
+                                    <div class="form-group col-3">
+                                        <div class="formGroupBorder" style="height: 100%; ">
+                                            <label class="form-label labelsColor mt-2 mb-0" for="Datos-Cantidad">Stock</label>
+                                            <hr style="margin:0px;margin-bottom: 10px">
+                                            <!-- Cantidad -->
+                                            <div class="form-group ">
+                                                <label class="form-label m-1" for="Datos-Cantidad">Cantidad:</label>
+                                                <div class="input-group">
+                                                    <input type="number" id="Datos-Cantidad" class="form-control form-input" name="Cantidad" 
+                                                    placeholder="Cant." min="0.0"  maxlength="4" >
+                                                </div>
+                                                <div class="invalid-feedback">Cantidad incorrecto!</div>
+                                            </div>
+                                            <!-- Minimo -->
+                                            <div class="form-group ">
+                                                <label class="form-label mt-2" for="Datos-Minimo">Minimo:</label>
+                                                <div class="input-group">
+                                                    <input type="number" id="Datos-Minimo" class="form-control form-input" name="Minimo" 
+                                                    placeholder="Min." min="0.0"  maxlength="4" >
+                                                </div>
+                                                <div class="invalid-feedback">Minimo incorrecto!</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
+
+
                                 
 
-                            </div>
 
 
+                                <label class="form-label mt-2 labelsColor">Observación</label>
+                                <div class="form-group formGroupBorder">
+                                    <div class="input-group">
+                                            <div class="form-check form-switch mt-2">
+                                                <input class="form-check-input" type="checkbox" id="Datos-NoObs" checked="">
+                                                <label id="noTieneObsLabel"class="form-check-label" for="Datos-NoObs">No tiene observaciones</label>
+                                            </div>
+                                    </div>
 
-                            
-
-
-
-                            <label for="exampleInputEmail1" class="form-label mt-2 labelsColor">Observación</label>
-                            <div class="form-group formGroupBorder">
-                                <div class="input-group">
-                                        <div class="form-check form-switch mt-2">
-                                            <input class="form-check-input" type="checkbox" id="Datos-NoObs" checked="">
-                                            <label id="noTieneObsLabel"class="form-check-label" for="flexSwitchCheckDefault">No tiene observaciones</label>
-                                        </div>
+                                    <div id="formObs" class="input-group" style="display: none;">
+                                        <fieldset>
+                                            <textarea class="form-control form-input" id="Datos-Obs" rows="5" cols="50" placeholder="Observaciones..." name="Observacion" minlength="1" maxlength="200"></textarea>
+                                            <div class="invalid-feedback">Formato incorrecto!</div>
+                                        </fieldset>                                        
+                                    </div>
                                 </div>
 
-                                <div id="formObs" class="input-group" style="display: none;">
-                                    <fieldset>
-                                        <textarea class="form-control form-input" id="Datos-Obs" rows="5" cols="50" placeholder="Observaciones..." name="Observacion" minlength="1" maxlength="200"></textarea>
-                                        <div class="invalid-feedback">Formato incorrecto!</div>
-                                    </fieldset>                                        
+                                <label class="form-label mt-2 labelsColor">Sección</label>
+                                <div class="form-group formGroupBorder">
+                                            <div class=" input-group mt-3">
+                                                <select class="form-select " id="comboSeccion">
+                                                    <option value="0">No aplica</option>
+                                                </select>
+                                            </div>
+                                                <div class="invalid-feedback">Combo incorrecto!</div>
+                                    <div class="input-group">
+                                            <div class="form-check form-switch mt-2">
+                                                <input class="form-check-input" type="checkbox" id="Datos-NoObs" checked="">
+                                                <label id="noTieneObsLabel"class="form-check-label" for="Datos-NoObs">Croquis</label>
+                                            </div>
+                                    </div>
+
+                                    <div id="formObs" class="input-group" style="display: none;">
+                                        <fieldset>
+                                            <textarea class="form-control form-input" id="Datos-Obs" rows="5" cols="50" placeholder="Observaciones..." name="Observacion" minlength="1" maxlength="200"></textarea>
+                                            <div class="invalid-feedback">Formato incorrecto!</div>
+                                        </fieldset>                                        
+                                    </div>
                                 </div>
-                            </div>
 
-                            <label for="exampleInputEmail1" class="form-label mt-2 labelsColor">Sección</label>
-                            <div class="form-group formGroupBorder">
-                                        <div class=" input-group mt-3">
-                                            <select class="form-select " id="comboSeccion">
-                                                <option value="0">No aplica</option>
-                                            </select>
-                                        </div>
-                                            <div class="invalid-feedback">Combo incorrecto!</div>
-                                <div class="input-group">
-                                        <div class="form-check form-switch mt-2">
-                                            <input class="form-check-input" type="checkbox" id="Datos-NoObs" checked="">
-                                            <label id="noTieneObsLabel"class="form-check-label" for="flexSwitchCheckDefault">Croquis</label>
-                                        </div>
+                                <div class="form-group" style="padding-top: 10px; text-align: center;">
+                                    <button class="btn btnColor " style="width:100%;" id="btn-Guardar">Guardar cambios</button>
                                 </div>
 
-                                <div id="formObs" class="input-group" style="display: none;">
-                                    <fieldset>
-                                        <textarea class="form-control form-input" id="Datos-Obs" rows="5" cols="50" placeholder="Observaciones..." name="Observacion" minlength="1" maxlength="200"></textarea>
-                                        <div class="invalid-feedback">Formato incorrecto!</div>
-                                    </fieldset>                                        
+
+                                <div class="form-group" style="padding-top: 20px; text-align: center;">
+                                    <button class="btn btn-outline-success  btnHover2" style="margin-left: 2px; width:100%" id="btn-Nuevo">Nuevo</button>
                                 </div>
-                            </div>
 
-                            <div class="form-group" style="padding-top: 10px; text-align: center;">
-                                <button class="btn btnColor " style="width:100%;" id="btn-Guardar">Guardar cambios</button>
-                            </div>
-
-
-                            <div class="form-group" style="padding-top: 20px; text-align: center;">
-                                <button class="btn btn-outline-success  btnHover2" style="margin-left: 2px; width:100%" id="btn-Nuevo">Nuevo</button>
-                            </div>
-
-                        </form>
-                            
+                            </form>
+                        </div>
                         
                     </div>
             
@@ -370,20 +374,71 @@
             <!------------------------------------------------------------------------->
             <div class="col-12 col-md-5">
                 <div class="card text-white ">
-                    <div class="card-header">Tabla de Productos</div>
-                        <div class="card-body tablaModeloBody">
-                            <div id="idTabla" class="tabla-con-scroll" >
-                                <div class="diseñoTablaGrid" style="height:100%">
-                                        <div id="myGrid" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                    <!--<div class="card-header">Tabla de Modelos</div>-->
+                    <div class="card-header colorHeaderRelacion d-flex justify-content-between align-items-center" style="">
+                        <h6 style="margin-left: 10px;margin-top: 5px; ">Tabla de Productos</h6>
+                        <div id="filtroCheckGroup" class="form-check form-switch ">
+                            <input class="form-check-input" type="checkbox" id="filtroCheck" >
+                            <label id="tieneCuenta1Label"class="form-check-label" for="filtroCheck">filtros</label>
+                        </div>
+                    </div>
+                    <div class="card-body tablaModeloBody" style="display: flex;flex-direction:column">
+                        <div id="paginationSupDiv" class="groupPaginationFilter" style="display: none;">
+                            <div class="filtros" style="display:flex">
+                                <div id="filtro1" style="display: flex;">
+                                    <label id="filtro1Label" for="filtro1Input">Marca:</label>
+                                    <input id="filtro1Input" type="search" class="">
                                 </div>
-                                
-                                
+                                <div id="filtro2" style="display: flex;">
+                                    <label id="filtro2Label" for="filtro2Input">Producto:</label>
+                                    <input id="filtro2Input" type="search" class="">
+                                </div>
+                                <div id="filtro3" style="display: flex;">
+                                    <label for="filtro3Input">Filtro3:</label>
+                                    <input id="filtro3Input" type="search" class="">
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex;">
+                                <label for="page-size">Filas:</label>
+                                <select id="page-size" class="" >
+                                        <!--<option value="10">10</option>-->
+                                        <option value="-1">Todos</option>
+                                    </select>
                             </div>
                         </div>
-                    
+
+                        <!---------------------------Tabla------------------------->
+                        <div id="grid-wrapper" classe="diseñoTablaGrid" style="flex-grow: 1;">
+                            <div id="myGrid" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                        </div>
+
+                        <div class="groupPagination">
+                            <div>
+                                <label id="registrosLabel" class="registrosLabel">Registros</label>
+                            </div>
+                            <div id="pagination" class="myPagination">
+                                <a id="firstPageBtn" class="page-link aLeft" href="#">
+                                    <i class="fa-solid fa-backward-step"></i>
+                                </a>
+                                <a id="previousPageBtn" class="page-link aLeft" href="#">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </a>
+                                <input id="actualPageInput"type="search" class="" maxlength="2" value="1">
+                                
+                                <a id="nextPageBtn" class="page-link aRight" href="#">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </a>
+                                <a id="lastPageBtn" class="page-link aRight" href="#">
+                                    <i class="fa-solid fa-forward-step"></i>
+                                </a>
+                            </div>
+                            <div>
+                                <label id="pagesLabel">Pagina 1 de 25</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
             </div>
 
 

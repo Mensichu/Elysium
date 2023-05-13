@@ -192,3 +192,67 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 */
+
+
+
+
+/* -----------------------------PAGINATION -----------------------------*/
+
+@media (max-width: 1500px) and (min-width: 768px) {
+  
+  #filtro1{
+    display: none !important;
+  }
+ 
+}
+
+
+@media (max-width: 972px) and (min-width: 768px) {
+  
+  #filtro2{
+    display: none !important;
+  }
+ 
+}
+
+@media (max-width: 1350px) and (min-width: 768px) {
+
+  .groupPagination div label{
+      display: none !important;
+  }
+}
+
+
+@media (max-width: 565px) {
+
+  #filtro1{
+    display: none !important;
+  }
+ 
+}
+
+@media (max-width: 482px){
+
+  .groupPagination div label{
+      display: none !important;
+  }
+}
+
+
+@media (max-width: 400px) {
+  
+  #filtro2{
+    display: none !important;
+  }
+ 
+}
+
+@media ( (max-width: 320px)) {
+  .groupPaginationFilter{
+      display: none !important;
+  }
+  #filtroCheckGroup{
+      display: none;
+  }
+  
+}

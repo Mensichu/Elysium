@@ -1,15 +1,84 @@
-
 //Productos
 window.addEventListener('load',()=>{
+
     //Solo se ejecuta cada vez que se recargue la pagina y sea Productos
     const pagina = window.location.pathname;
-    if(pagina == '/productos'){
-        console.log("Cargo productos");
+
+    if(pagina == '/productos'){console.log("Cargo productos");
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA PRODUCTO
 
-document.querySelector('#fondo').classList.add('showNow');
+        document.querySelector('#fondo').classList.add('showNow');
 
-let rowId = null;
+        //let rowId = null;
+        let size = 20;
+        let lastPage = 1;
+        let actualPage = 1;
+        let filtro1 = ''
+        let filtro2 = ''
+
+
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBOBOX
+
+        //------------------------------------------------------------------------------ ComboPagination
+        const comboPagination = document.getElementById('page-size');
+        cargarComboPagination();
+        //Combo Pagination
+        async function cargarComboPagination(){
+            try{
+                
+                let paginations = await fetch('/paginations')
+                .then(response => response.json());
+
+                console.log("Numero de sizes en el combo pagination: "+paginations.length);
+                //Creamos el elemento temporal
+                const fragmento = document.createDocumentFragment();
+                for(i=0;i<paginations.length;i++){
+                    //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
+                    const item = document.createElement("OPTION");
+                    item.innerHTML = paginations[i].num_pagination;
+                    item.value =paginations[i].num_pagination;
+                    fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+                    //Se setea el size por defecto
+                    size= paginations[i].default?paginations[i].num_pagination:size;
+                }
+
+                //Vaciamos el combo primero
+                for(i=comboPagination.options.length-1;i>=0;i--){
+                    comboPagination.remove(i);
+                }
+
+                //Se agrega al combobox comboPagination
+                comboPagination.appendChild(fragmento);
+                //Se agrega la opcion Todos (-1)
+                const item = document.createElement("OPTION");
+                item.innerHTML = 'Todos';
+                item.value = -1;
+                comboPagination.appendChild(item);
+                //Seleccionamos el por defecto:
+                seleccionCombo(size,comboPagination);
+                cargarTablaProductos(actualPage,size,filtro1,filtro2);
+            }catch(error){
+                console.log(error.message);
+            }
+
+        }
+
+        
+        function seleccionCombo(id, combo){
+
+            for(i=0;i<combo.options.length;i++){
+                if(combo.options[i].value == id){
+                    //una vez encontrado mostramos en el combo correspondiente
+                    combo.selectedIndex=i;
+                    return;
+                }
+            }
+            console.log('No encontre seleccionCombo');
+        }
+
+
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO PROVEEDOR
         const comboProveedor = document.getElementById('comboProveedor');
@@ -23,7 +92,7 @@ let rowId = null;
                 console.log("Numero de proveedores en el combo proveedor: "+proveedores.length); 
                 //Creamos el elemento temporal
                 const fragmento = document.createDocumentFragment();
-                for(i=0;i<3;i++){
+                for(i=0;i<proveedores.length;i++){
                     //Creamos la etiqueta option con su value y texto de cada proveedor al combobox de proveedores
                     const item = document.createElement("OPTION");
                     item.textContent = proveedores[i].nom_proveedor.toUpperCase();
@@ -144,7 +213,12 @@ inputNombre.addEventListener('contextmenu', function(e) {
     }
 });
 
-
+inputNombre.addEventListener('keyup', function(e) {
+    e.preventDefault();
+    if(e.target.tagName === 'INPUT' && nuevoBtn.textContent !== 'Nuevo'){
+        document.getElementById("Datos-Nom-Impresion").value=e.target.value
+    }
+});
 
 function modoComboNombres(mostrar){
     console.log('Ejecute estaa')
@@ -286,20 +360,19 @@ async function cargarComboSeccion(){
             columnDefs: [
                 {headerName: "Id", 
                         field: "id", hide: true
-                    },/*
+                    },
                 {headerName: "Proveedor",
-                    field: "nom_proveedor",sort: 'asc', floatingFilter:true, 
-                    width: 150
-                    },*/
+                    field: "nom_proveedor",
+                    width: 150, maxWidth: 150
+                    },
                 {headerName: "Marca",
-                    field: "marca",sort: 'asc', floatingFilter:true, 
-                    width: 140
+                    field: "marca",sort: 'asc', //Filtro1
+                    width: 150, maxWidth: 150
                     },
                 {headerName: "Producto", 
-                    field: "nom_producto", floatingFilter:true,
+                    field: "nom_producto",sort: 'asc', //Filtro2
                     flex: 1, minWidth: 150
                     }
-                
             ],
 
             // default col def properties get applied to all columns
@@ -315,25 +388,20 @@ async function cargarComboSeccion(){
 
             getRowClass: (params) => {
                 if(params.data!== undefined){
-
-                    if(rowId === params.data.id){
-
+                    if(getSelectedRowId() === params.data.id){
                         params.node.setSelected(true);
                         seleccionTabla(params.data.id,false);
                         return clasesFila;
                     }
-
                 }
                 return '';
             },
 
             onModelUpdated: (event) => {
-                if(true || rowId!==null){
+                if(getSelectedRowId()!==null){
                     console.log('-----------------------------------------CHINGONNKNKN');
-                    
                     clasesFila='cambioColor';
                     gridOptions.api.redrawRows();
-
                 }
             },
             onCellValueChanged: (event) => {
@@ -352,23 +420,29 @@ async function cargarComboSeccion(){
             rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
 
             rowGroupPanelShow: 'always',
-            //popupParent: document.body,
             rowSelection: 'single', // allow rows to be selected
             animateRows: true, // have rows animate to new positions when sorted
+            overlayLoadingTemplate: 'Cargando tabla...',
+            overlayNoRowsTemplate: 'Registros no encontrados',
 
             // example event handler
             onCellClicked: params => {
                 if(params.data!== undefined){
                     //console.log('cell was clicked', params.data);
-                    rowId = params.data.id;
                     botonesModoNuevo(false);
                     guardarBtn.disabled=false;
-                    seleccionTabla(rowId,true);
+                    seleccionTabla(params.data.id,true);
 
                 }else{
                     guardarBtn.disabled=true;
                 }
-            }
+            },
+
+            onGridReady: function(params) {
+                params.api.sizeColumnsToFit();
+            },
+
+            onGridSizeChanged: onGridSizeChanged
         };
 
         // get div to host the grid
@@ -378,7 +452,41 @@ async function cargarComboSeccion(){
 
         const gridApi = gridOptions.api;
         
-        //gridOptions.api.sizeColumnsToFit();
+        function onGridSizeChanged(params) {
+            // get the current grids width
+            var gridWidth = document.getElementById('grid-wrapper').offsetWidth;
+            console.log('gridWidth: ')
+            console.log(gridWidth)
+
+            // keep track of which columns to hide/show
+            var columnsToShow = [];
+            var columnsToHide = ['id'];
+
+            if(gridWidth< 600){
+                columnsToHide.push('nom_proveedor');
+            }else{
+                columnsToShow.push('nom_proveedor');
+            }
+
+            if(gridWidth< 475){
+                columnsToHide.push('marca');
+            }else{
+                columnsToShow.push('marca');
+            }
+
+            // iterate over all columns (visible or not) and work out
+            // now many columns can fit (based on their minWidth)
+            
+            
+            
+
+            // show/hide columns based on current grid width
+            params.columnApi.setColumnsVisible(columnsToShow, true);
+            params.columnApi.setColumnsVisible(columnsToHide, false);
+
+            // fill out any available space to ensure there are no gaps
+            params.api.sizeColumnsToFit();
+        }
         
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID: ACTUALIZACION Y NUEVA FILA
 
@@ -394,11 +502,10 @@ async function cargarComboSeccion(){
                     comboTipo.selectedIndex=i;
                 */
                 return [{   id: data.id,
-                            /*nom_proveedor:data.Proveedors[0].nom_proveedor.toUpperCase(),//data.TipoDeIdentificacion.tipo.toUpperCase(), */
+                            nom_proveedor: n==0?data.Proveedors[0].nom_proveedor.toUpperCase():
+                            comboProveedor.options[comboProveedor.selectedIndex].textContent.toUpperCase(),
                             marca: data.marca.toUpperCase(), 
                             nom_producto: data.nom_producto.toUpperCase()}];
-            
-
             }
         }
 
@@ -428,7 +535,7 @@ async function cargarComboSeccion(){
             const res = gridOptions.api.applyTransaction({ add: filaNueva });
             if (res.add) {
                 const addedRow = res.add[0];
-                rowId = addedRow.rowId;
+
                 //Selecciona la fila nueva
                 gridOptions.api.deselectAll();
                 addedRow.setSelected(true);
@@ -438,22 +545,68 @@ async function cargarComboSeccion(){
         }
 
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA MODO CARGA
 
-        cargarTablaProductos();
-        async function cargarTablaProductos(){
-            try{
-                //pinCarga('cargando');
-                // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/productosTabla')
-                .then(response => response.json());
-                const Productos = data;
-                //mediante un for vamos cargando fila por fila
-                for(i=0;i<Productos.length;i++){
-                    let newRow = datosAFilaGrid(Productos[i],0);
-                    gridOptions.api.applyTransaction({ add: newRow });
+let tiempoCargaExcedido = true;
+function paginaModoCarga(activar){
+        const inputCard = document.querySelectorAll('.form-group input');
+        const buttonCard = document.querySelectorAll('.form-group button');
+        const cardBody = document.getElementById('cardBodyTodo');
+        const cardBodyCargando = document.getElementById('cardBodyCargando');
+        if(activar){
+            tiempoCargaExcedido=true;
+            gridApi.showLoadingOverlay();
+            pinCarga('cargando')
+            inputCard.forEach(input => {
+                input.disabled=true;
+            });
+            buttonCard.forEach(button => {
+                button.disabled=true;
+            });
+            comboTipo.disabled=true;
+            setTimeout(()=>{
+                if(tiempoCargaExcedido){
+                    cardBody.classList.add('invisible');
+                    cardBodyCargando.classList.add('blockLoadingBody');
                 }
-                //pinCarga('success');
+            },500);
+        }else{
+            tiempoCargaExcedido=false;
+            gridApi.hideOverlay();
+            pinCarga('success')
+            inputCard.forEach(input => {
+                input.disabled=false;
+            });
+            buttonCard.forEach(button => {
+                button.disabled=false;
+            });
+            comboTipo.disabled=false;
+            cardBody.classList.remove('invisible');
+            cardBodyCargando.classList.remove('blockLoadingBody');
+        }
+        
+}
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
+        //Cargamos una vez acabe de cargar el size por defecto del comboPagination
+        async function cargarTablaProductos(page,size,search1,search2){
+            try{
+                gridOptions.api.setRowData([])
+                paginaModoCarga(true);
+                // Hace una llamada fetch y trae el arreglo de datos para la tabla
+                const queryParams = new URLSearchParams({page:page-1,size:size,search1:search1,search2:search2});
+
+                const data = await fetch(`/tablaProductos?${queryParams.toString()}`)
+                .then(response => response.json());
+                lastPage = size!=-1?Math.ceil(data.count/size):1;
+                pagesLabel.textContent= size!=-1?('Pagina '+actualPage+' de '+lastPage):'Todos';
+                registrosLabel.textContent= data.count+' registros';
+                actualPageInput.value = page
+                const Productos = data.rows;
+                //Dom: Map debe usarse para cambiar la estructura de los elementos de una colección
+                const filasDeTabla = Productos.map((producto) => datosAFilaGrid(producto,0));
+                gridOptions.api.applyTransaction({ add: [...filasDeTabla.flat()] });
+                paginaModoCarga(false);
             }catch(error){
                 console.log('Error al obtener los productos:', error);
                 toast(error.message, "toastColorError");
@@ -475,19 +628,12 @@ async function cargarComboSeccion(){
         
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ SELECCION TABLA AG-GRID
 
+
+
         async function seleccionTabla(id,mouse) {
             try{
-                const inputCard = document.querySelectorAll('.form-group input');
-                const buttonCard = document.querySelectorAll('.form-group button');
                 if(mouse){
-                    pinCarga('cargando')
-                    inputCard.forEach(input => {
-                        input.disabled=true;
-                    });
-                    buttonCard.forEach(button => {
-                        button.disabled=true;
-                    });
-                    comboTipo.disabled=true;
+                    paginaModoCarga(true);
                 }
                 if(conectado()){
                     const data = await fetch('/producto/'+id)
@@ -501,14 +647,7 @@ async function cargarComboSeccion(){
                     await cargarDatosDesdeSeleccion(data);
                     validacionVaciar();
                     if(mouse){
-                        pinCarga('successFast')
-                        inputCard.forEach(input => {
-                            input.disabled=false;
-                        });
-                        buttonCard.forEach(button => {
-                            button.disabled=false;
-                        });
-                        comboTipo.disabled=false;
+                        paginaModoCarga(false);
                     };
                 }
             }catch(error){
@@ -831,7 +970,7 @@ async function cargarComboSeccion(){
         guardarBtn.disabled=true;
         guardarBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if(rowId!== null){
+            if(getSelectedRowId()!== null){
                 if(validacionGuardar()){
                     //Construimos aqui el modal
                     construirModal(1);
@@ -901,7 +1040,7 @@ async function cargarComboSeccion(){
                     nuevaFilaAgGrid(res)
                     toast("Producto agregado", "toastColorSuccess");
                     pinCarga('success');
-                    rowId=res.id;
+
                 }).catch(error =>{
                     toast(error.message, "toastColorError");
                     console.log(error.message)
@@ -980,6 +1119,202 @@ async function cargarComboSeccion(){
         }
 
 
+
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++      PAGINATION     +++++++++++++++++++++++++++++
+                
+const registrosLabel = document.getElementById('registrosLabel');
+const pageSize = document.getElementById('page-size');
+const pagesLabel = document.getElementById('pagesLabel');
+const actualPageInput = document.getElementById('actualPageInput');
+
+const firstPageBtn = document.getElementById('firstPageBtn')
+const nextPageBtn = document.getElementById('nextPageBtn')
+const previousPageBtn = document.getElementById('previousPageBtn')
+const lastPageBtn = document.getElementById('lastPageBtn')
+
+
+function onPageSizeChanged(){
+    size = document.getElementById('page-size').value;
+    //actualPage=1; vaciarFiltro ya lo hace
+    vaciarFiltro();
+    cargarTablaProductos(1,size,filtro1,filtro2);
+}
+
+function onFirstPage(){
+    actualPageInput.value=1
+    if(actualPage!=1){
+        actualPage= 1
+        cargarTablaProductos(actualPage,size,filtro1,filtro2);
+    }
+}
+function onPreviousPage(){
+    actualPageInput.value=actualPage
+    if(actualPage>1){
+        actualPage-=1
+        cargarTablaProductos(actualPage,size,filtro1,filtro2);
+    }
+}
+
+function onNextPage(){
+    actualPageInput.value=actualPage
+    if(actualPage<lastPage){
+        actualPage+=1
+        cargarTablaProductos(actualPage,size,filtro1,filtro2);
+    }
+}
+
+
+function onLastPage(){
+    actualPageInput.value=lastPage
+    if(actualPage!=lastPage){
+        actualPage= lastPage
+        cargarTablaProductos(actualPage,size,filtro1,filtro2);
+    }
+}
+
+function presionarEnterPage(event,page){
+    if (event.code === "Enter" || event.which === 13) {
+        console.log('presiono enter');
+        if(page>=lastPage)onLastPage();
+        if(page<=1)onFirstPage();
+        if(page<lastPage && page>1){
+            actualPage=page
+            cargarTablaProductos(actualPage,size,filtro1,filtro2);
+        }
+    }
+}
+
+
+firstPageBtn.addEventListener('click',()=>{
+    onFirstPage();
+});
+
+previousPageBtn.addEventListener('click',()=>{
+    onPreviousPage();
+});
+
+nextPageBtn.addEventListener('click',()=>{
+    onNextPage();
+});
+
+lastPageBtn.addEventListener('click',()=>{
+    onLastPage();
+});
+
+pageSize.addEventListener('change',()=>{
+    onPageSizeChanged();
+});
+
+actualPageInput.addEventListener('keyup',(event)=>{
+    try{
+        actualPageInput.value=actualPageInput.value.trim();
+        const texto = actualPageInput.value;
+        const num = parseInt(texto);
+        if(!isNaN(num)){
+            actualPageInput.value=num;
+            presionarEnterPage(event,num);
+        }
+    }catch(error){
+        console.log(error)
+    }
+    
+});
+
+
+
+//-----------------------------------------------------------------FILTROS
+
+        
+//-------------------------BTN CHECK filtros
+const pagSupDiv = document.getElementById('paginationSupDiv');
+const filtroCheck = document.getElementById('filtroCheck');
+filtroCheck.addEventListener('change',function(){
+    if (this.checked) {
+        console.log("El checkbox ha sido marcado");
+        pagSupDiv.style.display='flex';
+        // Aquí puedes agregar cualquier acción que quieras que se ejecute cuando se marque el checkbox
+    } else {
+        console.log("El checkbox ha sido desmarcado");
+        pagSupDiv.style.display='none';
+        // Aquí puedes agregar cualquier acción que quieras que se ejecute cuando se desmarque el checkbox
+    }
+});
+
+
+function presionarEnterFilter1(){
+    filtro1=filtro1Input.value;
+    filtro2=filtro2Input.value;
+    actualPage=1
+    actualPageInput.value=1;
+    cargarTablaProductos(actualPage,size,filtro1,filtro2);
+}
+
+
+function presionarEnterFilter2(){
+    filtro1=filtro1Input.value;
+    filtro2=filtro2Input.value;
+    actualPage=1
+    actualPageInput.value=1;
+    cargarTablaProductos(actualPage,size,filtro1,filtro2);
+}
+
+function vaciarFiltro(){
+    vaciarFiltro1();
+    vaciarFiltro2();
+}
+
+function vaciarFiltro1(){
+    filtro1 = '';
+    filtro1Input.value='';
+    actualPage=1;
+}
+function vaciarFiltro2(){
+    filtro2 = '';
+    filtro2Input.value='';
+    actualPage=1;
+}
+
+const filtro1Input = document.getElementById('filtro1Input');
+filtro1Input.addEventListener('keyup',(event)=>{
+    if (event.code === "Enter" || event.which === 13) {
+        presionarEnterFilter1();
+    }
+});
+
+const filtro2Input = document.getElementById('filtro2Input');
+filtro2Input.addEventListener('keyup',(event)=>{
+    if (event.code === "Enter" || event.which === 13) {
+        presionarEnterFilter2();
+    }
+    
+});
+
+const filtro1Label = document.getElementById('filtro1Label');
+filtro1Label.addEventListener('click',(event)=>{
+    vaciarFiltro1();
+    cargarTablaProductos(actualPage,size,filtro1,filtro2);
+});
+
+const filtro2Label = document.getElementById('filtro2Label');
+filtro2Label.addEventListener('click',(event)=>{
+    vaciarFiltro2();
+    cargarTablaProductos(actualPage,size,filtro1,filtro2);
+});
+
+
+
+
+
+
+
+
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++      FIN     +++++++++++++++++++++++++++++
 
 
 
