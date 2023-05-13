@@ -361,6 +361,7 @@ async function cargarComboSeccion(){
                 {headerName: "Id", 
                         field: "id", hide: true
                     },
+                    /*
                 {headerName: "Proveedor",
                     field: "nom_proveedor",
                     width: 150, maxWidth: 150
@@ -369,6 +370,7 @@ async function cargarComboSeccion(){
                     field: "marca",sort: 'asc', //Filtro1
                     width: 150, maxWidth: 150
                     },
+                    */
                 {headerName: "Producto", 
                     field: "nom_producto",sort: 'asc', //Filtro2
                     flex: 1, minWidth: 150
@@ -502,9 +504,9 @@ async function cargarComboSeccion(){
                     comboTipo.selectedIndex=i;
                 */
                 return [{   id: data.id,
-                            nom_proveedor: n==0?data.Proveedors[0].nom_proveedor.toUpperCase():
-                            comboProveedor.options[comboProveedor.selectedIndex].textContent.toUpperCase(),
-                            marca: data.marca.toUpperCase(), 
+                            //nom_proveedor: n==0?data.Proveedors[0].nom_proveedor.toUpperCase():
+                            //comboProveedor.options[comboProveedor.selectedIndex].textContent.toUpperCase(),
+                            //marca: data.marca.toUpperCase(), 
                             nom_producto: data.nom_producto.toUpperCase()}];
             }
         }

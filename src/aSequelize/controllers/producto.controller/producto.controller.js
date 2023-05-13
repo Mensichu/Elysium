@@ -123,6 +123,7 @@ export const getTablaProductos = async (req,res) =>{
                     ],
                 },
             attributes:['id','marca','nom_producto'],
+            /*
             include:[
                 {
                     model:tablaProveedor,
@@ -132,6 +133,7 @@ export const getTablaProductos = async (req,res) =>{
                     
                 },
             ]
+            */
         });
         res.json(productos);
     }catch(error){

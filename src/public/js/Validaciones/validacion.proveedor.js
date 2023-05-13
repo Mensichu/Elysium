@@ -252,6 +252,27 @@ const expresiones = {
 
         function validacionDatos(){
             let validado= true;
+            let band =0;
+            let mensaje ="";
+            idElementos.forEach((idElemento)=>{
+                let elemento = document.getElementById(idElemento);
+                
+                if(!validarProveedor(elemento,false)) {
+                    mensaje = mensaje +' - '+elemento.name+''
+                    band=1;
+                }
+        
+            });
+            if(band==1){
+                toast("Ingrese correctamente los sgts. campos: \n"+mensaje+"!", "toastColorError");
+                validado = false;
+                band=0;
+            }
+            return validado;
+        }
+/*
+        function validacionDatos(){
+            let validado= true;
             idElementos.forEach((idElemento)=>{
                 let elemento = document.getElementById(idElemento);
                 //Datos no requiere validar Alias para guardar o nuevo
@@ -263,7 +284,7 @@ const expresiones = {
             });
             return validado;
         }
-
+*/
 
         function validacionIdentificacion(){
             const identificacion = document.getElementById("Datos-Identificacion");

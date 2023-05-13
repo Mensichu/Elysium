@@ -492,7 +492,8 @@ function calculoPVP3(subtotalConIva){
     const g3 = parseFloat(G3Input.value)
     const pvp3 = subtotalConIva*(1+(g3/100))
         //Value
-        pvp3Input.value = pvp3.toFixed(2);
+        //pvp3Input.value = pvp3.toFixed(2); usado para testear
+        pvp3Input.value = redondearA5o0(pvp3).toFixed(2);
         comprobarNumDosDecimales(pvp3Input);
         //Preguntamos si se efectuo el calculo, si no mandamos no valido
         const validar = isNaN(parseFloat(pvp3));
