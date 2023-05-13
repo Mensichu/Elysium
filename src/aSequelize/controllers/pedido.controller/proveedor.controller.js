@@ -72,10 +72,32 @@ export const getProveedor = async (req,res)=>{
     
 }
 
+
+import Sequelize from 'sequelize';
+
 export const getTablaProveedores = async (req,res) =>{
     try{
-        const proveedores = await tablaProveedor.findAll({
-            where:{estado:true},
+        let {page,size,search1,search2}= req.query;
+        
+        page=page!==undefined?page:'';
+        size=size!==undefined?size:'';
+        search1=search1!==undefined?search1:'';
+        search2=search2!==undefined?search2:'';
+        size = size!=-1 ? size : '';//Envia todos los registros si es -1
+        const searchString1 = search1 ? search1.toUpperCase() : '';
+        const searchString2 = search2 ? search2.toUpperCase() : '';
+
+        console.log('valores: '+page+' '+size+' '+search1+' '+search2)
+
+        const proveedores = await tablaProveedor.findAndCountAll({
+            where:
+                {
+                    estado:true,
+                    [Op.and]: [
+                        Sequelize.where(Sequelize.fn('upper', Sequelize.col('nom_proveedor')), 'LIKE', `%${searchString1}%`),
+                        Sequelize.where(Sequelize.fn('upper', Sequelize.col('identificacion')), 'LIKE', `%${searchString2}%`)
+                    ],
+                },
             attributes:['id','identificacion','nom_proveedor','representante'],
             include:[
                 {

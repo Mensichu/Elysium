@@ -202,14 +202,19 @@ function ejecutarAnimacion(){
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ANIMACION TOAST 
 
 function toast(mensaje,colorClass){
+    //Conseguimos mostrar el toast con un offset del teclado en pantalla
+    const alturaTeclado = window.innerHeight - window.visualViewport.height;
     Toastify({
         text: mensaje+" ",
         duration: 3000, // duración en milisegundos
         gravity: "bottom", // posición en pantalla (top, bottom, left, right)
         position: "right", // alineación del mensaje (center, left, right)
-        offset: {
+        /*offset: {
             y: 35 // horizontal axis - can be a number or a string indicating unity. eg: '2em'
-          },
+          },*/
+        offset: {
+        y: alturaTeclado<1?35:alturaTeclado // horizontal axis - can be a number or a string indicating unity. eg: '2em'
+        },
         close:true,
         className: colorClass,
 
@@ -219,25 +224,6 @@ function toast(mensaje,colorClass){
 }
 
 
-    // Función para ajustar la posición del toast
-    function adjustToastPosition() {
-        // Obtener la altura del viewport
-        var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-        
-        // Obtener la altura del body
-        var bodyHeight = document.body.offsetHeight;
-        
-        // Calcular la posición del toast en la parte inferior de la pantalla
-        var toastBottom = viewportHeight - bodyHeight;
-        
-        // Actualizar la posición del toast
-        Toastify.reposition(undefined, toastBottom);
-    }
-    
-    // Detectar cuándo el teclado virtual se abre o se cierra
-    window.addEventListener("resize", function() {
-        adjustToastPosition();
-    });
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ WHATSAPP CONTACTO
 

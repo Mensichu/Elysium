@@ -86,7 +86,7 @@ router.get('/productos/clasificacion', (req,res)=>{
   res.render('links/productos/clasificacion');
 });
 
-router.get('/pedidos/proveedores',isAuthenticated, (req,res)=>{
+router.get('/pedidos/proveedores', (req,res)=>{
   res.render('links/pedidos/proveedores');
 });
 

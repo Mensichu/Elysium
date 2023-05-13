@@ -81,13 +81,7 @@ body{
   
   /*                                               TABLA AG GRID                    */
   
-  .ag-theme-alpine-dark .ag-row-selected {
-    /*background-color: var(--color1);*/
-  }
 
-  .ag-theme-alpine-dark .ag-row-hover {
-    /*background-color: var(--color2);*/
-  }
 
   .datosModeloBody{
     height: auto;
@@ -128,3 +122,125 @@ body{
   .circuloOrig {
     background-color: var(--colorBodyCards) !important;
   }
+
+
+
+
+
+
+/* Combo Identificacion e Input */
+
+
+.respIdentificacionCombo{
+  min-width: 75px !important;
+}
+
+
+.respIdentificacionLabel{
+  display: flex;
+}
+
+
+@media ((max-width: 1399px) and (min-width: 1200px)) {
+  
+  .respIdentificacionCombo{
+    border-top-right-radius:     0.375rem !important;
+    border-bottom-right-radius:  0.375rem !important;
+  }
+
+  .respIdentificacionLabel{
+    display: block;
+    border-top-left-radius:     0.375rem !important;
+    border-bottom-left-radius:  0.375rem !important;
+    
+  }
+
+  
+}
+
+
+@media ((max-width: 1151px) and (min-width: 768px)) {
+  
+  .respIdentificacionCombo{
+    border-top-right-radius:     0.375rem !important;
+    border-bottom-right-radius:  0.375rem !important;
+  }
+
+  .respIdentificacionLabel{
+    display: block;
+    border-top-left-radius:     0.375rem !important;
+    border-bottom-left-radius:  0.375rem !important;
+    
+  }
+
+  
+}
+
+@media (max-width: 383px) {
+  
+  .respIdentificacionCombo{
+    border-top-right-radius:     0.375rem !important;
+    border-bottom-right-radius:  0.375rem !important;
+  }
+
+  .respIdentificacionLabel{
+    display: block;
+    border-top-left-radius:     0.375rem !important;
+    border-bottom-left-radius:  0.375rem !important;
+    
+  }
+
+  
+}
+
+
+  
+/* -----------------------------PAGINATION -----------------------------*/
+
+
+@media ( (max-width: 500px) ) {
+
+  .groupPagination div label{
+      display: none !important;
+  }
+}
+
+
+
+@media (max-width: 905px) and (min-width: 768px) {
+
+  #filtro1{
+    display: none !important;
+  }
+ 
+}
+
+@media (max-width: 600px) {
+  
+  #filtro1{
+    display: none !important;
+  }
+ 
+}
+
+
+
+
+@media ( (max-width: 405px)) {
+  .groupPaginationFilter{
+      display: none !important;
+  }
+  #filtroCheckGroup{
+      display: none;
+  }
+  .groupPagination div label{
+      display: none !important;
+  }
+}
+
+/* quita la paginacion, en caso de pantalla extremadamente delgada*/
+@media ( (max-width: 309px)) {
+  .myPagination{
+      display: none !important;
+  }
+}

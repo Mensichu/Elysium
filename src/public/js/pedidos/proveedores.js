@@ -1,15 +1,110 @@
-
 //Proveedores
 window.addEventListener('load',()=>{
+
     //Solo se ejecuta cada vez que se recargue la pagina y sea Proveedores
     const pagina = window.location.pathname;
-    if(pagina == '/pedidos/proveedores'){
-        console.log("Cargo proveedores");
+
+    if(pagina.toLowerCase() == '/pedidos/proveedores'){console.log("Cargo proveedores");
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA PROVEEDORES
 
-document.querySelector('#fondo').classList.add('showNow');
+        document.querySelector('#fondo').classList.add('showNow');
 
-let rowId = null;
+        //let rowId = null;
+        let size = 20;
+        let lastPage = 1;
+        let actualPage = 1;
+        let filtro1 = ''
+        let filtro2 = ''
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ RESPONSIVE CONTAINER
+        
+const containerDiv = document.getElementById('containerDiv');
+        
+function comprobarAncho() {
+    if (window.innerWidth < 1200) {
+        // La página tiene menos de 1200px de ancho
+        containerDiv.classList.remove('container');
+    }else{
+        // La página tiene 1200px o más de ancho
+        containerDiv.classList.add('container');
+    }
+}
+let temporizador;
+comprobarAncho();
+//Este retardo sirve para no hacer una cte. revision del ancho de la pantalla
+window.addEventListener("resize", function() {
+    // Si el temporizador está activo, cancelarlo
+    if (temporizador) {
+        clearTimeout(temporizador);
+    }
+    // Iniciar un nuevo temporizador para ejecutar la función después de 200ms
+    temporizador = setTimeout(comprobarAncho, 200);
+});
+
+
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBOBOX
+
+//------------------------------------------------------------------------------ ComboPagination
+const comboPagination = document.getElementById('page-size');
+cargarComboPagination();
+//Combo Pagination
+async function cargarComboPagination(){
+    try{
+        
+        let paginations = await fetch('/paginations')
+        .then(response => response.json());
+
+        console.log("Numero de sizes en el combo pagination: "+paginations.length);
+        //Creamos el elemento temporal
+        const fragmento = document.createDocumentFragment();
+        for(i=0;i<paginations.length;i++){
+            //Creamos la etiqueta option con su value y texto de cada marca al combobox de marcas
+            const item = document.createElement("OPTION");
+            item.innerHTML = paginations[i].num_pagination;
+            item.value =paginations[i].num_pagination;
+            fragmento.appendChild(item);//Se utiliza fragmento para ahorrar el consumo en memoria
+            //Se setea el size por defecto
+            size= paginations[i].default?paginations[i].num_pagination:size;
+        }
+
+        //Vaciamos el combo primero
+        for(i=comboPagination.options.length-1;i>=0;i--){
+            comboPagination.remove(i);
+        }
+
+        //Se agrega al combobox comboPagination
+        comboPagination.appendChild(fragmento);
+        //Se agrega la opcion Todos (-1)
+        const item = document.createElement("OPTION");
+        item.innerHTML = 'Todos';
+        item.value = -1;
+        comboPagination.appendChild(item);
+        //Seleccionamos el por defecto:
+        seleccionCombo(size,comboPagination);
+        cargarTablaProveedores(actualPage,size,filtro1,filtro2);
+    }catch(error){
+        console.log(error.message);
+    }
+
+}
+
+
+function seleccionCombo(id, combo){
+
+    for(i=0;i<combo.options.length;i++){
+        if(combo.options[i].value == id){
+            //una vez encontrado mostramos en el combo correspondiente
+            combo.selectedIndex=i;
+            return;
+        }
+    }
+    console.log('No encontre seleccionCombo');
+}
+
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ COMBO TIPO
         const comboTipo = document.getElementById('comboTipo');
@@ -72,12 +167,12 @@ let rowId = null;
                         field: "id", hide: true
                     },
                 {headerName: "Proveedor", 
-                    field: "nom_proveedor", floatingFilter:true,
+                    field: "nom_proveedor",sort: 'asc',
                     flex: 1, minWidth: 150
                     },
                 {headerName: "Identidad",
-                    field: "identidad",sort: 'asc', floatingFilter:true, 
-                    width: 150
+                    field: "identidad",
+                    width: 150, maxWidth:150
                     },
                 {headerName: "Tipo", 
                         field: "tipo",
@@ -88,19 +183,17 @@ let rowId = null;
 
             // default col def properties get applied to all columns
             defaultColDef: {sortable: true, 
-                            filter: 'agTextColumnFilter', 
                             enableRowGroup:true,
                             filterParams:{
                                 buttons: ["apply","reset"]
                             },
                             resizable: true,
-                            //autoSizeAllColumns: true
                         },
 
             getRowClass: (params) => {
                 if(params.data!== undefined){
 
-                    if(rowId === params.data.id){
+                    if(getSelectedRowId() === params.data.id){
 
                         params.node.setSelected(true);
                         seleccionTabla(params.data.id,false);
@@ -112,7 +205,7 @@ let rowId = null;
             },
 
             onModelUpdated: (event) => {
-                if(true || rowId!==null){
+                if(getSelectedRowId()!==null){
                     console.log('-----------------------------------------CHINGONNKNKN');
                     
                     clasesFila='cambioColor';
@@ -123,8 +216,6 @@ let rowId = null;
             onCellValueChanged: (event) => {
                 // Aquí va el código que se ejecutará cuando cambie el valor de una celda
                 console.log('--------------------------------------------PERROS QUE PERRAN');
-                //clasesFila='cambioColor';
-                //gridOptions.api.redrawRows();
             },
 
             getRowId: (params) => { return params.data.id; },
@@ -137,23 +228,29 @@ let rowId = null;
             rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
 
             rowGroupPanelShow: 'always',
-            //popupParent: document.body,
             rowSelection: 'single', // allow rows to be selected
             animateRows: true, // have rows animate to new positions when sorted
+            overlayLoadingTemplate: 'Cargando tabla...',
+            overlayNoRowsTemplate: 'Registros no encontrados',
 
             // example event handler
             onCellClicked: params => {
                 if(params.data!== undefined){
                     //console.log('cell was clicked', params.data);
-                    rowId = params.data.id;
                     botonesModoNuevo(false);
                     guardarBtn.disabled=false;
-                    seleccionTabla(rowId,true);
+                    seleccionTabla(params.data.id,true);
 
                 }else{
                     guardarBtn.disabled=true;
                 }
-            }
+            },
+
+            onGridReady: function(params) {
+                params.api.sizeColumnsToFit();
+            },
+
+            onGridSizeChanged: onGridSizeChanged
         };
 
         // get div to host the grid
@@ -163,7 +260,36 @@ let rowId = null;
 
         const gridApi = gridOptions.api;
         
-        //gridOptions.api.sizeColumnsToFit();
+        function onGridSizeChanged(params) {
+            // get the current grids width
+            var gridWidth = document.getElementById('grid-wrapper').offsetWidth;
+            console.log('gridWidth: ')
+            console.log(gridWidth)
+
+            // keep track of which columns to hide/show
+            var columnsToShow = [];
+            var columnsToHide = ['id'];
+
+            if(gridWidth< 500){
+                columnsToHide.push('tipo');
+            }else{
+                columnsToShow.push('tipo');
+            }
+
+
+            // iterate over all columns (visible or not) and work out
+            // now many columns can fit (based on their minWidth)
+            
+            
+            
+
+            // show/hide columns based on current grid width
+            params.columnApi.setColumnsVisible(columnsToShow, true);
+            params.columnApi.setColumnsVisible(columnsToHide, false);
+
+            // fill out any available space to ensure there are no gaps
+            params.api.sizeColumnsToFit();
+        }
         
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AG-GRID: ACTUALIZACION Y NUEVA FILA
 
@@ -210,7 +336,7 @@ let rowId = null;
             const res = gridOptions.api.applyTransaction({ add: filaNueva });
             if (res.add) {
                 const addedRow = res.add[0];
-                rowId = addedRow.rowId;
+
                 //Selecciona la fila nueva
                 gridOptions.api.deselectAll();
                 addedRow.setSelected(true);
@@ -220,22 +346,69 @@ let rowId = null;
         }
 
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
 
-        cargarTablaProveedores();
-        async function cargarTablaProveedores(){
-            try{
-                //pinCarga('cargando');
-                // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/proveedores')
-                .then(response => response.json());
-                const Proveedores = data;
-                //mediante un for vamos cargando fila por fila
-                for(i=0;i<Proveedores.length;i++){
-                    let newRow = datosAFilaGrid(Proveedores[i],0);
-                    gridOptions.api.applyTransaction({ add: newRow });
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA MODO CARGA
+
+let tiempoCargaExcedido = true;
+function paginaModoCarga(activar){
+        const inputCard = document.querySelectorAll('.form-group input');
+        const buttonCard = document.querySelectorAll('.form-group button');
+        const cardBody = document.getElementById('cardBodyTodo');
+        const cardBodyCargando = document.getElementById('cardBodyCargando');
+        if(activar){
+            tiempoCargaExcedido=true;
+            gridApi.showLoadingOverlay();
+            pinCarga('cargando')
+            inputCard.forEach(input => {
+                input.disabled=true;
+            });
+            buttonCard.forEach(button => {
+                button.disabled=true;
+            });
+            comboTipo.disabled=true;
+            setTimeout(()=>{
+                if(tiempoCargaExcedido){
+                    cardBody.classList.add('invisible');
+                    cardBodyCargando.classList.add('blockLoadingBody');
                 }
-                //pinCarga('success');
+            },500);
+        }else{
+            tiempoCargaExcedido=false;
+            gridApi.hideOverlay();
+            pinCarga('success')
+            inputCard.forEach(input => {
+                input.disabled=false;
+            });
+            buttonCard.forEach(button => {
+                button.disabled=false;
+            });
+            comboTipo.disabled=false;
+            cardBody.classList.remove('invisible');
+            cardBodyCargando.classList.remove('blockLoadingBody');
+        }
+        
+}
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AG-GRID
+        //Cargamos una vez acabe de cargar el size por defecto del comboPagination
+        async function cargarTablaProveedores(page,size,search1,search2){
+            try{
+                gridOptions.api.setRowData([])
+                paginaModoCarga(true);
+                // Hace una llamada fetch y trae el arreglo de datos para la tabla
+                const queryParams = new URLSearchParams({page:page-1,size:size,search1:search1,search2:search2});
+
+                const data = await fetch(`/tablaProveedores?${queryParams.toString()}`)
+                .then(response => response.json());
+                lastPage = size!=-1?Math.ceil(data.count/size):1;
+                pagesLabel.textContent= size!=-1?('Pagina '+actualPage+' de '+lastPage):'Todos';
+                registrosLabel.textContent= data.count+' registros';
+                actualPageInput.value = page
+                const Proveedores = data.rows;
+                //Dom: Map debe usarse para cambiar la estructura de los elementos de una colección
+                const filasDeTabla = Proveedores.map((proveedor) => datosAFilaGrid(proveedor,0));
+                gridOptions.api.applyTransaction({ add: [...filasDeTabla.flat()] });
+                paginaModoCarga(false);
             }catch(error){
                 console.log('Error al obtener los proveedores:', error);
                 toast(error.message, "toastColorError");
@@ -259,17 +432,8 @@ let rowId = null;
 
         async function seleccionTabla(id,mouse) {
             try{
-                const inputCard = document.querySelectorAll('.form-group input');
-                const buttonCard = document.querySelectorAll('.form-group button');
                 if(mouse){
-                    pinCarga('cargando')
-                    inputCard.forEach(input => {
-                        input.disabled=true;
-                    });
-                    buttonCard.forEach(button => {
-                        button.disabled=true;
-                    });
-                    comboTipo.disabled=true;
+                    paginaModoCarga(true);
                 }
                 if(conectado()){
                     const data = await fetch('/proveedor/'+id)
@@ -283,14 +447,8 @@ let rowId = null;
                     await cargarDatosDesdeSeleccion(data);
                     validacionVaciar();
                     if(mouse){
-                        pinCarga('successFast')
-                        inputCard.forEach(input => {
-                            input.disabled=false;
-                        });
-                        buttonCard.forEach(button => {
-                            button.disabled=false;
-                        });
-                        comboTipo.disabled=false;
+                        paginaModoCarga(false);
+                        //pinCarga('successFast')
                     };
                 }
             }catch(error){
@@ -734,7 +892,7 @@ let rowId = null;
         guardarBtn.disabled=true;
         guardarBtn.addEventListener('click',(e)=>{
             e.preventDefault();
-            if(rowId!== null){
+            if(getSelectedRowId()!== null){
                 if(validacionGuardar()){
                     //Construimos aqui el modal
                     construirModal(1);
@@ -825,7 +983,6 @@ let rowId = null;
                     nuevaFilaAgGrid(res)
                     toast("Proveedor agregado", "toastColorSuccess");
                     pinCarga('success');
-                    rowId=res.id;
                 }).catch(error =>{
                     toast(error.message, "toastColorError");
                     console.log(error.message)
@@ -906,6 +1063,201 @@ let rowId = null;
          })
 
         
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++      PAGINATION     +++++++++++++++++++++++++++++
+                
+const registrosLabel = document.getElementById('registrosLabel');
+const pageSize = document.getElementById('page-size');
+const pagesLabel = document.getElementById('pagesLabel');
+const actualPageInput = document.getElementById('actualPageInput');
+
+const firstPageBtn = document.getElementById('firstPageBtn')
+const nextPageBtn = document.getElementById('nextPageBtn')
+const previousPageBtn = document.getElementById('previousPageBtn')
+const lastPageBtn = document.getElementById('lastPageBtn')
+
+
+function onPageSizeChanged(){
+    size = document.getElementById('page-size').value;
+    //actualPage=1; vaciarFiltro ya lo hace
+    vaciarFiltro();
+    cargarTablaProveedores(1,size,filtro1,filtro2);
+}
+
+function onFirstPage(){
+    actualPageInput.value=1
+    if(actualPage!=1){
+        actualPage= 1
+        cargarTablaProveedores(actualPage,size,filtro1,filtro2);
+    }
+}
+function onPreviousPage(){
+    actualPageInput.value=actualPage
+    if(actualPage>1){
+        actualPage-=1
+        cargarTablaProveedores(actualPage,size,filtro1,filtro2);
+    }
+}
+
+function onNextPage(){
+    actualPageInput.value=actualPage
+    if(actualPage<lastPage){
+        actualPage+=1
+        cargarTablaProveedores(actualPage,size,filtro1,filtro2);
+    }
+}
+
+
+function onLastPage(){
+    actualPageInput.value=lastPage
+    if(actualPage!=lastPage){
+        actualPage= lastPage
+        cargarTablaProveedores(actualPage,size,filtro1,filtro2);
+    }
+}
+
+function presionarEnterPage(event,page){
+    if (event.code === "Enter" || event.which === 13) {
+        console.log('presiono enter');
+        if(page>=lastPage)onLastPage();
+        if(page<=1)onFirstPage();
+        if(page<lastPage && page>1){
+            actualPage=page
+            cargarTablaProveedores(actualPage,size,filtro1,filtro2);
+        }
+    }
+}
+
+
+firstPageBtn.addEventListener('click',()=>{
+    onFirstPage();
+});
+
+previousPageBtn.addEventListener('click',()=>{
+    onPreviousPage();
+});
+
+nextPageBtn.addEventListener('click',()=>{
+    onNextPage();
+});
+
+lastPageBtn.addEventListener('click',()=>{
+    onLastPage();
+});
+
+pageSize.addEventListener('change',()=>{
+    onPageSizeChanged();
+});
+
+actualPageInput.addEventListener('keyup',(event)=>{
+    try{
+        actualPageInput.value=actualPageInput.value.trim();
+        const texto = actualPageInput.value;
+        const num = parseInt(texto);
+        if(!isNaN(num)){
+            actualPageInput.value=num;
+            presionarEnterPage(event,num);
+        }
+    }catch(error){
+        console.log(error)
+    }
+    
+});
+
+
+
+//-----------------------------------------------------------------FILTROS
+
+        
+//-------------------------BTN CHECK filtros
+const pagSupDiv = document.getElementById('paginationSupDiv');
+const filtroCheck = document.getElementById('filtroCheck');
+filtroCheck.addEventListener('change',function(){
+    if (this.checked) {
+        console.log("El checkbox ha sido marcado");
+        pagSupDiv.style.display='flex';
+        // Aquí puedes agregar cualquier acción que quieras que se ejecute cuando se marque el checkbox
+    } else {
+        console.log("El checkbox ha sido desmarcado");
+        pagSupDiv.style.display='none';
+        // Aquí puedes agregar cualquier acción que quieras que se ejecute cuando se desmarque el checkbox
+    }
+});
+
+
+function presionarEnterFilter1(){
+    filtro1=filtro1Input.value;
+    filtro2=filtro2Input.value;
+    actualPage=1
+    actualPageInput.value=1;
+    cargarTablaProveedores(actualPage,size,filtro1,filtro2);
+}
+
+
+function presionarEnterFilter2(){
+    filtro1=filtro1Input.value;
+    filtro2=filtro2Input.value;
+    actualPage=1
+    actualPageInput.value=1;
+    cargarTablaProveedores(actualPage,size,filtro1,filtro2);
+}
+
+function vaciarFiltro(){
+    vaciarFiltro1();
+    vaciarFiltro2();
+}
+
+function vaciarFiltro1(){
+    filtro1 = '';
+    filtro1Input.value='';
+    actualPage=1;
+}
+function vaciarFiltro2(){
+    filtro2 = '';
+    filtro2Input.value='';
+    actualPage=1;
+}
+
+const filtro1Input = document.getElementById('filtro1Input');
+filtro1Input.addEventListener('keyup',(event)=>{
+    if (event.code === "Enter" || event.which === 13) {
+        presionarEnterFilter1();
+    }
+});
+
+const filtro2Input = document.getElementById('filtro2Input');
+filtro2Input.addEventListener('keyup',(event)=>{
+    if (event.code === "Enter" || event.which === 13) {
+        presionarEnterFilter2();
+    }
+    
+});
+
+const filtro1Label = document.getElementById('filtro1Label');
+filtro1Label.addEventListener('click',(event)=>{
+    vaciarFiltro1();
+    cargarTablaProveedores(actualPage,size,filtro1,filtro2);
+});
+
+const filtro2Label = document.getElementById('filtro2Label');
+filtro2Label.addEventListener('click',(event)=>{
+    vaciarFiltro2();
+    cargarTablaProveedores(actualPage,size,filtro1,filtro2);
+});
+
+
+
+
+
+
+
+
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++      FIN     +++++++++++++++++++++++++++++
+
 
         var btnPrueba = document.querySelector('#btnPrueba');
         btnPrueba.addEventListener('click', async function(e) {

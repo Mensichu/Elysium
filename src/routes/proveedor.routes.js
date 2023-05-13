@@ -10,7 +10,7 @@ router.put('/proveedor/:id',updateProveedor);
 
 router.get('/proveedor/:id',getProveedor);
 
-router.get('/proveedores',getTablaProveedores)
+router.get('/tablaProveedores',getTablaProveedores)
 
 router.get('/comboProveedor',getComboProveedor)
 
