@@ -1,16 +1,63 @@
 window.addEventListener('load',()=>{
     const liDropdown = document.querySelectorAll('.nav-item.dropdown');
+    
     liDropdown.forEach(li =>{
         li.addEventListener('click', ()=>{
-            //Si contiene show esta desplegado
-            const desplegar = li.children[0].classList.contains('show');
-            desplegarDropdown(li, !desplegar);
+            //Si contiene show esta desplegado ya no se usa esta linea
+            //const desplegar = li.children[0].classList.contains('show');
+            desplegarDropdown(li, true);
         });
+    });
+
+
+
+    
+    let bandDivNav=0;
+    const divDropdown = document.querySelectorAll('.dropdown-menu');
+    divDropdown.forEach(div =>{
+        //console.log(div)
+        div.addEventListener('mouseover', (e)=>{
+            if(bandDivNav===0){
+                //console.log('entro');
+                bandDivNav=1;
+            }
+        });
+        
+        div.addEventListener('mouseleave', (e)=>{
+            //console.log('salio');
+            bandDivNav=0;
+        });
+        
 
         
         
     });
 
+
+
+    
+    liDropdown.forEach(li =>{
+        li.addEventListener('mouseover', ()=>{
+            liDropdown.forEach(li2 =>{
+                desplegarDropdown(li2, false);
+            });
+            desplegarDropdown(li, true);
+        });
+
+        li.addEventListener('mouseout', ()=>{
+            setTimeout(()=>{
+                if(bandDivNav==0){
+                    desplegarDropdown(li, false);
+                }
+            },500)
+        });
+
+        
+        
+    });
+    
+    
+/*
     const navBarExitBtn = document.getElementById('navBarExitBtn');
     const navBarItems = document.getElementById('navbarColor01');
     navBarExitBtn.addEventListener('click',e=>{
@@ -31,6 +78,8 @@ window.addEventListener('load',()=>{
 
     })
 
+*/
+    /*
     navRemoveActive();
     function navRemoveActive(){
         const activos = document.querySelectorAll('.nav-link');
@@ -40,9 +89,14 @@ window.addEventListener('load',()=>{
             if(activo.id!='excepcion')activo.classList.remove('active');
         });
     }
+
+    */
+
+
+
     navAddActive();
     function navAddActive(){
-        navRemoveActive();
+        //navRemoveActive();
         const activos = document.querySelectorAll('.nav-link');        
         const pagina = window.location.pathname;
         console.log(pagina);
