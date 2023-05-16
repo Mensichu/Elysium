@@ -79,7 +79,7 @@ window.addEventListener('load',()=>{
     })
 
 */
-    /*
+    
     navRemoveActive();
     function navRemoveActive(){
         const activos = document.querySelectorAll('.nav-link');
@@ -90,17 +90,18 @@ window.addEventListener('load',()=>{
         });
     }
 
-    */
+    
 
 
 
     navAddActive();
     function navAddActive(){
-        //navRemoveActive();
+        navRemoveActive();
         const activos = document.querySelectorAll('.nav-link');        
         const pagina = window.location.pathname;
         console.log(pagina);
-        if(pagina==('/'))activos[0].classList.add('active');
+        if(pagina==('/')){activos[0].classList.add('active');bg_navElysium('#162938')};
+        if(pagina==('/login')){activos[0].classList.add('active');bg_navElysium('#162938')};
         if(pagina.includes('/clientes')){activos[1].classList.add('active');bg_navElysium('#be7e15')};
         if(pagina.includes('/vehiculos/autos')){activos[2].classList.add('active');bg_navElysium('#273f83')};
         if(pagina.includes('/vehiculos/placas')){activos[2].classList.add('active');bg_navElysium('#4a5472')};

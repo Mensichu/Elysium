@@ -14,7 +14,8 @@ function isAuthenticated(req,res,next){
   if(req.isAuthenticated()){
       return next();
   }
-  res.redirect('/login');
+  //Agrega a la url la direccion de redireccionamiento en la pagina login
+  res.redirect('/login?returnTo='+encodeURIComponent(req.originalUrl));
 }
 
 //Login para registrarse
@@ -24,26 +25,48 @@ router.post('/register', passport.authenticate('local-signup', {
   passReqToCallback:true
 }));
 
-
+/* Ya no se usa, cambiado por redirecciona a la pagina que se solicito antes inicio de sesion
 router.post('/login', passport.authenticate('local-signin', {
     successRedirect: '/',
     failureRedirect: '/login',
     passReqToCallback:true
   }));
-
-
+*/
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local-signin', (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.redirect('/login');
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      //En caso de tener redireccionamiento, enviado desde el controlador GET login
+      //mandado desde el formulario de login, redirecciona a la pagina en caso de inicio de sesion exitoso!
+      const returnTo = req.body.returnTo || '/';
+      console.log(req.body.returnTo);
+      return res.redirect(returnTo);
+    });
+  })(req, res, next);
+});
 
 
 router.get('/register', (req,res)=>{
   res.render('register');
 });
 
+//Iniciar sesion
 router.get('/login', (req,res)=>{
-  res.render('login');
+  //Agrega la pagina para redireccionar en caso de inicio de sesion exitoso
+  const returnTo = req.query.returnTo || '/';
+  res.render('login',{returnTo});
 });
 
 
-
+//Cerrar sesion
 router.post('/logout', function(req, res, next) {
     req.logout(function(err) {
       if (err) { return next(err); }
@@ -55,43 +78,39 @@ router.post('/logout', function(req, res, next) {
 
 
 
-
-  router.get('/',isAuthenticated, (req,res)=>{
-    res.render('links/home');
+// Home
+router.get('/',isAuthenticated, (req,res)=>{
+  res.render('links/home');
 });
 
 
 
-router.get('/clientes', (req,res)=>{
-    res.render('links/clientes');
+router.get('/clientes',isAuthenticated, (req,res)=>{
+  res.render('links/clientes');
 });
 
-router.get('/vehiculos/autos', (req,res)=>{
-    res.render('links/vehiculos/autos');
+router.get('/vehiculos/autos',isAuthenticated, (req,res)=>{
+  res.render('links/vehiculos/autos');
 });
 
-router.get('/vehiculos/placas', (req,res)=>{
-    res.render('links/vehiculos/placas');
+router.get('/vehiculos/placas',isAuthenticated, (req,res)=>{
+  res.render('links/vehiculos/placas');
 });
-/*
-router.get('/vehiculos/autos', (req,res)=>{
-    res.render('links/autos');
-});*/
 
-router.get('/productos', (req,res)=>{
+router.get('/productos',isAuthenticated, (req,res)=>{
   res.render('links/productos/productos');
 });
 
-router.get('/productos/clasificacion', (req,res)=>{
+router.get('/productos/clasificacion',isAuthenticated, (req,res)=>{
   res.render('links/productos/clasificacion');
 });
 
-router.get('/pedidos/proveedores', (req,res)=>{
+router.get('/pedidos/proveedores',isAuthenticated, (req,res)=>{
   res.render('links/pedidos/proveedores');
 });
 
 router.get('/pagos',isAuthenticated, (req,res)=>{
-    res.render('links/pagos');
+  res.render('links/pagos');
 });
 
 router.get('/relacionplacacliente', (req,res)=>{
