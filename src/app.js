@@ -66,6 +66,7 @@ app.use((req,res,next)=>{
     //Si no devuelve mensaje solo devuelve null
     app.locals.signupMessage=  req.flash('signupMessage')
     app.locals.signinMessage=  req.flash('signinMessage')
+    app.locals.user = req.user;
     next();
 });
 

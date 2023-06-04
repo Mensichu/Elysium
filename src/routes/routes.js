@@ -32,6 +32,7 @@ router.post('/login', passport.authenticate('local-signin', {
     passReqToCallback:true
   }));
 */
+
 router.post('/login', (req, res, next) => {
   passport.authenticate('local-signin', (err, user, info) => {
     if (err) {

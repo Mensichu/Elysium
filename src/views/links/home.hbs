@@ -3,7 +3,11 @@
     <h1 style="color:#162938;">Bienvenido</h1>
     <form id="formulario" class="formLogout" action="/logout" method="post">
         
-
+        {{#if user}}
+            <p>Bienvenido, {{user.dataValues.username}}</p>
+        {{else}}
+            <p>Inicie sesión para ver su nombre de usuario</p>
+        {{/if}}
         <div class="form-group mt-4" style="text-align: center;">
             <button class="btn btn-success btnHover" style="width:80%" id="btn-Sesion">Cerrar sesion</button>
         </div>
@@ -11,3 +15,6 @@
 
 </div>
 
+<style>
+    p{color: black;}
+</style>

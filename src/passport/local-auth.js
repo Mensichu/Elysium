@@ -73,6 +73,8 @@ passport.use('local-signin', new LocalStrategy({
         }
 
         // Si el usuario y la contraseña son correctos
+        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+        console.log(user);
         return done(null, user);
        
     }catch(error){
