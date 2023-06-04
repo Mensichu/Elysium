@@ -163,9 +163,9 @@ window.addEventListener('load',()=>{
             console.log('cambieCC1')
             const rgb = comboColor1.options[comboColor1.selectedIndex].style.background;
             const hex = rgbToHex(rgb);
-            document.querySelector("#Datos-Color1").value = hex;
+            document.querySelector("#Datos-Color1").style.backgroundColor = hex;
             //Al cambiar el color 1, copia al color 2
-            document.querySelector("#Datos-Color2").value = hex;
+            document.querySelector("#Datos-Color2").style.backgroundColor = hex;
             const idColor = comboColor1.options[comboColor1.selectedIndex].value;
             seleccionComboColor2(idColor);
         });
@@ -173,7 +173,7 @@ window.addEventListener('load',()=>{
         comboColor2.addEventListener('change',(e)=>{
             const rgb = comboColor2.options[comboColor2.selectedIndex].style.background;
             const hex = rgbToHex(rgb);
-            document.querySelector("#Datos-Color2").value = hex;
+            document.querySelector("#Datos-Color2").style.background = hex;
         });
 
         function rgbToHex(backgroundColor){
@@ -619,24 +619,17 @@ window.addEventListener('load',()=>{
                 //Asigna el color del arregle al color1 y color2
                 arregloColor.forEach(color =>{
                     if(color.id == placa.color1){
-                        document.querySelector("#Datos-Color1").value = color.hex_color;    
+                        document.querySelector("#Datos-Color1").style.backgroundColor = color.hex_color;    
                     }else{
-                        document.querySelector("#Datos-Color2").value = color.hex_color;    
+                        document.querySelector("#Datos-Color2").style.backgroundColor = color.hex_color;    
                     }
                 });
             }else{
-                document.querySelector("#Datos-Color1").value = placa.colores[0].hex_color;
-                document.querySelector("#Datos-Color2").value = placa.colores[0].hex_color;
+                document.querySelector("#Datos-Color1").style.backgroundColor = placa.colores[0].hex_color;
+                document.querySelector("#Datos-Color2").style.backgroundColor = placa.colores[0].hex_color;
             }
             
-            
-            
-            setTimeout(()=>{
-                document.querySelector("#Datos-Color1").setAttribute('disabled','true');
-                document.querySelector("#Datos-Color2").setAttribute('disabled','true');
-            },300);
-
-            
+                        
             seleccionComboColor1(placa.color1);
             seleccionComboColor2(placa.color2);
 
@@ -1326,11 +1319,6 @@ window.addEventListener('load',()=>{
         btnPrueba.addEventListener('click', function(e) {
             e.preventDefault();
             //obtenerDatos();
-
-            //document.querySelector("#Datos-Color1").setAttribute('disabled','true');
-            //document.querySelector("#Datos-Color2").setAttribute('disabled','true');
-
-            
 
         });
 
