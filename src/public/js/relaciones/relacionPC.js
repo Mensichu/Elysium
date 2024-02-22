@@ -176,18 +176,12 @@ const gridOptionsRelacionClientes = {
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA CLIENTES
 
-        //cargarTablaClientes();
-        async function cargarTablaClientes(){
+        async function cargarTablaClientes(Clientes){
             try{
-                //pinCarga('cargando');
-                // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/clientesRelacion')
-                .then(response => response.json());
-                const Clientes = data;
-                //mediante un for vamos cargando fila por fila
+                
                 for(i=0;i<Clientes.length;i++){
                     let newRow = datosAFilaGridClientes(Clientes[i],0);
-                    gridOptionsClientes.api.applyTransaction({ add: newRow });
+                    gridOptionsRelacionClientes.api.applyTransaction({ add: newRow });
                 }
                 //pinCarga('success');
             }catch(error){
@@ -201,7 +195,7 @@ const gridOptionsRelacionClientes = {
         //---------------------------------------------------Convierte los datos en una fila para AG-GRID
         function datosAFilaGridClientes(data,n) {
 
-            if (gridOptionsClientes.api) {
+            if (gridOptionsRelacionClientes.api) {
 
                 return [{ 
                             id: data.id,
@@ -214,37 +208,28 @@ const gridOptionsRelacionClientes = {
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA PLACAS
-        
-        cargarTablaPlacas();
-        async function cargarTablaPlacas(){
-            console.log('Cargandoooooo')
-            
+
+        async function cargarTablaPlacas(Clientes){
             try{
-                //pinCarga('cargando');
-                // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/placasRelacion')
-                .then(response => response.json());
-                const Placas = data;
-                //mediante un for vamos cargando fila por fila
-                for(i=0;i<Placas.length;i++){
-                    let newRow = datosAFilaGridPlacas(Placas[i],0);
-                    gridOptionsPlacas.api.applyTransaction({ add: newRow });
+
+                for(i=0;i<Clientes.length;i++){
+                    let newRow = datosAFilaGridPlacas(Clientes[i],0);
+                    gridOptionsRelacionPlacas.api.applyTransaction({ add: newRow });
                 }
                 //pinCarga('success');
             }catch(error){
-                console.log('Error al obtener las placas:', error);
+                console.log('Error al obtener los placas:', error);
                 toast(error.message, "toastColorError");
                 pinCarga('fallo');
 
             }
         }
 
-
-        //-------------------------------------------------Convierte los datos en una fila para AG-GRID
+        //---------------------------------------------------Convierte los datos en una fila para AG-GRID
         function datosAFilaGridPlacas(data,n) {
 
-            if (gridOptionsPlacas.api) {
-
+            if (gridOptionsRelacionPlacas.api) {
+                
                 return [{ 
                             id: data.id,
                             placa: data.nom_placa.toUpperCase(), 
@@ -253,7 +238,6 @@ const gridOptionsRelacionClientes = {
                             info: ('Y: '+data.Auto.ano+' | C: '+data.Auto.cilindraje.toFixed(1)).toUpperCase()
                             + ' | '+ (data.Auto.combustible? 'TD':'TM')
                         }];
-            
             }
         }
 
@@ -651,10 +635,10 @@ const gridOptionsRelacionClientes = {
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FUNCIONES PRINCIPALES
 
 
-        //-----------------------------------------------PRUEBA
+        //-----------------------------------------------CAMBIAR TIPO TABLA
         //0: no encontro 1: Tipo Cliente 2: Tipo Placa
         var tipoTabla=0;
-        function prueba(){
+        function cambiarTipoTabla(datos){
             // Paso 1: Obtener el contenedor del grid
             const eGridDivRelacion = document.getElementById("myGridRelacion");
 
@@ -662,20 +646,20 @@ const gridOptionsRelacionClientes = {
             while (eGridDivRelacion.firstChild) {
             eGridDivRelacion.removeChild(eGridDivRelacion.firstChild);
             }
-            if (tipoTabla==0){
+            console.log(datos);
+            if (tipoTabla==1){
                 // Paso 3: Crear la nueva tabla/grid
                 var nuevaTabla = new agGrid.Grid(eGridDivRelacion, gridOptionsRelacionClientes);
-                tipoTabla=1;
-            }else if(tipoTabla==1){
-                var nuevaTabla = new agGrid.Grid(eGridDivRelacion, gridOptionsRelacionPlacas);
-                tipoTabla=2;
+                cargarTablaClientes(datos);
             }else if(tipoTabla==2){
-                tipoTabla=0;
+                var nuevaTabla = new agGrid.Grid(eGridDivRelacion, gridOptionsRelacionPlacas);
+                cargarTablaPlacas(datos);
             }
-            
 
         }
 
+
+        //-----------------------------------------------BUSCAR CLIENTE
         async function buscarCliente(id){
             try{
                 if(conectado()){
@@ -690,12 +674,15 @@ const gridOptionsRelacionClientes = {
                     await cargarDatosDelCliente(data);
                     console.log("Estos son los datos")
                     console.log(data)
+                    tipoTabla=2; //Tabla de placas del cliente
+                    cambiarTipoTabla(data.placas);
                     
                 }
             }catch(error){
                 toast(error.message, "toastColorError");
                 console.log(error.message);
                 pinCarga('fallo');
+                tipoTabla=0;
             }
         }
 
@@ -704,10 +691,12 @@ const gridOptionsRelacionClientes = {
             document.getElementById("staticIdentificacion").value=data.identificacion;
             document.getElementById("staticLastName").value=data.apellidos_empresa;
             document.getElementById("staticName").value=data.nombres;
+            document.getElementById("tituloHeaderRelacion").innerHTML="Cliente: "+data.apellidos_empresa+" "+data.nombres;
+            
         }
 
 
-
+        //-----------------------------------------------BUSCAR PLACA
         async function buscarPlaca(nom_placa){
             try{
                 if(conectado()){
@@ -719,26 +708,29 @@ const gridOptionsRelacionClientes = {
                         return response.json()
                     });
                     // carga los datos de data en los combos y textos de "Datos del Cliente
+                    await cargarDatosDePlaca(data);
                     console.log("Estos son los datos")
                     console.log(data)
-                    await cargarDatosDePlaca(data);
+                    tipoTabla=1;
+                    cambiarTipoTabla(data.clientes); //Tabla de clientes de la placa
                     
                 }
             }catch(error){
                 toast(error.message, "toastColorError");
                 console.log(error.message);
                 pinCarga('fallo');
+                tipoTabla=0;
             }
         }
 
 
         function cargarDatosDePlaca(data){
-            document.getElementById("staticPlaca").value=data.nom_placa;
-            document.getElementById("staticMarca").value=data.Auto.Marca.nom_marca;
+            document.getElementById("staticPlaca").value=data.nom_placa.toUpperCase();
+            document.getElementById("staticMarca").value=data.Auto.Marca.nom_marca.toUpperCase();
             const info = (data.Auto.nom_auto+' | Y: '+data.Auto.ano+' | C: '+data.Auto.cilindraje.toFixed(1)).toUpperCase()
             + ' | '+ (data.Auto.combustible? 'TD':'TM');
             document.getElementById("staticModel").value=info;
-
+            document.getElementById("tituloHeaderRelacion").innerHTML="Placa: "+data.nom_placa.toUpperCase();
         }
 
 

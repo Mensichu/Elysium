@@ -1,5 +1,7 @@
 
 import { tablaCliente } from '../models/tablaCliente';
+import { tablaAuto } from '../models/Auto/tablaAuto';
+import { tablaMarca } from '../models/Auto/tablaMarca';
 import {tablaTipoDeIdentificacion} from '../models/Sri/tablaTipoDeIdentificacion'
 
 
@@ -107,7 +109,18 @@ export const getClientByData = async (req,res)=>{
             const registros = await client.getRegistros();
             // Mapear los registros para obtener la información de la placa
             const placas = await Promise.all(registros.map(async registro => {
-                const placa = await registro.getPlaca();
+                const placa = await registro.getPlaca({
+                    include:
+                        {
+                            model: tablaAuto,
+                            attributes: ['nom_auto', 'ano', 'cilindraje'],
+                            include: {
+                                model: tablaMarca,
+                                attributes: ['nom_marca','alias']
+                            }
+                        }
+                    
+                });
                 return placa.toJSON();
             }));
             // Agregar la información de la placa al objeto del cliente
