@@ -86,6 +86,47 @@ export const getClient = async (req,res)=>{
 }
 
 
+export const getClientByData = async (req,res)=>{
+    const {id} = req.params;
+    try{
+        const client = await tablaCliente.findOne({
+            where:{identificacion:id},
+            attributes:{
+                exclude:['estado','createdAt','updatedAt']
+            },
+            include:[
+                {
+                    model:tablaTipoDeIdentificacion,
+                    attributes:['tipo']
+                }
+        ]
+        });
+        if (client!==null){
+            //res.json(client);
+            // Obtener los registros del cliente
+            const registros = await client.getRegistros();
+            // Mapear los registros para obtener la información de la placa
+            const placas = await Promise.all(registros.map(async registro => {
+                const placa = await registro.getPlaca();
+                return placa.toJSON();
+            }));
+            // Agregar la información de la placa al objeto del cliente
+            const clienteConPlacas = client.toJSON();
+            clienteConPlacas.placas = placas;
+            res.json(clienteConPlacas);
+        }else{
+            res.status(404).json({message: 'client not found'});
+        }
+    }catch(error){
+        return res.status(500).json({message:error.message});
+    }
+    
+}
+
+
+
+//Filtros
+
 import Sequelize from 'sequelize';
 
 export const getTablaClients = async (req,res) =>{

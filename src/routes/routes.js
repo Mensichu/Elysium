@@ -48,7 +48,7 @@ router.post('/login', (req, res, next) => {
       //En caso de tener redireccionamiento, enviado desde el controlador GET login
       //mandado desde el formulario de login, redirecciona a la pagina en caso de inicio de sesion exitoso!
       const returnTo = req.body.returnTo || '/';
-      console.log(req.body.returnTo);
+      console.log("HERE2: "+req.body.returnTo);
       return res.redirect(returnTo);
     });
   })(req, res, next);
@@ -63,6 +63,7 @@ router.get('/register', (req,res)=>{
 router.get('/login', (req,res)=>{
   //Agrega la pagina para redireccionar en caso de inicio de sesion exitoso
   const returnTo = req.query.returnTo || '/';
+  console.log("HERE: "+req.query.returnTo)
   res.render('login',{returnTo});
 });
 
@@ -122,6 +123,13 @@ router.get('/relacionproductoauto', (req,res)=>{
   res.render('links/relaciones/relacionProductoAuto');
 });
 
+
+
+
+
+router.get('/relacionplacacliente222', (req,res)=>{
+  res.render('links/relaciones/relacionPlacaCliente222');
+});
 
 
 export default router;

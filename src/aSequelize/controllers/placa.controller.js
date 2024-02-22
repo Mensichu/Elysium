@@ -75,8 +75,6 @@ export const updatePlaca = async (req,res)=>{
 
 }
 
-
-
 async function placaConAutoYMarca (idPlaca){
     const placaId = idPlaca;
     const placaConAutoYMarca = await tablaPlaca.findOne({
@@ -93,6 +91,57 @@ async function placaConAutoYMarca (idPlaca){
         ]
     });
     return placaConAutoYMarca;
+}
+
+
+
+
+export const getPlacaByData = async (req,res)=>{
+    const {id} = req.params;
+    try{
+        console.log(req.params);
+        const placa = await tablaPlaca.findOne({
+            where:{nom_placa:id},
+            attributes:{
+                exclude:['estado','createdAt','updatedAt']
+            },
+            include:[
+                {
+                    model: tablaAuto,
+                    attributes: ['nom_auto', 'ano', 'cilindraje'],
+                    include: {
+                        model: tablaMarca,
+                        attributes: ['nom_marca','alias']
+                    }
+                },
+                {
+                    model: tablaColor,
+                    as: 'colores',
+                    attributes: ['id','hex_color']
+                }
+            ]
+        });
+        console.log("toy333");
+        if (placa!==null){
+            //res.json(placa);
+            // Obtener los registros de la placa
+            const registros = await placa.getRegistros();
+            // Mapear los registros para obtener la información de los clientes
+            const clients = await Promise.all(registros.map(async registro => {
+                const client = await registro.getCliente();
+                return client.toJSON();
+            }));
+            // Agregar la información de la placa al objeto del cliente
+            const placaConClientes = placa.toJSON();
+            placaConClientes.clientes = clients;
+            res.json(placaConClientes);
+        }else{
+            res.status(404).json({message: 'placa not found'});
+        }
+    }catch(error){
+        return res.status(500).json({message:error.message});
+    }
+    
 }
 
 

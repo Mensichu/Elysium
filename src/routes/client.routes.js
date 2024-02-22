@@ -1,5 +1,5 @@
 import {Router} from 'express'
-import {createClient,updateClient,getClient,getTablaClients,getComboTipos,getClientsRepetidos} from '../aSequelize/controllers/client.controller'
+import {createClient,updateClient,getClient,getTablaClients,getComboTipos,getClientsRepetidos, getClientByData} from '../aSequelize/controllers/client.controller'
 import {createPagination,getAllPaginations} from '../aSequelize/controllers/pagination.controller'
 
 const router = Router();
@@ -11,6 +11,8 @@ router.post('/client',createClient);
 router.put('/client/:id',updateClient);
 
 router.get('/client/:id',getClient);
+
+router.get('/clientByData/:id',getClientByData);
 
 router.get('/tablaClients',getTablaClients)
 

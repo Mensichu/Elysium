@@ -3,7 +3,8 @@
 window.addEventListener('load',()=>{
     //Solo se ejecuta cada vez que se recargue la pagina y sea Productos
     const pagina = window.location.pathname;
-    if(pagina.toLowerCase() == '/relacionplacacliente'){
+    //if(pagina.toLowerCase() == '/relacionplacacliente'){
+    if(pagina.toLowerCase() == '/relacionplacacliente222'){
         console.log("Cargo relacionPlacaCliente");
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA RELACION PLACA CLIENTE
 
@@ -14,97 +15,9 @@ window.addEventListener('load',()=>{
         let rowIdRelacionPlaca=null;
         let rowIdRelacionCliente=null;
 
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++TABLA CLIENTES
-        // configurar la instancia de ag-Grid
-        const gridOptionsClientes = {
-
-            // each entry here represents one column
-            columnDefs: [
-                {headerName: "Id", 
-                        field: "id", hide: true
-                    },
-                {headerName: "Identificacion",
-                    field: "identidad",sort: 'asc', floatingFilter:true, 
-                    width: 150
-                    },
-                {headerName: "Cliente", 
-                    field: "nombre", floatingFilter:true,
-                    flex: 1, minWidth: 150
-                    }
-                
-            ],
-
-            defaultColDef: {sortable: true, 
-                            filter: 'agTextColumnFilter', 
-                            enableRowGroup:true,
-                            filterParams:{
-                                buttons: ["apply","reset"]
-                            },
-                            resizable: true,
-                        },
-            onModelUpdated: (event) => {
-                if(true || rowIdCliente!==null){
-                    console.log('-----------------------------------------ON MODEL UPDATED');
-                    //Anima al reordenar las filas
-                    gridOptionsClientes.api.redrawRows();
-                    
-                }
-            },
-
-            getRowId: (params) => { return params.data.id; },
-
-            rowHeight: 45, // altura de las filas en píxeles
-            headerHeight: 30, // altura del encabezado en píxeles
-            rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
-            rowSelection: 'single', // allow rows to be selected
-            animateRows: true, // have rows animate to new positions when sorted
-
-            // example event handler
-            onCellClicked: params => {
-                if(params.data!== undefined){
-                    rowIdCliente = params.data.id;
-                    rowIdRelacionPlaca=null;
-                    gridOptionsRelacionPlacas.api.setRowData([])
-                    const titleClienteRelacion = document.getElementById('titulo-Cliente-Placas');
-                    titleClienteRelacion.textContent= 'Cliente: ';
-                }else{
-                    console.log('Deseleccionaste!')
-                }
-            },
-            onCellDoubleClicked: function(event) {
-                // Manejar el doble clic en una celda
-                
-                rowIdCliente = event.data.id;
-                rowIdRelacionPlaca=null;
-                seleccionTablaCliente(rowIdCliente,true);
-            },
-            onSelectionChanged: () => {
-                console.log('SelectionChanged')
-                const selectedRows = gridOptionsClientes.api.getSelectedRows();
-                if (selectedRows.length === 0) {
-                    // aquí puedes hacer algo cuando no hay filas seleccionadas
-                    rowIdCliente=null
-                  
-                }
-            }
-
-        };
-        // get div to host the grid
-        const eGridDivClientes = document.getElementById("myGridClientes");
-        // new grid instance, passing in the hosting DIV and Grid Options
-        var grid = new agGrid.Grid(eGridDivClientes, gridOptionsClientes);
-
-        const gridApi = gridOptionsClientes.api;
-        // obtenemos el elemento del encabezado de la tabla
-//const headerElement = document.querySelector("#myGridClientes .ag-header-row");
-
-
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA CLIENTE: placas RELACION
-
-
-
 
 
 
@@ -178,122 +91,14 @@ const gridOptionsRelacionPlacas = {
     }
 };
 // get div to host the grid
-const eGridDivRelacionPlacas = document.getElementById("myGridRelacionPlacas");
+const eGridDivRelacion = document.getElementById("myGridRelacion");
+
 // new grid instance, passing in the hosting DIV and Grid Options
-var grid = new agGrid.Grid(eGridDivRelacionPlacas, gridOptionsRelacionPlacas);
+var temporal111 = new agGrid.Grid(eGridDivRelacion, gridOptionsRelacionPlacas);
 
-const gridApiRelacionPlacas = gridOptionsRelacionPlacas.api;
+//const gridApiRelacionPlacas = gridOptionsRelacionPlacas.api;
 
-
-
-gridOptionsRelacionPlacas.api.setRowData([]);
-
-
-
-
-
-
-
-
-
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++TABLA PLACAS
-
-        // configurar la instancia de ag-Grid
-        const gridOptionsPlacas = {
-
-            // each entry here represents one column
-            columnDefs: [
-                {headerName: "Id", 
-                        field: "id", hide: true
-                    },
-                {headerName: "Placa",
-                    field: "placa",sort: 'asc', floatingFilter:true, 
-                    width: 110
-                    },
-                {headerName: "Marca",
-                    field: "marca",sort: 'asc', floatingFilter:true, 
-                    width: 100
-                    },
-                {headerName: "Modelo", 
-                    field: "modelo", floatingFilter:true,
-                    flex: 1, minWidth: 150
-                    },
-                {headerName: "info", 
-                    field: "info", floatingFilter:true,
-                    width: 180
-                    }
-            ],
-            defaultColDef: {sortable: true, 
-                            filter: 'agTextColumnFilter', 
-                            enableRowGroup:true,
-                            filterParams:{
-                                buttons: ["apply","reset"]
-                            },
-                            resizable: true,
-                        },
-            onModelUpdated: (event) => {
-                if(true || rowIdPlaca!==null){
-
-                    clasesFila='cambioColor';
-                    gridOptionsPlacas.api.redrawRows();
-
-                }
-            },
-            onModelUpdated: (event) => {
-                if(true || rowId!==null){
-                    console.log('-----------------------------------------ON MODEL PLACA UPDATED');
-                    //Anima al reordenar las filas
-                    gridOptionsPlacas.api.redrawRows();
-                    //btnPlacaRelacionNueva.disabled=true;
-                    
-                }
-            },
-
-            getRowId: (params) => { return params.data.id; },
-
-            rowHeight: 50, // altura de las filas en píxeles
-            headerHeight: 40, // altura del encabezado en píxeles
-            rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
-            rowSelection: 'single', // allow rows to be selected
-            animateRows: true, // have rows animate to new positions when sorted
-
-            // example event handler
-            onCellClicked: params => {
-                if(params.data!== undefined){
-                    rowIdPlaca = params.data.id;
-                    //seleccionTabla(rowIdCliente,true);
-                    //btnPlacaRelacionNueva.disabled=modotablaClienteRelacion;
-                    rowIdRelacionCliente=null;
-                    gridOptionsRelacionClientes.api.setRowData([])
-                    const titlePlacaRelacion = document.getElementById('titulo-Placa-Clientes');
-                    titlePlacaRelacion.textContent= 'Placa:';
-                }else{
-                    //guardarBtn.disabled=true;
-                }
-            },
-            onCellDoubleClicked: function(event){
-                rowIdPlaca = event.data.id;
-                seleccionTablaPlaca(rowIdPlaca,true);
-                rowIdRelacionCliente=null;//gridOptionsClientes.api.deselectAll();
-            },
-            onSelectionChanged: () => {
-                console.log('SelectionChanged')
-                const selectedRows = gridOptionsPlacas.api.getSelectedRows();
-                if (selectedRows.length === 0) {
-                    // aquí puedes hacer algo cuando no hay filas seleccionadas
-                    rowIdPlaca=null
-                  
-                }
-            }
-        };
-        // get div to host the grid
-        const eGridDivPlacas = document.getElementById("myGridPlacas");
-        // new grid instance, passing in the hosting DIV and Grid Options
-        var grid = new agGrid.Grid(eGridDivPlacas, gridOptionsPlacas);
-
-        const gridApiPlacas = gridOptionsPlacas.api;
-
-
+//gridOptionsRelacionPlacas.api.setRowData([]);
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA PLACA: clientes RELACION
@@ -362,20 +167,16 @@ const gridOptionsRelacionClientes = {
     }
 };
 // get div to host the grid
-const eGridDivRelacionClientes = document.getElementById("myGridRelacionClientes");
+//const eGridDivRelacionClientes = document.getElementById("myGridRelacionClientes"); seria el mismo de arriba
 // new grid instance, passing in the hosting DIV and Grid Options
-var grid = new agGrid.Grid(eGridDivRelacionClientes, gridOptionsRelacionClientes);
 
-const gridApiRelacionClientes = gridOptionsRelacionClientes.api;
+    //const tablaRelClientes = document.createElement("div");
 
-
-
-gridOptionsRelacionClientes.api.setRowData([]);
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA CLIENTES
 
-        cargarTablaClientes();
+        //cargarTablaClientes();
         async function cargarTablaClientes(){
             try{
                 //pinCarga('cargando');
@@ -751,12 +552,36 @@ gridOptionsRelacionClientes.api.setRowData([]);
 
 
         
+        //------------------------------------------------------------------------------------ btn PRUEBA111
+
+        const btnPrueba111 = document.getElementById('btn-Relacionar');
+
+        
+        btnPrueba111.addEventListener('click',()=>{
+            
+            prueba();
+        });
+        
+        const btnBuscarCliente = document.getElementById("btn-BuscarCliente");
+
+        btnBuscarCliente.addEventListener('click',()=>{
+            const id = document.getElementById("Datos-Identificacion").value;
+            buscarCliente(id);
+        });
+
+        const btnBuscarPlaca = document.getElementById("btn-BuscarPlaca");
+
+        btnBuscarPlaca.addEventListener('click',()=>{
+            const nom_placa = document.getElementById("Datos-Placa").value;
+            buscarPlaca(nom_placa);
+        });
+        
         //------------------------------------------------------------------------------------ btn CLIENTE RELACION NUEVA
 
         const btnClienteRelacionNueva = document.getElementById('btn-ClienteRelacionar');
 
         
-        btnClienteRelacionNueva.addEventListener('click',()=>{
+        /*btnClienteRelacionNueva.addEventListener('click',()=>{
             
             if(rowIdCliente!==null && rowIdPlaca!==null){
                 //console.log('CREANDO RELACION');
@@ -819,14 +644,102 @@ gridOptionsRelacionClientes.api.setRowData([]);
         });
 
 
-
+        */
 
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FUNCIONES PRINCIPALES
 
 
+        //-----------------------------------------------PRUEBA
+        //0: no encontro 1: Tipo Cliente 2: Tipo Placa
+        var tipoTabla=0;
+        function prueba(){
+            // Paso 1: Obtener el contenedor del grid
+            const eGridDivRelacion = document.getElementById("myGridRelacion");
 
+            // Paso 2: Verificar si hay hijos en el contenedor y eliminarlos
+            while (eGridDivRelacion.firstChild) {
+            eGridDivRelacion.removeChild(eGridDivRelacion.firstChild);
+            }
+            if (tipoTabla==0){
+                // Paso 3: Crear la nueva tabla/grid
+                var nuevaTabla = new agGrid.Grid(eGridDivRelacion, gridOptionsRelacionClientes);
+                tipoTabla=1;
+            }else if(tipoTabla==1){
+                var nuevaTabla = new agGrid.Grid(eGridDivRelacion, gridOptionsRelacionPlacas);
+                tipoTabla=2;
+            }else if(tipoTabla==2){
+                tipoTabla=0;
+            }
+            
+
+        }
+
+        async function buscarCliente(id){
+            try{
+                if(conectado()){
+                    const data = await fetch('/clientByData/'+id)
+                    .then(response => {
+                        if(!response.ok){
+                            throw new Error('Servidor - '+response.status+': '+response.statusText);
+                        }
+                        return response.json()
+                    });
+                    // carga los datos de data en los combos y textos de "Datos del Cliente
+                    await cargarDatosDelCliente(data);
+                    console.log("Estos son los datos")
+                    console.log(data)
+                    
+                }
+            }catch(error){
+                toast(error.message, "toastColorError");
+                console.log(error.message);
+                pinCarga('fallo');
+            }
+        }
+
+
+        function cargarDatosDelCliente(data){
+            document.getElementById("staticIdentificacion").value=data.identificacion;
+            document.getElementById("staticLastName").value=data.apellidos_empresa;
+            document.getElementById("staticName").value=data.nombres;
+        }
+
+
+
+        async function buscarPlaca(nom_placa){
+            try{
+                if(conectado()){
+                    const data = await fetch('/placaByData/'+nom_placa)
+                    .then(response => {
+                        if(!response.ok){
+                            throw new Error('Servidor - '+response.status+': '+response.statusText);
+                        }
+                        return response.json()
+                    });
+                    // carga los datos de data en los combos y textos de "Datos del Cliente
+                    console.log("Estos son los datos")
+                    console.log(data)
+                    await cargarDatosDePlaca(data);
+                    
+                }
+            }catch(error){
+                toast(error.message, "toastColorError");
+                console.log(error.message);
+                pinCarga('fallo');
+            }
+        }
+
+
+        function cargarDatosDePlaca(data){
+            document.getElementById("staticPlaca").value=data.nom_placa;
+            document.getElementById("staticMarca").value=data.Auto.Marca.nom_marca;
+            const info = (data.Auto.nom_auto+' | Y: '+data.Auto.ano+' | C: '+data.Auto.cilindraje.toFixed(1)).toUpperCase()
+            + ' | '+ (data.Auto.combustible? 'TD':'TM');
+            document.getElementById("staticModel").value=info;
+
+        }
 
 
         //---------------------------------------------- NUEVA RELACION

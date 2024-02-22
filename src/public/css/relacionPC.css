@@ -120,6 +120,7 @@ body{
     max-width: 98%;
     margin-left:auto;
     margin-right:auto;
+    
   }
   
 
@@ -132,12 +133,14 @@ body{
 
   .contenedor {
     position: relative;
-    height: 85vh; /* altura del viewport */
+    /*height: 85vh; /* altura del viewport */
+    
     
   }
 
   .tablaPrincipal{
     height: 60%;
+    padding-top: 10px;
   }
 
   .tablaRelacion{

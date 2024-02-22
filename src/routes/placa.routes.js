@@ -1,5 +1,5 @@
 import {Router} from 'express'
-import {getPlacas,getComboAutosInfo,createPlaca,getTablaPlacas,getPlacasRepetidas,getPlacaById,updatePlaca} from '../aSequelize/controllers/placa.controller'
+import {getPlacas,getComboAutosInfo,createPlaca,getTablaPlacas,getPlacasRepetidas,getPlacaById,updatePlaca, getPlacaByData} from '../aSequelize/controllers/placa.controller'
 
 const router = Router();
 
@@ -17,6 +17,8 @@ router.post('/placa',createPlaca);
 router.get('/tablaPlacas',getTablaPlacas);
 
 router.get('/placasRepetidas',getPlacasRepetidas);
+
+router.get('/placaByData/:id',getPlacaByData);
 
 router.get('/placa/:id',getPlacaById);
 
