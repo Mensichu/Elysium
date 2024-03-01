@@ -42,11 +42,11 @@
     }
   
 
-    .formGroupBorder{
-        border: 1px dashed transparent;
-        background-color: var(--backgroundColorGroup);
-        
-    }
+  .formGroupBorder{
+      border: 1px dashed transparent;
+      background-color: var(--backgroundColorGroup);
+      
+  }
   
 
   
@@ -87,7 +87,10 @@
     .card{
       background: transparent;
     }
-  
+    
+    .card-body-green{
+      background-color:#00ff0018 !important;
+    }
     
 /*                                               FONDO                    */
 
@@ -125,6 +128,8 @@ body{
   
 
   .contenedorIzquierdo{
+    border: 0px;
+    border-radius: 0%;
     border-right: 1px solid;
     border-right-color: #4e4e4e;
   }
@@ -205,6 +210,27 @@ body{
     width: 50%;
 
 }
+
+
+
+.textoYCuadro {
+  display: flex;
+  align-items: center; /* Alinea verticalmente el contenido */
+}
+
+.cuadrado-color {
+  width: 20px;
+  height: 20px;
+  background-color: black;
+  margin-right: 10px; /* Ajusta el espacio entre el cuadrado y el texto según sea necesario */
+}
+
+
+
+
+
+
+
 
 .anchoResp1{
   display: block;

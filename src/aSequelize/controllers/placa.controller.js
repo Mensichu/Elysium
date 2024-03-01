@@ -103,7 +103,7 @@ export const getPlacaByData = async (req,res)=>{
         const placa = await tablaPlaca.findOne({
             where:{nom_placa:id},
             attributes:{
-                exclude:['estado','createdAt','updatedAt']
+                exclude:['color1','color2','estado','createdAt','updatedAt']
             },
             include:[
                 {
@@ -121,7 +121,6 @@ export const getPlacaByData = async (req,res)=>{
                 }
             ]
         });
-        console.log("toy333");
         if (placa!==null){
             //res.json(placa);
             // Obtener los registros de la placa
@@ -129,7 +128,11 @@ export const getPlacaByData = async (req,res)=>{
             // Mapear los registros para obtener la información de los clientes
             const clients = await Promise.all(registros.map(async registro => {
                 const client = await registro.getCliente();
-                return client.toJSON();
+                const clienteConIdRelacion = {
+                    ...client.toJSON(),
+                    id_relacion: registro.dataValues.id
+                };
+                return clienteConIdRelacion;
             }));
             // Agregar la información de la placa al objeto del cliente
             const placaConClientes = placa.toJSON();

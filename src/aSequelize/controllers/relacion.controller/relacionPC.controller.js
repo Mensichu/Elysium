@@ -41,14 +41,12 @@ export const createRelacionPC = async (req,res) =>{
 export const deleteRelacionPC = async (req,res)=>{
     
     try{
+        const {id} = req.params;
         const relacion = await tablaRegistroPlacaCliente.findOne({
             where:
-            [
                 {
-                    id_cliente:req.body.id_cliente,
-                    id_placa:req.body.id_placa
+                    id
                 }
-            ]
         });
         if(relacion!==null){
             await relacion.destroy();

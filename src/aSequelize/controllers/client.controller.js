@@ -107,11 +107,16 @@ export const getClientByData = async (req,res)=>{
             //res.json(client);
             // Obtener los registros del cliente
             const registros = await client.getRegistros();
+            //console.log("ESTOS SON LOS REGISTROS DEL CLIENTE");
+            //console.log(registros[0].dataValues.id)
             // Mapear los registros para obtener la información de la placa
             const placas = await Promise.all(registros.map(async registro => {
+                console.log("REGISTRO")
+                console.log(registro.dataValues.id)
                 const placa = await registro.getPlaca({
                     include:
                         {
+                            //id_relacion: registro.dataValues.id,
                             model: tablaAuto,
                             attributes: ['nom_auto', 'ano', 'cilindraje'],
                             include: {
@@ -119,9 +124,12 @@ export const getClientByData = async (req,res)=>{
                                 attributes: ['nom_marca','alias']
                             }
                         }
-                    
                 });
-                return placa.toJSON();
+                const placaConIdRelacion = {
+                    ...placa.toJSON(),
+                    id_relacion: registro.dataValues.id
+                };
+                return placaConIdRelacion;
             }));
             // Agregar la información de la placa al objeto del cliente
             const clienteConPlacas = client.toJSON();

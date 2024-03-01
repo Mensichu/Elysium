@@ -8,7 +8,7 @@ const router = Router();
 
 router.post('/createRelacionPC',createRelacionPC)
 
-router.delete('/deleteRelacionPC',deleteRelacionPC)
+router.delete('/deleteRelacionPC/:id',deleteRelacionPC)
 
 router.get('/clientesRelacion',getClientesRelacion)
 

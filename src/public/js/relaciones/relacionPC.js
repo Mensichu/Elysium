@@ -4,7 +4,7 @@ window.addEventListener('load',()=>{
     //Solo se ejecuta cada vez que se recargue la pagina y sea Productos
     const pagina = window.location.pathname;
     //if(pagina.toLowerCase() == '/relacionplacacliente'){
-    if(pagina.toLowerCase() == '/relacionplacacliente222'){
+    if(pagina.toLowerCase() == '/relacionplacacliente'){
         console.log("Cargo relacionPlacaCliente");
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA RELACION PLACA CLIENTE
 
@@ -12,8 +12,7 @@ window.addEventListener('load',()=>{
         
         let rowIdCliente = null;
         let rowIdPlaca = null;
-        let rowIdRelacionPlaca=null;
-        let rowIdRelacionCliente=null;
+        let rowIdRelacion=null;
 
 
 
@@ -25,9 +24,12 @@ const gridOptionsRelacionPlacas = {
 
     // each entry here represents one column
     columnDefs: [
-        {headerName: "Id", 
-                field: "id", hide: true
+        {headerName: "Id_Relacion", 
+                field: "id_relacion", hide: true
             },
+        {headerName: "Id", 
+            field: "id", hide: true
+        },
         {headerName: "Placa",
             field: "placa",sort: 'asc', floatingFilter:true, 
             width: 110
@@ -54,7 +56,7 @@ const gridOptionsRelacionPlacas = {
                     resizable: true,
                 },
     onModelUpdated: (event) => {
-        if(true || rowIdRelacionPlaca!==null){
+        if(true ){
             console.log('-----------------------------------------ON MODEL PLACA UPDATED');
             //Anima al reordenar las filas
             gridOptionsRelacionPlacas.api.redrawRows();
@@ -70,33 +72,94 @@ const gridOptionsRelacionPlacas = {
     rowSelection: 'single', // allow rows to be selected
     animateRows: true, // have rows animate to new positions when sorted
     overlayNoRowsTemplate: 'No se encontraron placas relacionadas a este cliente',
+    getContextMenuItems: getContextMenuItems1,
 
     // example event handler
     onCellClicked: params => {
         if(params.data!== undefined){
-            rowIdRelacionPlaca = params.data.id;
-            //seleccionTabla(rowIdCliente,true);
+            rowIdRelacion = params.data.id_relacion;
         }else{
             //guardarBtn.disabled=true;
         }
+    },
+    onCellContextMenu: params => {
+        // Acciones a realizar al hacer clic derecho en una celda
+        console.log('Hiciste clic derecho en la celda:', params.data.id);
+        rowIdRelacion = params.data.id_relacion;
+        // Puedes acceder a la fila seleccionada y realizar acciones adicionales
+        params.api.deselectAll();
+        const selectedNode = params.node;
+        selectedNode.setSelected(true);
+        //console.log('Datos de la fila seleccionada:', selectedRowNode.data);
+
+        // Evita que aparezca el menú contextual predeterminado del navegador
+        //params.event.preventDefault();
     },
     onSelectionChanged: () => {
         console.log('SelectionChanged')
         const selectedRows = gridOptionsRelacionPlacas.api.getSelectedRows();
         if (selectedRows.length === 0) {
             // aquí puedes hacer algo cuando no hay filas seleccionadas
-            rowIdRelacionPlaca=null
+            
           
         }
     }
 };
+
+  
+  function getContextMenuItems1(params) {
+    var result = [
+      {
+        // custom item
+        name: 'Eliminar',
+        action: () => {
+            if(rowIdCliente!==null && rowIdRelacion!==null){
+                construirModal(0);
+                ejecutarAnimacion();
+            }else{
+                toast("Seleccione un cliente y un vehiculo!", "toastColorError");
+            }
+        },
+        cssClasses: ['red', 'bold'],
+      },
+      'copy',
+      'separator',
+      'export',
+    ];
+  
+    return result;
+  }
+
+  function getContextMenuItems2(params) {
+    var result = [
+      {
+        // custom item
+        name: 'Eliminar',
+        action: () => {
+            if(rowIdPlaca!==null && rowIdRelacion!==null){
+                construirModal(1);
+                ejecutarAnimacion();
+            }else{
+                toast("Seleccione un vehiculo y un cliente!", "toastColorError");
+            }
+        },
+        cssClasses: ['red', 'bold'],
+      },
+      'copy',
+      'separator',
+      'export',
+    ];
+  
+    return result;
+  }
+
 // get div to host the grid
 const eGridDivRelacion = document.getElementById("myGridRelacion");
 
 // new grid instance, passing in the hosting DIV and Grid Options
 var temporal111 = new agGrid.Grid(eGridDivRelacion, gridOptionsRelacionPlacas);
 
-//const gridApiRelacionPlacas = gridOptionsRelacionPlacas.api;
+const gridApiRelacionPlacas = gridOptionsRelacionPlacas.api;
 
 //gridOptionsRelacionPlacas.api.setRowData([]);
 
@@ -108,6 +171,9 @@ const gridOptionsRelacionClientes = {
 
     // each entry here represents one column
     columnDefs: [
+        {headerName: "Id_Relacion", 
+                field: "id_relacion", hide: true
+            },
         {headerName: "Id", 
                 field: "id", hide: true
             },
@@ -130,7 +196,7 @@ const gridOptionsRelacionClientes = {
                     resizable: true,
                 },
     onModelUpdated: (event) => {
-        if(true || rowIdRelacionCliente!==null){
+        if(true ){
             console.log('-----------------------------------------ON MODEL PLACA UPDATED');
             //Anima al reordenar las filas
             gridOptionsRelacionClientes.api.redrawRows();
@@ -146,44 +212,107 @@ const gridOptionsRelacionClientes = {
     rowSelection: 'single', // allow rows to be selected
     animateRows: true, // have rows animate to new positions when sorted
     overlayNoRowsTemplate: 'No se encontraron clientes relacionados a esta placa',
+    getContextMenuItems: getContextMenuItems2,
 
     // example event handler
     onCellClicked: params => {
         if(params.data!== undefined){
-            rowIdRelacionCliente = params.data.id;
-            //seleccionTabla(rowIdCliente,true);
+            rowIdRelacion = params.data.id_relacion;
+            
         }else{
-            //guardarBtn.disabled=true;
+            
         }
+    },
+    onCellContextMenu: params => {
+        // Acciones a realizar al hacer clic derecho en una celda
+        console.log('Hiciste clic derecho en la celda:', params.data.id);
+        rowIdRelacion = params.data.id_relacion;
+        // Puedes acceder a la fila seleccionada y realizar acciones adicionales
+        params.api.deselectAll();
+        const selectedNode = params.node;
+        selectedNode.setSelected(true);
+        //console.log('Datos de la fila seleccionada:', selectedRowNode.data);
+
+        // Evita que aparezca el menú contextual predeterminado del navegador
+        //params.event.preventDefault();
     },
     onSelectionChanged: () => {
         console.log('SelectionChanged')
         const selectedRows = gridOptionsRelacionClientes.api.getSelectedRows();
         if (selectedRows.length === 0) {
             // aquí puedes hacer algo cuando no hay filas seleccionadas
-            rowIdRelacionCliente=null
+            
           
         }
     }
 };
-// get div to host the grid
-//const eGridDivRelacionClientes = document.getElementById("myGridRelacionClientes"); seria el mismo de arriba
-// new grid instance, passing in the hosting DIV and Grid Options
-
-    //const tablaRelClientes = document.createElement("div");
 
 
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA CLIENTES
+
+
+
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FUNCIONES PRINCIPALES
+
+
+        //+++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA MODO CARGA
+
+        function paginaModoCarga(activar){
+            const inputCard = document.querySelectorAll('input');
+            const buttonCard = document.querySelectorAll('button');
+            
+            if(activar){
+                pinCarga('cargando')
+                cambiarTipoTabla([]);
+                if(tipoTabla==1){//Tabla de Clientes
+                    try{gridOptionsRelacionClientes.api.setRowData([]);
+                        gridOptionsRelacionClientes.api.showLoadingOverlay();}catch(error){}
+                    
+                }else{//Tabla de Placas
+                    try{gridOptionsRelacionPlacas.api.setRowData([]);
+                        gridOptionsRelacionPlacas.api.showLoadingOverlay();}catch(error){}
+                }
+                inputCard.forEach(input => {
+                    input.disabled=true;
+                });
+                buttonCard.forEach(button => {
+                    button.disabled=true;
+                });
+            }else{
+                pinCarga('success')
+                inputCard.forEach(input => {
+                    input.disabled=false;
+                });
+                buttonCard.forEach(button => {
+                    button.disabled=false;
+                });
+                if(tipoTabla==1){//Tabla de Clientes
+                    //try{gridOptionsRelacionClientes.api.hideOverlay();}catch(error){}
+                    
+                }else{//Tabla de Placas
+                    try{gridOptionsRelacionPlacas.api.hideLoadingOverlay();}catch(error){}
+                }
+            }
+            
+        }  
+
+
+
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA CLIENTES
 
         async function cargarTablaClientes(Clientes){
             try{
-                
-                for(i=0;i<Clientes.length;i++){
-                    let newRow = datosAFilaGridClientes(Clientes[i],0);
-                    gridOptionsRelacionClientes.api.applyTransaction({ add: newRow });
+                if(Clientes.length!=0){
+                    for(i=0;i<Clientes.length;i++){
+                        let newRow = datosAFilaGridClientes(Clientes[i],0);
+                        gridOptionsRelacionClientes.api.applyTransaction({ add: newRow });
+                    }
+                }else{
+                    gridOptionsRelacionClientes.api.setRowData([]);
                 }
-                //pinCarga('success');
             }catch(error){
                 console.log('Error al obtener los clientes:', error);
                 toast(error.message, "toastColorError");
@@ -198,6 +327,7 @@ const gridOptionsRelacionClientes = {
             if (gridOptionsRelacionClientes.api) {
 
                 return [{ 
+                            id_relacion: data.id_relacion,
                             id: data.id,
                             identidad: data.identificacion.toUpperCase(), 
                             nombre: data.apellidos_empresa.toUpperCase()+(data.nombres!=null?' '+data.nombres.toUpperCase():'')
@@ -207,16 +337,18 @@ const gridOptionsRelacionClientes = {
         }
 
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA PLACAS
+        //+++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA PLACAS
 
-        async function cargarTablaPlacas(Clientes){
+        async function cargarTablaPlacas(Placas){
             try{
-
-                for(i=0;i<Clientes.length;i++){
-                    let newRow = datosAFilaGridPlacas(Clientes[i],0);
-                    gridOptionsRelacionPlacas.api.applyTransaction({ add: newRow });
+                if(Placas.length!=0){
+                    for(i=0;i<Placas.length;i++){
+                        let newRow = datosAFilaGridPlacas(Placas[i],0);
+                        gridOptionsRelacionPlacas.api.applyTransaction({ add: newRow });
+                    }
+                }else{
+                    gridOptionsRelacionPlacas.api.setRowData([]);
                 }
-                //pinCarga('success');
             }catch(error){
                 console.log('Error al obtener los placas:', error);
                 toast(error.message, "toastColorError");
@@ -229,8 +361,9 @@ const gridOptionsRelacionClientes = {
         function datosAFilaGridPlacas(data,n) {
 
             if (gridOptionsRelacionPlacas.api) {
-                
-                return [{ 
+
+                return [{
+                            id_relacion: data.id_relacion,
                             id: data.id,
                             placa: data.nom_placa.toUpperCase(), 
                             marca: data.Auto.Marca.alias.toUpperCase(),
@@ -240,399 +373,6 @@ const gridOptionsRelacionClientes = {
                         }];
             }
         }
-
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ SELECCIONES
-
-
-
-        //------------------------------------------------------------------------------------ seleccion tabla cliente
-        let modotablaPlacaRelacion= false;
-
-        async function seleccionTablaCliente(id,mouse) {
-            console.log('Id enviado es: '+id)
-            const titleClienteRelacion = document.getElementById('titulo-Cliente-Placas');
-            titleClienteRelacion.textContent= 'Cliente: '+obtenerDatosFilaSeleccionadaClientes().identidad;
-            try{
-                const inputCard = document.querySelectorAll('.form-group input');
-                const buttonCard = document.querySelectorAll('.form-group button');
-                if(mouse){
-                    pinCarga('cargando')
-                    inputCard.forEach(input => {
-                        input.disabled=true;
-                    });
-                    buttonCard.forEach(button => {
-                        button.disabled=true;
-                    });
-                }
-                if(conectado()){
-                    const data = await fetch('/clienteRelacionById/'+id)
-                    .then(response => {
-                        if(!response.ok){
-                            throw new Error('Servidor - '+response.status+': '+response.statusText);
-                        }
-                        return response.json()
-                    });
-                    // carga los datos de data en los combos y textos de "Datos del Cliente
-                    const Placas = data.placas;
-                    //console.log(Placas);
-                    if(Placas.length!=0){
-                        gridOptionsRelacionPlacas.api.setRowData([])
-                        //mediante un for vamos cargando fila por fila
-                        for(i=0;i<Placas.length;i++){
-                            let newRow = datosAFilaGridPlacas(Placas[i],0);
-                            gridOptionsRelacionPlacas.api.applyTransaction({ add: newRow });
-                        }
-                        modotablaPlacaRelacion=true;
-                    }else{
-                        if(modotablaPlacaRelacion){
-                            gridOptionsRelacionPlacas.api.setRowData([])
-                            //cargarTablaPlacas();
-                            modotablaPlacaRelacion=false;
-                        }
-                        toast('No registra relacion alguna', "toastColorInfo");
-                    }
-                    
-                    //validacionVaciar();
-                    if(mouse){
-                        pinCarga('successFast')
-                        inputCard.forEach(input => {
-                            input.disabled=false;
-                        });
-                        buttonCard.forEach(button => {
-                            button.disabled=false;
-                        });
-                    };
-                }
-            }catch(error){
-                toast(error.message, "toastColorError");
-                console.log(error.message);
-                pinCarga('fallo');
-            }
-        }
-
-        //------------------------------------------------------------------------------------ seleccion tabla placa
-        let modotablaClienteRelacion= false;
-
-        async function seleccionTablaPlaca(id,mouse) {
-            console.log('Id enviado es: '+id)
-            const titlePlacaRelacion = document.getElementById('titulo-Placa-Clientes');
-            titlePlacaRelacion.textContent= 'Placa: '+obtenerDatosFilaSeleccionadaPlacas().placa;
-            try{
-                const inputCard = document.querySelectorAll('.form-group input');
-                const buttonCard = document.querySelectorAll('.form-group button');
-                if(mouse){
-                    pinCarga('cargando')
-                    inputCard.forEach(input => {
-                        input.disabled=true;
-                    });
-                    buttonCard.forEach(button => {
-                        button.disabled=true;
-                    });
-                }
-                if(conectado()){
-                    const data = await fetch('/placaRelacionById/'+id)
-                    .then(response => {
-                        if(!response.ok){
-                            throw new Error('Servidor - '+response.status+': '+response.statusText);
-                        }
-                        return response.json()
-                    });
-                    console.log('+++++++++++++++++++++++++++++++++++++++++')
-                    const Clientes = data.clients;
-                    //console.log(Placas);
-                    if(Clientes.length!=0){
-                        gridOptionsRelacionClientes.api.setRowData([])
-                        //mediante un for vamos cargando fila por fila
-                        for(i=0;i<Clientes.length;i++){
-                            let newRow = datosAFilaGridClientes(Clientes[i],0);
-                            gridOptionsRelacionClientes.api.applyTransaction({ add: newRow });
-                        }
-                        modotablaClienteRelacion=true;
-                    }else{
-                        if(modotablaClienteRelacion){
-                            gridOptionsRelacionClientes.api.setRowData([])
-                            //cargarTablaPlacas();
-                            modotablaClienteRelacion=false;
-                        }
-                        toast('No registra relacion alguna', "toastColorInfo");
-                    }
-                    
-                    //validacionVaciar();
-                    if(mouse){
-                        pinCarga('successFast')
-                        inputCard.forEach(input => {
-                            input.disabled=false;
-                        });
-                        buttonCard.forEach(button => {
-                            button.disabled=false;
-                        });
-                        //btnPlacaRelacionNueva.disabled=modotablaClienteRelacion;
-                    };
-                }
-            }catch(error){
-                toast(error.message, "toastColorError");
-                console.log(error.message);
-                pinCarga('fallo');
-            }
-        }
-    
-
-        function obtenerDatosFilaSeleccionadaClientes(){
-            const gridApi = gridOptionsClientes.api;
-            const selectedRowNode = gridApi.getSelectedNodes()[0];
-            if(selectedRowNode!== undefined){
-                const selectedData = selectedRowNode.data;
-                //console.log(selectedData)
-                return selectedData;
-            }
-            return null
-        }
-        function obtenerDatosFilaSeleccionadaPlacas(){
-            const gridApi = gridOptionsPlacas.api;
-            const selectedRowNode = gridApi.getSelectedNodes()[0];
-            if(selectedRowNode!== undefined){
-                const selectedData = selectedRowNode.data;
-                //console.log(selectedData)
-                return selectedData;
-            }
-            return null
-        }
-
-
-        function obtenerDatosFilaSeleccionadaRelacionClientes(){
-            const gridApi = gridOptionsRelacionClientes.api;
-            const selectedRowNode = gridApi.getSelectedNodes()[0];
-            if(selectedRowNode!== undefined){
-                const selectedData = selectedRowNode.data;
-                //console.log(selectedData)
-                return selectedData;
-            }
-            return null
-        }
-        function obtenerDatosFilaSeleccionadaRelacionPlacas(){
-            const gridApi = gridOptionsRelacionPlacas.api;
-            const selectedRowNode = gridApi.getSelectedNodes()[0];
-            if(selectedRowNode!== undefined){
-                const selectedData = selectedRowNode.data;
-                //console.log(selectedData)
-                return selectedData;
-            }
-            return null
-        }
-
-        
-
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ MODAL
-
-        //-----------------------------------------------------------Construccion modal
-
-        function construirModal(numeroModal){
-            const titulo = ['Eliminar relacion','Eliminar relacion','Nueva relacion'];
-            let dataCliente = -1;
-            let dataPlaca = -1;
-            if(numeroModal==0){
-                dataCliente =   obtenerDatosFilaSeleccionadaClientes()
-                dataPlaca =     obtenerDatosFilaSeleccionadaRelacionPlacas()
-            }
-            if(numeroModal==1){
-                dataCliente =   obtenerDatosFilaSeleccionadaRelacionClientes()
-                dataPlaca =     obtenerDatosFilaSeleccionadaPlacas()
-            }
-            if(numeroModal==2){
-                dataCliente = obtenerDatosFilaSeleccionadaClientes()
-                dataPlaca = obtenerDatosFilaSeleccionadaPlacas()
-            }
-            
-
-            //Vaciar Modal
-            vaciarModal();
-            
-            //H5: TITLE
-            const h5Title = document.getElementById('tituloHeader');
-            h5Title.textContent=titulo[numeroModal];
-            //DIV: CardBody
-            const modalBody = document.getElementById('modalBody');
-            //INPUT: elemento P
-            const textoP = document.createElement('P');
-            textoP.classList.add('card-title');
-            //rowIdCliente rowIdRelacionPlaca
-            //rowIdRelacionCliente rowIdPlaca
-            if(numeroModal == 0)textoP.textContent='¿"'+dataCliente.nombre+'" tiene un auto con placa: "'+dataPlaca.placa+'"\n, desea Destruir esta relacion?';
-            if(numeroModal == 1)textoP.textContent='¿"'+dataCliente.nombre+'" tiene un auto con placa: "'+dataPlaca.placa+'"\n, desea Destruir esta relacion?';
-            if(numeroModal == 2)textoP.textContent='¿"'+dataCliente.nombre+'" tiene un auto con placa: "'+dataPlaca.placa+'" ?';
-            modalBody.insertBefore(textoP,modalBody.firstChild);
-
-            //BUTTON 1
-            const boton1 = document.getElementById('confirmar');
-            boton1.value= numeroModal;
-            boton1.textContent='Eliminar';
-            if(numeroModal == 2)boton1.textContent='Confirmar';
-            
-            console.log('termine de construir el modal');
-            
-        }
-
-        function vaciarModal(){
-            const modalBody = document.getElementById('modalBody');
-            modalBody.firstChild.remove();
-        }
-
-
-
-        //------------------------------------------------------Modal Confirmar
-
-        const btnConfirmar =document.getElementById('confirmar');
-
-        btnConfirmar.addEventListener('click', (e)=>{
-            btnConfirmar.disabled=true;
-            
-            //Ejecutar funcion
-            if(conectado()){
-                pinCarga('cargando');
-                //rowIdCliente rowIdRelacionPlaca
-                //rowIdRelacionCliente rowIdPlaca
-                if(btnConfirmar.value==0)eliminarRelacion(rowIdCliente,rowIdRelacionPlaca);
-                if(btnConfirmar.value==1)eliminarRelacion(rowIdRelacionCliente,rowIdPlaca);
-                if(btnConfirmar.value==2)nuevaRelacion();
-
-            }
-
-            // Restablecer el estado de la función cuando se complete
-        });
-
-        //-------------------------------------------------------Modal Cerrar
-
-        const modal = document.getElementById('myModal');
-
-        function cerrarModal(){
-            modal.classList.remove('show');
-            circulo.style = '';
-            circulo.classList.remove('circuloAnim');
-        }
-        //Tres tipos de cancelar mediante el boton cancelar de cada modal, la X en el modal, y al hacer clic en la pantalla.
-        // Cancelar X
-        const btnCancelar1 = document.getElementById('cancelar1');
-        btnCancelar1.addEventListener('click', (e)=>{
-            cerrarModal();
-        });
-        // Cancelar boton
-        const btnCancelar = document.getElementById('cancelar');
-        btnCancelar.addEventListener('click', (e)=>{
-            cerrarModal();
-        });
-        // Cancelar fondo
-        modal.addEventListener('click', (e)=>{
-            //console.log(e.target.parentNode)
-            if(e.target.parentNode.id=="fondo" ||
-                e.target.parentNode.classList=="container-fluid" ||
-                e.target.parentNode.tagName === 'BODY' ){
-                    cerrarModal();
-                }
-        });
-
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
-
-
-        
-        //------------------------------------------------------------------------------------ btn PRUEBA111
-
-        const btnPrueba111 = document.getElementById('btn-Relacionar');
-
-        
-        btnPrueba111.addEventListener('click',()=>{
-            
-            prueba();
-        });
-        
-        const btnBuscarCliente = document.getElementById("btn-BuscarCliente");
-
-        btnBuscarCliente.addEventListener('click',()=>{
-            const id = document.getElementById("Datos-Identificacion").value;
-            buscarCliente(id);
-        });
-
-        const btnBuscarPlaca = document.getElementById("btn-BuscarPlaca");
-
-        btnBuscarPlaca.addEventListener('click',()=>{
-            const nom_placa = document.getElementById("Datos-Placa").value;
-            buscarPlaca(nom_placa);
-        });
-        
-        //------------------------------------------------------------------------------------ btn CLIENTE RELACION NUEVA
-
-        const btnClienteRelacionNueva = document.getElementById('btn-ClienteRelacionar');
-
-        
-        /*btnClienteRelacionNueva.addEventListener('click',()=>{
-            
-            if(rowIdCliente!==null && rowIdPlaca!==null){
-                //console.log('CREANDO RELACION');
-                //console.log('idCliente: '+rowIdCliente);
-                //console.log('idPlaca: '+rowIdPlaca);
-                construirModal(2);
-                ejecutarAnimacion();
-            }else{
-                toast("Seleccione un cliente y un vehiculo!", "toastColorError");
-            }
-        });
-
-        //------------------------------------------------------------------------------------ btn PLACA RELACION NUEVA
-
-        const btnPlacaRelacionNueva = document.getElementById('btn-PlacaRelacionar');
-        //btnPlacaRelacionNueva.disabled=true;
-        
-        btnPlacaRelacionNueva.addEventListener('click',()=>{
-            
-            if(rowIdCliente!==null && rowIdPlaca!==null){
-                construirModal(2);
-                ejecutarAnimacion();
-            }else{
-                toast("Seleccione un cliente y un vehiculo!", "toastColorError");
-            }
-        });
-
-
-
-
-        //------------------------------------------------------------------------------------ btn CLIENTE RELACION ELIMINAR
-
-        const btnClienteRelacionEliminar = document.getElementById('btn-ClienteEliminarRelacion');
-
-        
-        btnClienteRelacionEliminar.addEventListener('click',()=>{
-            
-            if(rowIdCliente!==null && rowIdRelacionPlaca!==null){
-                construirModal(0);
-                ejecutarAnimacion();
-            }else{
-                toast("Seleccione un cliente y un vehiculo!", "toastColorError");
-            }
-        });
-
-        //------------------------------------------------------------------------------------ btn PLACA RELACION ELIMINAR
-
-        const btnPlacaRelacionEliminar = document.getElementById('btn-PlacaEliminarRelacion');
-
-        
-        btnPlacaRelacionEliminar.addEventListener('click',()=>{
-            
-            if(rowIdRelacionCliente!==null && rowIdPlaca!==null){
-                construirModal(1);
-                ejecutarAnimacion();
-            }else{
-                toast("Seleccione un cliente y un vehiculo!", "toastColorError");
-            }
-
-        });
-
-
-        */
-
-
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FUNCIONES PRINCIPALES
 
 
         //-----------------------------------------------CAMBIAR TIPO TABLA
@@ -647,8 +387,8 @@ const gridOptionsRelacionClientes = {
             eGridDivRelacion.removeChild(eGridDivRelacion.firstChild);
             }
             console.log(datos);
+            // Paso 3: Crear la nueva tabla/grid
             if (tipoTabla==1){
-                // Paso 3: Crear la nueva tabla/grid
                 var nuevaTabla = new agGrid.Grid(eGridDivRelacion, gridOptionsRelacionClientes);
                 cargarTablaClientes(datos);
             }else if(tipoTabla==2){
@@ -661,6 +401,9 @@ const gridOptionsRelacionClientes = {
 
         //-----------------------------------------------BUSCAR CLIENTE
         async function buscarCliente(id){
+            tipoTabla=2;
+            cambiarTipoTabla([]);
+            paginaModoCarga(true);
             try{
                 if(conectado()){
                     const data = await fetch('/clientByData/'+id)
@@ -670,34 +413,48 @@ const gridOptionsRelacionClientes = {
                         }
                         return response.json()
                     });
-                    // carga los datos de data en los combos y textos de "Datos del Cliente
-                    await cargarDatosDelCliente(data);
-                    console.log("Estos son los datos")
-                    console.log(data)
-                    tipoTabla=2; //Tabla de placas del cliente
+                    cargarDatosDelCliente(data);
                     cambiarTipoTabla(data.placas);
-                    
                 }
             }catch(error){
                 toast(error.message, "toastColorError");
                 console.log(error.message);
                 pinCarga('fallo');
-                tipoTabla=0;
+                borrarDatosDelCliente();
+                cambiarTipoTabla([]);
             }
+
+            paginaModoCarga(false);
         }
 
 
         function cargarDatosDelCliente(data){
+            rowIdCliente=data.id;
             document.getElementById("staticIdentificacion").value=data.identificacion;
             document.getElementById("staticLastName").value=data.apellidos_empresa;
             document.getElementById("staticName").value=data.nombres;
             document.getElementById("tituloHeaderRelacion").innerHTML="Cliente: "+data.apellidos_empresa+" "+data.nombres;
-            
+            document.getElementById("card-body-placa").classList.remove("card-body-green");
+            document.getElementById("card-body-cliente").classList.add("card-body-green");
+
         }
 
+        function borrarDatosDelCliente(){
+            rowIdCliente=null;
+            document.getElementById("staticIdentificacion").value="0";
+            document.getElementById("staticLastName").value="_";
+            document.getElementById("staticName").value="_";
+            document.getElementById("tituloHeaderRelacion").innerHTML="Cliente: _";
+            document.getElementById("card-body-placa").classList.remove("card-body-green");
+            document.getElementById("card-body-cliente").classList.remove("card-body-green");
+
+        }
 
         //-----------------------------------------------BUSCAR PLACA
         async function buscarPlaca(nom_placa){
+            tipoTabla=1;
+            cambiarTipoTabla([]);
+            paginaModoCarga(true);
             try{
                 if(conectado()){
                     const data = await fetch('/placaByData/'+nom_placa)
@@ -707,32 +464,44 @@ const gridOptionsRelacionClientes = {
                         }
                         return response.json()
                     });
-                    // carga los datos de data en los combos y textos de "Datos del Cliente
-                    await cargarDatosDePlaca(data);
-                    console.log("Estos son los datos")
-                    console.log(data)
-                    tipoTabla=1;
-                    cambiarTipoTabla(data.clientes); //Tabla de clientes de la placa
-                    
+                    cargarDatosDePlaca(data);
+                    cambiarTipoTabla(data.clientes);
                 }
             }catch(error){
                 toast(error.message, "toastColorError");
                 console.log(error.message);
                 pinCarga('fallo');
-                tipoTabla=0;
+                borrarDatosDePlaca();
+                cambiarTipoTabla([]);
             }
+            paginaModoCarga(false);
         }
 
 
         function cargarDatosDePlaca(data){
+            rowIdPlaca=data.id;
             document.getElementById("staticPlaca").value=data.nom_placa.toUpperCase();
             document.getElementById("staticMarca").value=data.Auto.Marca.nom_marca.toUpperCase();
             const info = (data.Auto.nom_auto+' | Y: '+data.Auto.ano+' | C: '+data.Auto.cilindraje.toFixed(1)).toUpperCase()
             + ' | '+ (data.Auto.combustible? 'TD':'TM');
             document.getElementById("staticModel").value=info;
             document.getElementById("tituloHeaderRelacion").innerHTML="Placa: "+data.nom_placa.toUpperCase();
+            document.getElementById("card-body-cliente").classList.remove("card-body-green");
+            document.getElementById("card-body-placa").classList.add("card-body-green");
+            document.getElementById("cuadradoColor").style.backgroundColor=data.colores[0].hex_color;
+            console.log(data)
         }
 
+        function borrarDatosDePlaca(){
+            rowIdPlaca=null;
+            document.getElementById("staticPlaca").value="_";
+            document.getElementById("staticMarca").value="_";
+            document.getElementById("staticModel").value="_";;
+            document.getElementById("tituloHeaderRelacion").innerHTML="Placa: _";
+            document.getElementById("card-body-cliente").classList.remove("card-body-green");
+            document.getElementById("card-body-placa").classList.remove("card-body-green");
+            document.getElementById("cuadradoColor").style.backgroundColor="black";
+        }
 
         //---------------------------------------------- NUEVA RELACION
 
@@ -780,16 +549,11 @@ const gridOptionsRelacionClientes = {
 
 
         //---------------------------------------------- ELIMINAR RELACION
-        //rowIdCliente rowIdRelacionPlaca
-        //rowIdRelacionCliente rowIdPlaca
-        async function eliminarRelacion(id_cliente,id_placa){
+        
+        async function eliminarRelacion(){
             pinCarga('cargando');
-            await fetch('/deleteRelacionPC',{
+            await fetch(`/deleteRelacionPC/${rowIdRelacion}`,{
                 method: 'DELETE',
-                body: JSON.stringify({
-                    id_cliente:id_cliente,
-                    id_placa:id_placa
-                }),
                 headers:{
                     'Content-Type':'application/json'
                 }
@@ -804,7 +568,7 @@ const gridOptionsRelacionClientes = {
                     
                 }
                 if(response.status===204){//Relacion destruida!
-                    toast("Relacion Destruida", "toastColorSuccess");
+                    toast("Relacion Destruida!", "toastColorSuccess");
                 }
                 cerrarModal();
                 pinCarga('success');
@@ -821,6 +585,182 @@ const gridOptionsRelacionClientes = {
             },600);
             
         }
+
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ SELECCIONES
+
+
+       
+        function obtenerDatosFilaSeleccionadaRelacionClientes(){
+            const gridApi = gridOptionsRelacionClientes.api;
+            const selectedRowNode = gridApi.getSelectedNodes()[0];
+            if(selectedRowNode!== undefined){
+                const selectedData = selectedRowNode.data;
+                //console.log(selectedData)
+                return selectedData;
+            }
+            return null
+        }
+        function obtenerDatosFilaSeleccionadaRelacionPlacas(){
+            const gridApi = gridOptionsRelacionPlacas.api;
+            const selectedRowNode = gridApi.getSelectedNodes()[0];
+            if(selectedRowNode!== undefined){
+                const selectedData = selectedRowNode.data;
+                //console.log(selectedData)
+                return selectedData;
+            }
+            return null
+        }
+
+        
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ MODAL
+
+        //-----------------------------------------------------------Construccion modal
+
+        function construirModal(numeroModal){
+            const titulo = ['Eliminar relacion','Eliminar relacion','Nueva relacion'];
+            let dataCliente = -1;
+            let dataPlaca = -1;
+            if(numeroModal==0){
+                dataCliente =   document.getElementById("staticLastName").value.toUpperCase()+" "+document.getElementById("staticName").value.toUpperCase();
+                dataPlaca =     obtenerDatosFilaSeleccionadaRelacionPlacas()
+            }else if(numeroModal==1){
+                dataCliente =   obtenerDatosFilaSeleccionadaRelacionClientes()
+                dataPlaca =     document.getElementById("staticPlaca").value.toUpperCase();
+            }else if(numeroModal==2){
+                dataCliente = document.getElementById("staticLastName").value.toUpperCase()+" "+document.getElementById("staticName").value.toUpperCase();
+                dataPlaca = document.getElementById("staticPlaca").value;
+            }
+            
+
+            //Vaciar Modal
+            vaciarModal();
+            
+            //H5: TITLE
+            const h5Title = document.getElementById('tituloHeader');
+            h5Title.textContent=titulo[numeroModal];
+            //DIV: CardBody
+            const modalBody = document.getElementById('modalBody');
+            //INPUT: elemento P
+            const textoP = document.createElement('P');
+            textoP.classList.add('card-title');
+            
+            if(numeroModal == 0)textoP.textContent='¿"'+dataCliente+'" tiene un auto con placa: "'+dataPlaca.placa+'"\n, desea Destruir esta relacion?';
+            if(numeroModal == 1)textoP.textContent='¿"'+dataCliente.nombre+'" tiene un auto con placa: "'+dataPlaca+'"\n, desea Destruir esta relacion?';
+            if(numeroModal == 2)textoP.textContent='¿El cliente "'+dataCliente+'" tiene un auto con placa: "'+dataPlaca+'" ?';
+            modalBody.insertBefore(textoP,modalBody.firstChild);
+
+            //BUTTON 1
+            const boton1 = document.getElementById('confirmar');
+            boton1.value= numeroModal;
+            boton1.textContent='Eliminar';
+            if(numeroModal == 2)boton1.textContent='Confirmar';
+            
+            console.log('termine de construir el modal');
+            
+        }
+
+        function vaciarModal(){
+            const modalBody = document.getElementById('modalBody');
+            modalBody.firstChild.remove();
+        }
+
+
+
+        //------------------------------------------------------Modal Confirmar
+
+        const btnConfirmar =document.getElementById('confirmar');
+
+        btnConfirmar.addEventListener('click', (e)=>{
+            btnConfirmar.disabled=true;
+            
+            //Ejecutar funcion
+            if(conectado()){
+                pinCarga('cargando');
+                
+                if(btnConfirmar.value!=2)eliminarRelacion();
+                if(btnConfirmar.value==2)nuevaRelacion();
+
+            }
+
+            // Restablecer el estado de la función cuando se complete
+        });
+
+        //-------------------------------------------------------Modal Cerrar
+
+        const modal = document.getElementById('myModal');
+
+        function cerrarModal(){
+            modal.classList.remove('show');
+            circulo.style = '';
+            circulo.classList.remove('circuloAnim');
+        }
+        //Tres tipos de cancelar mediante el boton cancelar de cada modal, la X en el modal, y al hacer clic en la pantalla.
+        // Cancelar X
+        const btnCancelar1 = document.getElementById('cancelar1');
+        btnCancelar1.addEventListener('click', (e)=>{
+            cerrarModal();
+        });
+        // Cancelar boton
+        const btnCancelar = document.getElementById('cancelar');
+        btnCancelar.addEventListener('click', (e)=>{
+            cerrarModal();
+        });
+        // Cancelar fondo
+        modal.addEventListener('click', (e)=>{
+            //console.log(e.target.parentNode)
+            if(e.target.parentNode.id=="fondo" ||
+                e.target.parentNode.classList=="container-fluid" ||
+                e.target.parentNode.tagName === 'BODY' ){
+                    cerrarModal();
+                }
+        });
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
+
+
+
+        //------------------------------------------------------------------------------------ btn Relacion nueva
+
+        const btnRelacionNueva = document.getElementById('btn-Relacionar');
+
+        
+        btnRelacionNueva.addEventListener('click',()=>{
+            console.log("Id del cliente: "+rowIdCliente);
+            console.log("Id de placa: "+rowIdPlaca);
+            if(rowIdCliente!==null && rowIdPlaca!==null){
+                construirModal(2);
+                ejecutarAnimacion();
+            }else{
+                toast("Seleccione un cliente y un vehiculo!", "toastColorError");
+            }
+        });
+        
+
+        //------------------------------------------------------------------------------------ btn Buscar Cliente
+
+        const btnBuscarCliente = document.getElementById("btn-BuscarCliente");
+
+        btnBuscarCliente.addEventListener('click',()=>{
+            const id = document.getElementById("Datos-Identificacion").value;
+            buscarCliente(id);
+        });
+
+
+        //------------------------------------------------------------------------------------ btn Buscar Placa
+
+        const btnBuscarPlaca = document.getElementById("btn-BuscarPlaca");
+
+        btnBuscarPlaca.addEventListener('click',()=>{
+            const nom_placa = document.getElementById("Datos-Placa").value;
+            buscarPlaca(nom_placa);
+        });
+        
+
 
 
 
