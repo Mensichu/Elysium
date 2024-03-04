@@ -9,7 +9,7 @@ const router = Router();
 
 router.post('/createRelacionPA',createRelacionPA)
 
-router.delete('/deleteRelacionPA',deleteRelacionPA)
+router.delete('/deleteRelacionPA/:id',deleteRelacionPA)
 
 router.get('/productosRelacion',getProductosRelacion)
 

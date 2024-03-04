@@ -443,3 +443,56 @@ export const getAutosRepetidos = async (req, res)=>{
         return res.status(500).json({ message: error.message });
     }
 }
+
+
+
+
+//Relaciones
+
+
+export const getAutoByData = async (req,res)=>{
+    const {id} = req.params;
+    try{
+        const auto = await tablaAuto.findOne({
+            where:{id:id},
+            attributes:{
+                exclude:['estado','createdAt','updatedAt']
+            },
+            include:[
+                {
+                    model:tablaMarca,
+                    attributes:['nom_marca']
+                }
+        ]
+        });
+        if (auto!==null){
+            //res.json(client);
+            // Obtener los registros del vehiculo
+            const registros = await auto.getRegistros();
+            //console.log("ESTOS SON LOS REGISTROS DEL VEHICULO");
+            //console.log(registros[0].dataValues.id)
+            // Mapear los registros para obtener la información de la placa
+            const productos = await Promise.all(registros.map(async registro => {
+                console.log("REGISTRO")
+                console.log(registro.dataValues.id)
+                const producto = await registro.getProducto({
+                    attributes:['id','marca','nom_producto']
+                });
+                const productoConIdRelacion = {
+                    ...producto.toJSON(),
+                    id_relacion: registro.dataValues.id
+                };
+                return productoConIdRelacion;
+            }));
+            // Agregar la información de la placa al objeto del cliente
+            const autoConProductos = auto.toJSON();
+            autoConProductos.productos = productos;
+            res.json(autoConProductos);
+        }else{
+            res.status(404).json({message: 'auto not found'});
+        }
+    }catch(error){
+        return res.status(500).json({message:error.message});
+    }
+    
+}

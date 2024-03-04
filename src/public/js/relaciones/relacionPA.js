@@ -1,8 +1,8 @@
-
 //Productos
 window.addEventListener('load',()=>{
     //Solo se ejecuta cada vez que se recargue la pagina y sea Productos
     const pagina = window.location.pathname;
+    //if(pagina.toLowerCase() == '/relacionplacacliente'){
     if(pagina.toLowerCase() == '/relacionproductoauto'){
         console.log("Cargo relacionProductoauto");
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA RELACION PRODUCTO AUTO
@@ -10,291 +10,22 @@ window.addEventListener('load',()=>{
         document.querySelector('#fondo').classList.add('showNow');
         
         let rowIdProducto = null;
-        let rowIdAuto = null;
-        let rowIdRelacionAuto=null;
-        let rowIdRelacionProducto=null;
-
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++TABLA PRODUCTOS
-        // configurar la instancia de ag-Grid
-        const gridOptionsProductos = {
-
-            // each entry here represents one column
-            columnDefs: [
-                {headerName: "Id", 
-                        field: "id", hide: true
-                    },
-                {headerName: "Marca",
-                    field: "marca",sort: 'asc', floatingFilter:true, 
-                    width: 150
-                    },
-                {headerName: "Producto", 
-                    field: "producto", floatingFilter:true,
-                    flex: 1, minWidth: 150
-                    }
-                
-            ],
-
-            defaultColDef: {sortable: true, 
-                            filter: 'agTextColumnFilter', 
-                            enableRowGroup:true,
-                            filterParams:{
-                                buttons: ["apply","reset"]
-                            },
-                            resizable: true,
-                        },
-            onModelUpdated: (event) => {
-                if(true || rowIdProducto!==null){
-                    console.log('-----------------------------------------ON MODEL PRODUCTO UPDATED');
-                    //Anima al reordenar las filas
-                    gridOptionsProductos.api.redrawRows();
-                    
-                }
-            },
-
-            getRowId: (params) => { return params.data.id; },
-
-            rowHeight: 45, // altura de las filas en píxeles
-            headerHeight: 30, // altura del encabezado en píxeles
-            rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
-            rowSelection: 'single', // allow rows to be selected
-            animateRows: true, // have rows animate to new positions when sorted
-
-            // example event handler
-            onCellClicked: params => {
-                if(params.data!== undefined){
-                    rowIdProducto = params.data.id;
-                    rowIdRelacionAuto=null;
-                    gridOptionsRelacionAutos.api.setRowData([])
-                    const titleProductoRelacion = document.getElementById('titulo-Producto-Autos');
-                    titleProductoRelacion.textContent= 'Producto: autos';
-                }else{
-                    console.log('Deseleccionaste!')
-                }
-            },
-            onCellDoubleClicked: function(event) {
-                // Manejar el doble clic en una celda
-                
-                rowIdProducto = event.data.id;
-                rowIdRelacionAuto=null;
-                seleccionTablaProducto(rowIdProducto,true);
-            },
-            onSelectionChanged: () => {
-                console.log('SelectionChanged')
-                const selectedRows = gridOptionsProductos.api.getSelectedRows();
-                if (selectedRows.length === 0) {
-                    // aquí puedes hacer algo cuando no hay filas seleccionadas
-                    rowIdProducto=null
-                  
-                }
-            }
-
-        };
-        // get div to host the grid
-        const eGridDivProductos = document.getElementById("myGridProductos");
-        // new grid instance, passing in the hosting DIV and Grid Options
-        var grid = new agGrid.Grid(eGridDivProductos, gridOptionsProductos);
-
-        const gridApiProductos = gridOptionsProductos.api;
-        // obtenemos el elemento del encabezado de la tabla
-//const headerElement = document.querySelector("#myGridProductos .ag-header-row");
+        let rowIdVehiculo = null;
+        let rowIdRelacion=null;
 
 
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA PRODUCTO: vehiculo RELACION
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA PRODUCTO: autos RELACION
-
-
-
-
-
-
-const gridOptionsRelacionAutos = {
-
-    // each entry here represents one column
-    columnDefs: [
-        {headerName: "Id", 
-                field: "id", hide: true
-            },
-        {headerName: "Marca",
-            field: "marca",sort: 'asc', floatingFilter:true, 
-            width: 100
-            },
-        {headerName: "Modelo", 
-            field: "modelo",sort: 'asc', floatingFilter:true,
-            flex: 1, minWidth: 150
-            },
-        {headerName: "info", 
-            field: "info", floatingFilter:true,
-            width: 180
-            }
-    ],
-    defaultColDef: {sortable: true, 
-                    filter: 'agTextColumnFilter', 
-                    enableRowGroup:true,
-                    filterParams:{
-                        buttons: ["apply","reset"]
-                    },
-                    resizable: true,
-                },
-    onModelUpdated: (event) => {
-        if(true || rowIdRelacionAuto!==null){
-            console.log('-----------------------------------------ON MODEL PRODUCTO-AUTOS UPDATED');
-            //Anima al reordenar las filas
-            gridOptionsRelacionAutos.api.redrawRows();
-            
-        }
-    },
-
-    getRowId: (params) => { return params.data.id; },
-
-    rowHeight: 45, // altura de las filas en píxeles
-    headerHeight: 30, // altura del encabezado en píxeles
-    rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
-    rowSelection: 'single', // allow rows to be selected
-    animateRows: true, // have rows animate to new positions when sorted
-    overlayNoRowsTemplate: 'No se encontraron autos relacionados a este producto',
-
-    // example event handler
-    onCellClicked: params => {
-        if(params.data!== undefined){
-            rowIdRelacionAuto = params.data.id;
-            //seleccionTabla(rowIdProducto,true);
-        }else{
-            //guardarBtn.disabled=true;
-        }
-    },
-    onSelectionChanged: () => {
-        console.log('SelectionChanged')
-        const selectedRows = gridOptionsRelacionAutos.api.getSelectedRows();
-        if (selectedRows.length === 0) {
-            // aquí puedes hacer algo cuando no hay filas seleccionadas
-            rowIdRelacionAuto=null
-          
-        }
-    }
-};
-// get div to host the grid
-const eGridDivRelacionAutos = document.getElementById("myGridRelacionAutos");
-// new grid instance, passing in the hosting DIV and Grid Options
-var grid = new agGrid.Grid(eGridDivRelacionAutos, gridOptionsRelacionAutos);
-
-const gridApiRelacionAutos = gridOptionsRelacionAutos.api;
-
-
-
-gridOptionsRelacionAutos.api.setRowData([]);
-
-
-
-
-
-
-
-
-
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++TABLA AUTOS
-
-        // configurar la instancia de ag-Grid
-        const gridOptionsAutos = {
-
-            // each entry here represents one column
-            columnDefs: [
-                {headerName: "Id", 
-                        field: "id", hide: true
-                    },
-                {headerName: "Marca",
-                    field: "marca",sort: 'asc', floatingFilter:true, 
-                    width: 100
-                    },
-                {headerName: "Modelo", 
-                    field: "modelo", floatingFilter:true,
-                    flex: 1, minWidth: 150
-                    },
-                {headerName: "info", 
-                    field: "info", floatingFilter:true,
-                    width: 180
-                    }
-            ],
-            defaultColDef: {sortable: true, 
-                            filter: 'agTextColumnFilter', 
-                            enableRowGroup:true,
-                            filterParams:{
-                                buttons: ["apply","reset"]
-                            },
-                            resizable: true,
-                        },
-            onModelUpdated: (event) => {
-                if(true || rowIdAuto!==null){
-
-                    clasesFila='cambioColor';
-                    gridOptionsAutos.api.redrawRows();
-
-                }
-            },
-            onModelUpdated: (event) => {
-                if(true || rowId!==null){
-                    console.log('-----------------------------------------ON MODEL AUTO UPDATED');
-                    //Anima al reordenar las filas
-                    gridOptionsAutos.api.redrawRows();
-                    //btnAutoRelacionNueva.disabled=true;
-                    
-                }
-            },
-
-            getRowId: (params) => { return params.data.id; },
-
-            rowHeight: 50, // altura de las filas en píxeles
-            headerHeight: 40, // altura del encabezado en píxeles
-            rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
-            rowSelection: 'single', // allow rows to be selected
-            animateRows: true, // have rows animate to new positions when sorted
-
-            // example event handler
-            onCellClicked: params => {
-                if(params.data!== undefined){
-                    rowIdAuto = params.data.id;
-                    //seleccionTabla(rowIdProducto,true);
-                    //btnAutoRelacionNueva.disabled=modotablaProductoRelacion;
-                    rowIdRelacionProducto=null;
-                    gridOptionsRelacionProductos.api.setRowData([])
-                    const titleAutoRelacion = document.getElementById('titulo-Auto-Productos');
-                    titleAutoRelacion.textContent= 'Auto: productos';
-                }else{
-                    //guardarBtn.disabled=true;
-                }
-            },
-            onCellDoubleClicked: function(event){
-                rowIdAuto = event.data.id;
-                seleccionTablaAuto(rowIdAuto,true);
-                rowIdRelacionProducto=null;//gridOptionsProductos.api.deselectAll();
-            },
-            onSelectionChanged: () => {
-                console.log('SelectionChanged')
-                const selectedRows = gridOptionsAutos.api.getSelectedRows();
-                if (selectedRows.length === 0) {
-                    // aquí puedes hacer algo cuando no hay filas seleccionadas
-                    rowIdAuto=null
-                  
-                }
-            }
-        };
-        // get div to host the grid
-        const eGridDivAutos = document.getElementById("myGridAutos");
-        // new grid instance, passing in the hosting DIV and Grid Options
-        var grid = new agGrid.Grid(eGridDivAutos, gridOptionsAutos);
-
-        const gridApiAutos = gridOptionsAutos.api;
-
-
-
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA AUTOS: productos RELACION
 
 
 const gridOptionsRelacionProductos = {
 
     // each entry here represents one column
     columnDefs: [
+        {headerName: "Id_Relacion", 
+                field: "id_relacion", hide: true
+            },
         {headerName: "Id", 
                 field: "id", hide: true
             },
@@ -302,11 +33,10 @@ const gridOptionsRelacionProductos = {
             field: "marca",sort: 'asc', floatingFilter:true, 
             width: 150
             },
-        {headerName: "Producto", 
+        {headerName: "Producto",
             field: "producto", floatingFilter:true,
             flex: 1, minWidth: 150
             }
-        
     ],
     defaultColDef: {sortable: true, 
                     filter: 'agTextColumnFilter', 
@@ -317,8 +47,8 @@ const gridOptionsRelacionProductos = {
                     resizable: true,
                 },
     onModelUpdated: (event) => {
-        if(true || rowIdRelacionProducto!==null){
-            console.log('-----------------------------------------ON MODEL AUTO-PRODUCTOS UPDATED');
+        if(true ){
+            console.log('-----------------------------------------ON MODEL Producto UPDATED');
             //Anima al reordenar las filas
             gridOptionsRelacionProductos.api.redrawRows();
             
@@ -332,57 +62,254 @@ const gridOptionsRelacionProductos = {
     rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
     rowSelection: 'single', // allow rows to be selected
     animateRows: true, // have rows animate to new positions when sorted
-    overlayNoRowsTemplate: 'No se encontraron productos relacionados a este auto',
+    overlayNoRowsTemplate: 'No se encontraron productos relacionados a este vehiculo',
+    getContextMenuItems: getContextMenuItems1,
 
     // example event handler
     onCellClicked: params => {
         if(params.data!== undefined){
-            rowIdRelacionProducto = params.data.id;
-            //seleccionTabla(rowIdProducto,true);
+            rowIdRelacion = params.data.id_relacion;
         }else{
             //guardarBtn.disabled=true;
         }
+    },
+    onCellContextMenu: params => {
+        // Acciones a realizar al hacer clic derecho en una celda
+        console.log('Hiciste clic derecho en la celda:', params.data.id);
+        rowIdRelacion = params.data.id_relacion;
+        // Puedes acceder a la fila seleccionada y realizar acciones adicionales
+        params.api.deselectAll();
+        const selectedNode = params.node;
+        selectedNode.setSelected(true);
+        //console.log('Datos de la fila seleccionada:', selectedRowNode.data);
+
+        // Evita que aparezca el menú contextual predeterminado del navegador
+        //params.event.preventDefault();
     },
     onSelectionChanged: () => {
         console.log('SelectionChanged')
         const selectedRows = gridOptionsRelacionProductos.api.getSelectedRows();
         if (selectedRows.length === 0) {
             // aquí puedes hacer algo cuando no hay filas seleccionadas
-            rowIdRelacionProducto=null
+            
           
         }
     }
 };
+
+  
+  function getContextMenuItems1(params) {
+    var result = [
+      {
+        // custom item
+        name: 'Eliminar',
+        action: () => {
+            if(rowIdProducto!==null && rowIdRelacion!==null){
+                construirModal(0);
+                ejecutarAnimacion();
+            }else{
+                toast("Seleccione un producto y un vehiculo!", "toastColorError");
+            }
+        },
+        cssClasses: ['red', 'bold'],
+      },
+      'copy',
+      'separator',
+      'export',
+    ];
+  
+    return result;
+  }
+
+  function getContextMenuItems2(params) {
+    var result = [
+      {
+        // custom item
+        name: 'Eliminar',
+        action: () => {
+            if(rowIdVehiculo!==null && rowIdRelacion!==null){
+                construirModal(1);
+                ejecutarAnimacion();
+            }else{
+                toast("Seleccione un vehiculo y un producto!", "toastColorError");
+            }
+        },
+        cssClasses: ['red', 'bold'],
+      },
+      'copy',
+      'separator',
+      'export',
+    ];
+  
+    return result;
+  }
+
 // get div to host the grid
-const eGridDivRelacionProductos = document.getElementById("myGridRelacionProductos");
+const eGridDivRelacion = document.getElementById("myGridRelacion");
+
 // new grid instance, passing in the hosting DIV and Grid Options
-var grid = new agGrid.Grid(eGridDivRelacionProductos, gridOptionsRelacionProductos);
+var temporal111 = new agGrid.Grid(eGridDivRelacion, gridOptionsRelacionProductos);
 
-const gridApiRelacionProductos = gridOptionsRelacionProductos.api;
+const gridApiRelacionPlacas = gridOptionsRelacionProductos.api;
 
-
-
-gridOptionsRelacionProductos.api.setRowData([]);
+//gridOptionsRelacionProductos.api.setRowData([]);
 
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA CLIENTES
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ TABLA VEHICULO: productos RELACION
 
-        cargarTablaProductos();
-        async function cargarTablaProductos(){
-            try{
-                //pinCarga('cargando');
-                // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/productosRelacion')
-                .then(response => response.json());
-                const Productos = data;
-                //mediante un for vamos cargando fila por fila
-                for(i=0;i<Productos.length;i++){
-                    let newRow = datosAFilaGridProductos(Productos[i],0);
-                    gridOptionsProductos.api.applyTransaction({ add: newRow });
+
+const gridOptionsRelacionVehiculos = {
+
+    // each entry here represents one column
+    columnDefs: [
+        {headerName: "Id_Relacion", 
+                field: "id_relacion", hide: true
+            },
+        {headerName: "Id", 
+                field: "id", hide: true
+            },
+        {headerName: "Marca",
+            field: "marca",sort: 'asc', floatingFilter:true, 
+            width: 100
+            },
+        {headerName: "Modelo", 
+            field: "modelo", floatingFilter:true,
+            flex: 1, minWidth: 150
+            },
+        {headerName: "info", 
+            field: "info", floatingFilter:true,
+            width: 180
+            }
+        
+    ],
+    defaultColDef: {sortable: true, 
+                    filter: 'agTextColumnFilter', 
+                    enableRowGroup:true,
+                    filterParams:{
+                        buttons: ["apply","reset"]
+                    },
+                    resizable: true,
+                },
+    onModelUpdated: (event) => {
+        if(true ){
+            console.log('-----------------------------------------ON MODEL VEHICULO UPDATED');
+            //Anima al reordenar las filas
+            gridOptionsRelacionVehiculos.api.redrawRows();
+            
+        }
+    },
+
+    getRowId: (params) => { return params.data.id; },
+
+    rowHeight: 45, // altura de las filas en píxeles
+    headerHeight: 30, // altura del encabezado en píxeles
+    rowBuffer: 10, // cantidad de filas adicionales para cargar en la vista
+    rowSelection: 'single', // allow rows to be selected
+    animateRows: true, // have rows animate to new positions when sorted
+    overlayNoRowsTemplate: 'No se encontraron vehiculos relacionados a este producto',
+    getContextMenuItems: getContextMenuItems2,
+
+    // example event handler
+    onCellClicked: params => {
+        if(params.data!== undefined){
+            rowIdRelacion = params.data.id_relacion;
+            
+        }else{
+            
+        }
+    },
+    onCellContextMenu: params => {
+        // Acciones a realizar al hacer clic derecho en una celda
+        console.log('Hiciste clic derecho en la celda:', params.data.id);
+        rowIdRelacion = params.data.id_relacion;
+        // Puedes acceder a la fila seleccionada y realizar acciones adicionales
+        params.api.deselectAll();
+        const selectedNode = params.node;
+        selectedNode.setSelected(true);
+        //console.log('Datos de la fila seleccionada:', selectedRowNode.data);
+
+        // Evita que aparezca el menú contextual predeterminado del navegador
+        //params.event.preventDefault();
+    },
+    onSelectionChanged: () => {
+        console.log('SelectionChanged')
+        const selectedRows = gridOptionsRelacionVehiculos.api.getSelectedRows();
+        if (selectedRows.length === 0) {
+            // aquí puedes hacer algo cuando no hay filas seleccionadas
+            
+          
+        }
+    }
+};
+
+
+
+
+
+
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FUNCIONES PRINCIPALES
+
+
+        //+++++++++++++++++++++++++++++++++++++++++++++++++ PAGINA MODO CARGA
+
+        function paginaModoCarga(activar){
+            const inputCard = document.querySelectorAll('input');
+            const buttonCard = document.querySelectorAll('button');
+            
+            if(activar){
+                pinCarga('cargando')
+                cambiarTipoTabla([]);
+                if(tipoTabla==1){//Tabla de Clientes
+                    try{gridOptionsRelacionVehiculos.api.setRowData([]);
+                        gridOptionsRelacionVehiculos.api.showLoadingOverlay();}catch(error){}
+                    
+                }else{//Tabla de Placas
+                    try{gridOptionsRelacionProductos.api.setRowData([]);
+                        gridOptionsRelacionProductos.api.showLoadingOverlay();}catch(error){}
                 }
-                //pinCarga('success');
+                inputCard.forEach(input => {
+                    input.disabled=true;
+                });
+                buttonCard.forEach(button => {
+                    button.disabled=true;
+                });
+            }else{
+                pinCarga('success')
+                inputCard.forEach(input => {
+                    input.disabled=false;
+                });
+                buttonCard.forEach(button => {
+                    button.disabled=false;
+                });
+                if(tipoTabla==1){//Tabla de Clientes
+                    //try{gridOptionsRelacionVehiculos.api.hideOverlay();}catch(error){}
+                    
+                }else{//Tabla de Placas
+                    try{gridOptionsRelacionProductos.api.hideLoadingOverlay();}catch(error){}
+                }
+            }
+            
+        }  
+
+
+
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA VEHICULOS
+
+        async function cargarTablaVehiculos(Vehiculos){
+            try{
+                if(Vehiculos.length!=0){
+                    for(i=0;i<Vehiculos.length;i++){
+                        let newRow = datosAFilaGridVehiculos(Vehiculos[i],0);
+                        gridOptionsRelacionVehiculos.api.applyTransaction({ add: newRow });
+                    }
+                }else{
+                    gridOptionsRelacionVehiculos.api.setRowData([]);
+                }
             }catch(error){
-                console.log('Error al obtener los productos:', error);
+                console.log('Error al obtener los vehiculos:', error);
                 toast(error.message, "toastColorError");
                 pinCarga('fallo');
 
@@ -390,53 +317,12 @@ gridOptionsRelacionProductos.api.setRowData([]);
         }
 
         //---------------------------------------------------Convierte los datos en una fila para AG-GRID
-        function datosAFilaGridProductos(data,n) {
+        function datosAFilaGridVehiculos(data,n) {
 
-            if (gridOptionsProductos.api) {
-
-                return [{ 
-                            id: data.id,
-                            marca: data.marca.toUpperCase(), 
-                            producto: data.nom_producto.toUpperCase()
-                        }];
-            
-            }
-        }
-
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA AUTOS
-        
-        cargarTablaAutos();
-        async function cargarTablaAutos(){
-            console.log('Cargandoooooo')
-            
-            try{
-                //pinCarga('cargando');
-                // Hace una llamada fetch y trae el arreglo de datos para la tabla
-                const data = await fetch('/autosRelacion')
-                .then(response => response.json());
-                const Autos = data;
-                //mediante un for vamos cargando fila por fila
-                for(i=0;i<Autos.length;i++){
-                    let newRow = datosAFilaGridAutos(Autos[i],0);
-                    gridOptionsAutos.api.applyTransaction({ add: newRow });
-                }
-                //pinCarga('success');
-            }catch(error){
-                console.log('Error al obtener los autos:', error);
-                toast(error.message, "toastColorError");
-                pinCarga('fallo');
-
-            }
-        }
-
-
-        //-------------------------------------------------Convierte los datos en una fila para AG-GRID
-        function datosAFilaGridAutos(data,n) {
-
-            if (gridOptionsAutos.api) {
+            if (gridOptionsRelacionVehiculos.api) {
 
                 return [{ 
+                            id_relacion: data.id_relacion,
                             id: data.id,
                             marca: data.Marca.alias.toUpperCase(),
                             modelo: data.nom_auto.toUpperCase(),
@@ -448,142 +334,259 @@ gridOptionsRelacionProductos.api.setRowData([]);
         }
 
 
+        //+++++++++++++++++++++++++++++++++++++++++++++++++++++ CARGAR TABLA PRODUCTOS
+
+        async function cargarTablaProductos(Productos){
+            try{
+                if(Productos.length!=0){
+                    for(i=0;i<Productos.length;i++){
+                        let newRow = datosAFilaGridProductos(Productos[i],0);
+                        gridOptionsRelacionProductos.api.applyTransaction({ add: newRow });
+                    }
+                }else{
+                    gridOptionsRelacionProductos.api.setRowData([]);
+                }
+            }catch(error){
+                console.log('Error al obtener los productos:', error);
+                toast(error.message, "toastColorError");
+                pinCarga('fallo');
+
+            }
+        }
+
+        //---------------------------------------------------Convierte los datos en una fila para AG-GRID
+        function datosAFilaGridProductos(data,n) {
+
+            if (gridOptionsRelacionProductos.api) {
+
+                return [{
+                            id_relacion: data.id_relacion,
+                            id: data.id,
+                            marca: data.marca.toUpperCase(), 
+                            producto: data.nom_producto.toUpperCase()
+                        }];
+            }
+        }
+
+
+        //-----------------------------------------------CAMBIAR TIPO TABLA
+        //0: no encontro 1: Tipo Vehiculos 2: Tipo Producto
+        var tipoTabla=0;
+        function cambiarTipoTabla(datos){
+            // Paso 1: Obtener el contenedor del grid
+            const eGridDivRelacion = document.getElementById("myGridRelacion");
+
+            // Paso 2: Verificar si hay hijos en el contenedor y eliminarlos
+            while (eGridDivRelacion.firstChild) {
+            eGridDivRelacion.removeChild(eGridDivRelacion.firstChild);
+            }
+            console.log(datos);
+            // Paso 3: Crear la nueva tabla/grid
+            if (tipoTabla==1){
+                var nuevaTabla = new agGrid.Grid(eGridDivRelacion, gridOptionsRelacionVehiculos);
+                cargarTablaVehiculos(datos);
+            }else if(tipoTabla==2){
+                var nuevaTabla = new agGrid.Grid(eGridDivRelacion, gridOptionsRelacionProductos);
+                cargarTablaProductos(datos);
+            }
+
+        }
+
+
+        //-----------------------------------------------BUSCAR VEHICULO
+        async function buscarVehiculo(id){
+            tipoTabla=2;
+            cambiarTipoTabla([]);
+            paginaModoCarga(true);
+            try{
+                if(conectado()){
+                    const data = await fetch('/autoByData/'+id)
+                    .then(response => {
+                        if(!response.ok){
+                            throw new Error('Servidor - '+response.status+': '+response.statusText);
+                        }
+                        return response.json()
+                    });
+                    cargarDatosDelVehiculo(data);
+                    cambiarTipoTabla(data.productos);
+                }
+            }catch(error){
+                toast(error.message, "toastColorError");
+                console.log(error.message);
+                pinCarga('fallo');
+                borrarDatosDelVehiculo();
+                cambiarTipoTabla([]);
+            }
+
+            paginaModoCarga(false);
+        }
+
+
+        function cargarDatosDelVehiculo(data){
+            rowIdVehiculo=data.id;
+            document.getElementById("staticMarca").value=data.Marca.nom_marca.toUpperCase();
+            document.getElementById("staticModel").value=data.nom_auto;
+            const info = ('Y: '+data.ano+' | C: '+data.cilindraje.toFixed(1)).toUpperCase()
+            + ' | '+ (data.combustible? 'TD':'TM');
+            document.getElementById("staticInfo").value=info;
+            document.getElementById("tituloHeaderRelacion").innerHTML="Vehiculo: "+data.nom_auto.toUpperCase();
+            document.getElementById("card-body-producto").classList.remove("card-body-green");
+            document.getElementById("card-body-vehiculo").classList.add("card-body-green");
+        }
+
+        function borrarDatosDelVehiculo(){
+            rowIdVehiculo=null;
+            document.getElementById("staticMarca").value="_";
+            document.getElementById("staticModel").value="_";;
+            document.getElementById("staticInfo").value="_";;
+            document.getElementById("tituloHeaderRelacion").innerHTML="Vehiculo: _";
+            document.getElementById("card-body-producto").classList.remove("card-body-green");
+            document.getElementById("card-body-vehiculo").classList.remove("card-body-green");
+        }
+
+        //-----------------------------------------------BUSCAR PRODUCTO
+        async function buscarProducto(nom_producto){
+            tipoTabla=1;
+            cambiarTipoTabla([]);
+            paginaModoCarga(true);
+            try{
+                if(conectado()){
+                    const data = await fetch('/productoByData/'+nom_producto)
+                    .then(response => {
+                        if(!response.ok){
+                            throw new Error('Servidor - '+response.status+': '+response.statusText);
+                        }
+                        return response.json()
+                    });
+                    cargarDatosDelProducto(data);
+                    cambiarTipoTabla(data.autos);
+                }
+            }catch(error){
+                toast(error.message, "toastColorError");
+                console.log(error.message);
+                pinCarga('fallo');
+                borrarDatosDelProducto();
+                cambiarTipoTabla([]);
+            }
+            paginaModoCarga(false);
+        }
+
+        function cargarDatosDelProducto(data){
+            rowIdProducto=data.id;
+            document.getElementById("staticId").value=data.id;
+            document.getElementById("staticMarcaProducto").value=data.marca.toUpperCase();
+            document.getElementById("staticProducto").value=data.nom_producto;
+            document.getElementById("tituloHeaderRelacion").innerHTML="Producto: "+data.nom_producto;
+            document.getElementById("card-body-vehiculo").classList.remove("card-body-green");
+            document.getElementById("card-body-producto").classList.add("card-body-green");
+
+        }
+
+        function borrarDatosDelProducto(){
+            rowIdProducto=null;
+            document.getElementById("staticId").value="0";
+            document.getElementById("staticMarcaProducto").value="_";
+            document.getElementById("staticProducto").value="_";
+            document.getElementById("tituloHeaderRelacion").innerHTML="Producto: _";
+            document.getElementById("card-body-vehiculo").classList.remove("card-body-green");
+            document.getElementById("card-body-producto").classList.remove("card-body-green");
+
+        }
+
+        
+
+        //---------------------------------------------- NUEVA RELACION
+
+        async function nuevaRelacion(){
+            pinCarga('cargando');
+            await fetch('/createRelacionPA',{
+                method: 'POST',
+                body: JSON.stringify({
+                    id_producto:rowIdProducto,
+                    id_auto:rowIdVehiculo
+                }),
+                headers:{
+                    'Content-Type':'application/json'
+                }
+            })
+            .then(response =>{
+                if(!response.ok){
+                    toast(response.status, "toastColorError");
+                    throw new Error('Servidor - '+response.status+': '+response.statusText);
+                }
+                return response.json();
+            })
+            .then(async res =>{
+                if(!(await res[1])){
+                    console.log(!(await res[1]))
+                    throw new Error('Ya existe esta relacion!');
+                }else{
+                    cerrarModal();
+                    toast("Relacion Creada", "toastColorSuccess");
+                    pinCarga('success');
+                }
+            }).catch(error =>{
+                toast(error.message, "toastColorError");
+                pinCarga('fallo');
+            })
+            
+            
+            setTimeout(()=>{
+                btnConfirmar.disabled=false;
+            },600);
+            
+        }
+
+
+
+
+        //---------------------------------------------- ELIMINAR RELACION
+        
+        async function eliminarRelacion(){
+            pinCarga('cargando');
+            await fetch(`/deleteRelacionPA/${rowIdRelacion}`,{
+                method: 'DELETE',
+                headers:{
+                    'Content-Type':'application/json'
+                }
+            })
+            .then(response =>{
+                console.log(response)
+                if(!response.ok){//Error del servidor
+                    throw new Error('Servidor - '+response.status+': '+response.statusText);
+                }
+                if(response.status===404){//No encontro relacion a eliminar
+                    toast('Relacion no existe!', "toastColorError");
+                    
+                }
+                if(response.status===204){//Relacion destruida!
+                    toast("Relacion Destruida!", "toastColorSuccess");
+                }
+                cerrarModal();
+                pinCarga('success');
+                return response;
+                
+            }).catch(error =>{
+                toast(error.message, "toastColorError");
+                pinCarga('fallo');
+                return null;
+            })            
+            
+            setTimeout(()=>{
+                btnConfirmar.disabled=false;
+            },600);
+            
+        }
+
+
+
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ SELECCIONES
 
 
-
-        //------------------------------------------------------------------------------------ seleccion tabla producto
-        let modotablaAutoRelacion= false;
-
-        async function seleccionTablaProducto(id,mouse) {
-            console.log('Id enviado es: '+id)
-            const titleProductoRelacion = document.getElementById('titulo-Producto-Autos');
-            //titleProductoRelacion.textContent= 'Producto: '+obtenerDatosFilaSeleccionadaProductos().marca;
-            try{
-                const inputCard = document.querySelectorAll('.form-group input');
-                const buttonCard = document.querySelectorAll('.form-group button');
-                if(mouse){
-                    pinCarga('cargando')
-                    inputCard.forEach(input => {
-                        input.disabled=true;
-                    });
-                    buttonCard.forEach(button => {
-                        button.disabled=true;
-                    });
-                }
-                if(conectado()){
-                    const data = await fetch('/productoRelacionById/'+id)
-                    .then(response => {
-                        if(!response.ok){
-                            throw new Error('Servidor - '+response.status+': '+response.statusText);
-                        }
-                        return response.json()
-                    });
-                    
-                    const Autos = data.autos;
-                    //console.log(Placas);
-                    if(Autos.length!=0){
-                        gridOptionsRelacionAutos.api.setRowData([])
-                        //mediante un for vamos cargando fila por fila
-                        for(i=0;i<Autos.length;i++){
-                            let newRow = datosAFilaGridAutos(Autos[i],0);
-                            gridOptionsRelacionAutos.api.applyTransaction({ add: newRow });
-                        }
-                        modotablaAutoRelacion=true;
-                    }else{
-                        if(modotablaAutoRelacion){
-                            gridOptionsRelacionAutos.api.setRowData([])
-                            //cargarTablaAutos();
-                            modotablaAutoRelacion=false;
-                        }
-                        toast('No registra relacion alguna', "toastColorInfo");
-                    }
-                    
-                    //validacionVaciar();
-                    if(mouse){
-                        pinCarga('successFast')
-                        inputCard.forEach(input => {
-                            input.disabled=false;
-                        });
-                        buttonCard.forEach(button => {
-                            button.disabled=false;
-                        });
-                    };
-                }
-            }catch(error){
-                toast(error.message, "toastColorError");
-                console.log(error.message);
-                pinCarga('fallo');
-            }
-        }
-
-        //------------------------------------------------------------------------------------ seleccion tabla auto
-        let modotablaProductoRelacion= false;
-
-        async function seleccionTablaAuto(id,mouse) {
-            console.log('Id enviado es: '+id)
-            const titleAutoRelacion = document.getElementById('titulo-Auto-Productos');
-            //titleAutoRelacion.textContent= 'Auto: '+obtenerDatosFilaSeleccionadaAutos().marca;//?????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
-            try{
-                const inputCard = document.querySelectorAll('.form-group input');
-                const buttonCard = document.querySelectorAll('.form-group button');
-                if(mouse){
-                    pinCarga('cargando')
-                    inputCard.forEach(input => {
-                        input.disabled=true;
-                    });
-                    buttonCard.forEach(button => {
-                        button.disabled=true;
-                    });
-                }
-                if(conectado()){
-                    const data = await fetch('/autoRelacionById/'+id)
-                    .then(response => {
-                        if(!response.ok){
-                            throw new Error('Servidor - '+response.status+': '+response.statusText);
-                        }
-                        return response.json()
-                    });
-                    console.log('+++++++++++++++++++++++++++++++++++++++++')
-                    const Productos = data.productos;
-                    if(Productos.length!=0){
-                        gridOptionsRelacionProductos.api.setRowData([])
-                        //mediante un for vamos cargando fila por fila
-                        for(i=0;i<Productos.length;i++){
-                            let newRow = datosAFilaGridProductos(Productos[i],0);
-                            gridOptionsRelacionProductos.api.applyTransaction({ add: newRow });
-                        }
-                        modotablaProductoRelacion=true;
-                    }else{
-                        if(modotablaProductoRelacion){
-                            gridOptionsRelacionProductos.api.setRowData([])
-                            //cargarTablaAutos();
-                            modotablaProductoRelacion=false;
-                        }
-                        toast('No registra relacion alguna', "toastColorInfo");
-                    }
-                    
-                    //validacionVaciar();
-                    if(mouse){
-                        pinCarga('successFast')
-                        inputCard.forEach(input => {
-                            input.disabled=false;
-                        });
-                        buttonCard.forEach(button => {
-                            button.disabled=false;
-                        });
-                    };
-                }
-            }catch(error){
-                toast(error.message, "toastColorError");
-                console.log(error.message);
-                pinCarga('fallo');
-            }
-        }
-    
-
-        function obtenerDatosFilaSeleccionadaProductos(){
-            const gridApi = gridOptionsProductos.api;
+       
+        function obtenerDatosFilaSeleccionadaRelacionVehiculos(){
+            const gridApi = gridOptionsRelacionVehiculos.api;
             const selectedRowNode = gridApi.getSelectedNodes()[0];
             if(selectedRowNode!== undefined){
                 const selectedData = selectedRowNode.data;
@@ -592,30 +595,8 @@ gridOptionsRelacionProductos.api.setRowData([]);
             }
             return null
         }
-        function obtenerDatosFilaSeleccionadaAutos(){
-            const gridApi = gridOptionsAutos.api;
-            const selectedRowNode = gridApi.getSelectedNodes()[0];
-            if(selectedRowNode!== undefined){
-                const selectedData = selectedRowNode.data;
-                //console.log(selectedData)
-                return selectedData;
-            }
-            return null
-        }
-
-
         function obtenerDatosFilaSeleccionadaRelacionProductos(){
             const gridApi = gridOptionsRelacionProductos.api;
-            const selectedRowNode = gridApi.getSelectedNodes()[0];
-            if(selectedRowNode!== undefined){
-                const selectedData = selectedRowNode.data;
-                //console.log(selectedData)
-                return selectedData;
-            }
-            return null
-        }
-        function obtenerDatosFilaSeleccionadaRelacionAutos(){
-            const gridApi = gridOptionsRelacionAutos.api;
             const selectedRowNode = gridApi.getSelectedNodes()[0];
             if(selectedRowNode!== undefined){
                 const selectedData = selectedRowNode.data;
@@ -633,19 +614,19 @@ gridOptionsRelacionProductos.api.setRowData([]);
 
         function construirModal(numeroModal){
             const titulo = ['Eliminar relacion','Eliminar relacion','Nueva relacion'];
+            let dataVehiculo = -1;
             let dataProducto = -1;
-            let dataAuto = -1;
-            if(numeroModal==0){
-                dataProducto =   obtenerDatosFilaSeleccionadaProductos()
-                dataAuto =     obtenerDatosFilaSeleccionadaRelacionAutos()
-            }
-            if(numeroModal==1){
-                dataProducto =   obtenerDatosFilaSeleccionadaRelacionProductos()
-                dataAuto =     obtenerDatosFilaSeleccionadaAutos()
-            }
-            if(numeroModal==2){
-                dataProducto = obtenerDatosFilaSeleccionadaProductos()
-                dataAuto = obtenerDatosFilaSeleccionadaAutos()
+            if(numeroModal==0){//Seleccione un vehiculo y voy a eliminar una relacion de su producto
+                dataVehiculo =   document.getElementById("staticMarca").value.toUpperCase()+" "+document.getElementById("staticModel").value.toUpperCase()
+                +" "+document.getElementById("staticInfo").value.toUpperCase();
+                dataProducto =     obtenerDatosFilaSeleccionadaRelacionProductos()
+            }else if(numeroModal==1){
+                dataVehiculo =   obtenerDatosFilaSeleccionadaRelacionVehiculos()
+                dataProducto =     document.getElementById("staticProducto").value.toUpperCase();
+            }else if(numeroModal==2){
+                dataVehiculo = document.getElementById("staticMarca").value.toUpperCase()+" "+document.getElementById("staticModel").value.toUpperCase()
+                +" "+document.getElementById("staticInfo").value.toUpperCase();
+                dataProducto = document.getElementById("staticProducto").value;
             }
             
 
@@ -660,11 +641,11 @@ gridOptionsRelacionProductos.api.setRowData([]);
             //INPUT: elemento P
             const textoP = document.createElement('P');
             textoP.classList.add('card-title');
-            //rowIdProducto rowIdRelacionAuto
-            //rowIdRelacionProducto rowIdAuto
-            if(numeroModal == 0)textoP.textContent='¿"'+dataProducto.producto+'" es un repuesto para: "'+dataAuto.marca+' '+dataAuto.modelo+' '+dataAuto.info+'"\n, desea Destruir esta relacion?';
-            if(numeroModal == 1)textoP.textContent='¿"'+dataProducto.producto+'" es un repuesto para: "'+dataAuto.marca+' '+dataAuto.modelo+' '+dataAuto.info+'"\n, desea Destruir esta relacion?';
-            if(numeroModal == 2)textoP.textContent='¿"'+dataProducto.producto+'" es un repuesto para: "'+dataAuto.marca+' '+dataAuto.modelo+' '+dataAuto.info+'" ?';
+            
+            if(numeroModal == 0)textoP.textContent='¿"'+dataVehiculo+'" es compatible con el sgt producto: "'+dataProducto.producto+'"\n, desea destruir esta relacion?';
+            if(numeroModal == 1)textoP.textContent='¿"'+dataVehiculo.marca+' '+dataVehiculo.modelo+' '+dataVehiculo.info+' '+
+                                '" es compatible con el sgt producto: "'+dataProducto+'"\n, desea destruir esta relacion?';
+            if(numeroModal == 2)textoP.textContent='¿El vehiculo "'+dataVehiculo+'" es compatible con el siguiente producto: "'+dataProducto+'" ?';
             modalBody.insertBefore(textoP,modalBody.firstChild);
 
             //BUTTON 1
@@ -694,10 +675,8 @@ gridOptionsRelacionProductos.api.setRowData([]);
             //Ejecutar funcion
             if(conectado()){
                 pinCarga('cargando');
-                //rowIdProducto rowIdRelacionAuto
-                //rowIdRelacionProducto rowIdAuto
-                if(btnConfirmar.value==0)eliminarRelacion(rowIdProducto,rowIdRelacionAuto);
-                if(btnConfirmar.value==1)eliminarRelacion(rowIdRelacionProducto,rowIdAuto);
+                
+                if(btnConfirmar.value!=2)eliminarRelacion();
                 if(btnConfirmar.value==2)nuevaRelacion();
 
             }
@@ -739,172 +718,44 @@ gridOptionsRelacionProductos.api.setRowData([]);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BOTONES PRINCIPALES
 
 
-        
-        //------------------------------------------------------------------------------------ btn PRODUCTO RELACION NUEVA
 
-        const btnProductoRelacionNueva = document.getElementById('btn-ProductoRelacionar');
+        //------------------------------------------------------------------------------------ btn Relacion nueva
+
+        const btnRelacionNueva = document.getElementById('btn-Relacionar');
 
         
-        btnProductoRelacionNueva.addEventListener('click',()=>{
-            
-            if(rowIdProducto!==null && rowIdAuto!==null){
-                //console.log('CREANDO RELACION');
-                //console.log('idCliente: '+rowIdProducto);
-                //console.log('idPlaca: '+rowIdAuto);
+        btnRelacionNueva.addEventListener('click',()=>{
+            console.log("Id del cliente: "+rowIdProducto);
+            console.log("Id de placa: "+rowIdVehiculo);
+            if(rowIdProducto!==null && rowIdVehiculo!==null){
                 construirModal(2);
                 ejecutarAnimacion();
             }else{
-                toast("Seleccione un producto y un auto!", "toastColorError");
+                toast("Seleccione un cliente y un vehiculo!", "toastColorError");
             }
         });
-
-        //------------------------------------------------------------------------------------ btn AUTO RELACION NUEVA
-
-        const btnAutoRelacionNueva = document.getElementById('btn-AutoRelacionar');
-        //btnAutoRelacionNueva.disabled=true;
         
-        btnAutoRelacionNueva.addEventListener('click',()=>{
-            
-            if(rowIdProducto!==null && rowIdAuto!==null){
-                construirModal(2);
-                ejecutarAnimacion();
-            }else{
-                toast("Seleccione un producto y un auto!", "toastColorError");
-            }
+
+        //------------------------------------------------------------------------------------ btn Buscar Cliente
+
+        const btnbuscarVehiculo = document.getElementById("btn-BuscarVehiculo");
+
+        btnbuscarVehiculo.addEventListener('click',()=>{
+            const id = document.getElementById("Datos-Id-Vehiculo").value;
+            buscarVehiculo(id);
         });
 
 
+        //------------------------------------------------------------------------------------ btn Buscar Placa
 
+        const btnBuscarPlaca = document.getElementById("btn-BuscarProducto");
 
-        //------------------------------------------------------------------------------------ btn PRODUCTO RELACION ELIMINAR
-
-        const btnProductoRelacionEliminar = document.getElementById('btn-ProductoEliminarRelacion');
-
+        btnBuscarPlaca.addEventListener('click',()=>{
+            const nom_producto = document.getElementById("Datos-Id-Producto").value;
+            buscarProducto(nom_producto);
+        });
         
-        btnProductoRelacionEliminar.addEventListener('click',()=>{
-            
-            if(rowIdProducto!==null && rowIdRelacionAuto!==null){
-                construirModal(0);
-                ejecutarAnimacion();
-            }else{
-                toast("Seleccione un producto y un auto!", "toastColorError");
-            }
-        });
 
-        //------------------------------------------------------------------------------------ btn AUTO RELACION ELIMINAR
-
-        const btnAutoRelacionEliminar = document.getElementById('btn-AutoEliminarRelacion');
-
-        
-        btnAutoRelacionEliminar.addEventListener('click',()=>{
-            
-            if(rowIdRelacionProducto!==null && rowIdAuto!==null){
-                construirModal(1);
-                ejecutarAnimacion();
-            }else{
-                toast("Seleccione un producto y un auto!", "toastColorError");
-            }
-
-        });
-
-
-
-
-
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FUNCIONES PRINCIPALES
-
-
-
-
-
-        //---------------------------------------------- NUEVA RELACION
-
-        async function nuevaRelacion(){
-            pinCarga('cargando');
-            await fetch('/createRelacionPA',{
-                method: 'POST',
-                body: JSON.stringify({
-                    id_producto:rowIdProducto,
-                    id_auto:rowIdAuto
-                }),
-                headers:{
-                    'Content-Type':'application/json'
-                }
-            })
-            .then(response =>{
-                if(!response.ok){
-                    toast(response.status, "toastColorError");
-                    throw new Error('Servidor - '+response.status+': '+response.statusText);
-                }
-                return response.json();
-            })
-            .then(async res =>{
-                if(!(await res[1])){
-                    console.log(!(await res[1]))
-                    throw new Error('Ya existe esta relacion!');
-                }else{
-                    cerrarModal();
-                    toast("Relacion Creada", "toastColorSuccess");
-                    pinCarga('success');
-                }
-            }).catch(error =>{
-                toast(error.message, "toastColorError");
-                pinCarga('fallo');
-            })
-            
-            
-            setTimeout(()=>{
-                btnConfirmar.disabled=false;
-            },600);
-            
-        }
-
-
-
-
-        //---------------------------------------------- ELIMINAR RELACION
-        //rowIdProducto rowIdRelacionAuto
-        //rowIdRelacionProducto rowIdAuto
-        async function eliminarRelacion(id_producto,id_auto){
-            pinCarga('cargando');
-            await fetch('/deleteRelacionPA',{
-                method: 'DELETE',
-                body: JSON.stringify({
-                    id_producto:id_producto,
-                    id_auto:id_auto
-                }),
-                headers:{
-                    'Content-Type':'application/json'
-                }
-            })
-            .then(response =>{
-                console.log(response)
-                if(!response.ok){//Error del servidor
-                    throw new Error('Servidor - '+response.status+': '+response.statusText);
-                }
-                if(response.status===404){//No encontro relacion a eliminar
-                    toast('Relacion no existe!', "toastColorError");
-                    
-                }
-                if(response.status===204){//Relacion destruida!
-                    toast("Relacion Destruida", "toastColorSuccess");
-                }
-                cerrarModal();
-                pinCarga('success');
-                return response;
-                
-            }).catch(error =>{
-                toast(error.message, "toastColorError");
-                pinCarga('fallo');
-                return null;
-            })            
-            
-            setTimeout(()=>{
-                btnConfirmar.disabled=false;
-            },600);
-            
-        }
 
 
 
@@ -918,7 +769,7 @@ gridOptionsRelacionProductos.api.setRowData([]);
             e.preventDefault();
             //obtenerDatos();
 
-            gridOptionsProductos.api.deselectAll();
+            gridOptionsClientes.api.deselectAll();
             
 
         });

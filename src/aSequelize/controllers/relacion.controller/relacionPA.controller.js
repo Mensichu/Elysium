@@ -32,14 +32,12 @@ export const createRelacionPA = async (req,res) =>{
 export const deleteRelacionPA = async (req,res)=>{
 
     try{
+        const {id} = req.params;
         const relacion = await tablaRegistroProductoAuto.findOne({
             where:
-            [
-                {
-                    id_producto:req.body.id_producto,
-                    id_auto:req.body.id_auto
-                }
-            ]
+            {
+                id
+            }
         });
         if(relacion!==null){
             await relacion.destroy();

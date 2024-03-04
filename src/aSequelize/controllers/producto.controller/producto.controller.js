@@ -1,3 +1,4 @@
+import {tablaMarca} from '../../models/Auto/tablaMarca';
 import {tablaProducto} from '../../models/Productos/tablaProducto';
 import {tablaProveedor} from '../../models/Pedidos/tablaProveedor';
 import {tablaProductoSeccion} from '../../models/Productos/tablaProductoSeccion';
@@ -211,3 +212,56 @@ export const getProductoSubgrupo = async (req,res) =>{
     }
 }
 */
+
+
+
+//Relaciones
+
+
+
+export const getProductoByData = async (req,res)=>{
+    const {id} = req.params;
+    try{
+        const producto = await tablaProducto.findOne({
+            where:{id:id},
+            attributes:['id','marca','nom_producto'],
+        });
+        console.log(req.params);
+        if (producto!==null){
+            //res.json(client);
+            // Obtener los registros del vehiculo
+            const registros = await producto.getRegistros();
+            //console.log("ESTOS SON LOS REGISTROS DEL VEHICULO");
+            //console.log(registros[0].dataValues.id)
+            // Mapear los registros para obtener la información de la placa
+            const autos = await Promise.all(registros.map(async registro => {
+                console.log("REGISTRO")
+                console.log(registro.dataValues.id)
+                const auto = await registro.getAuto({
+                    attributes: ['id','nom_auto', 'ano', 'cilindraje','combustible'],
+                    include: [
+                        {
+                        model: tablaMarca,
+                        attributes: ['nom_marca','alias'],
+                        }
+                    ]
+
+                });
+                const autoConIdRelacion = {
+                    ...auto.toJSON(),
+                    id_relacion: registro.dataValues.id
+                };
+                return autoConIdRelacion;
+            }));
+            // Agregar la información de la placa al objeto del cliente
+            const productoConAutos = producto.toJSON();
+            productoConAutos.autos = autos;
+            res.json(productoConAutos);
+        }else{
+            res.status(404).json({message: 'auto not found'});
+        }
+    }catch(error){
+        return res.status(500).json({message:error.message});
+    }
+    
+}

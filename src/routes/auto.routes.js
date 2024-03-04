@@ -1,6 +1,6 @@
 import {Router} from 'express'
 import {createMarca,getMarcas,getComboMarcas, updateMarca,updateMarcaAlias,deleteMarca,getMarcaById, getMarcasRepetidas,
-        createAuto,getAutos,getComboAutosUnico,getDatasource,updateAuto,updateNomAuto,deleteAuto,getAutoById,getMarcaAutos, getAutosRepetidos, getTablaAutos} 
+        createAuto,getAutos,getComboAutosUnico,getDatasource,updateAuto,updateNomAuto,deleteAuto,getAutoById,getMarcaAutos, getAutosRepetidos, getTablaAutos, getAutoByData} 
         from '../aSequelize/controllers/auto.controller/auto.controller'
 
 const router = Router();
@@ -42,6 +42,8 @@ router.delete('/auto/:id',deleteAuto);
 router.put('/nomAuto/:id',updateNomAuto);
 
 router.get('/auto/:id',getAutoById);
+
+router.get('/autoByData/:id',getAutoByData);
 
 router.get('/autosRepetidos',getAutosRepetidos);
 

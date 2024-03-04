@@ -3,143 +3,145 @@
 
 
 <div id="fondo" class="showDelay mt-4" stylea="padding: 10px; border:2px black solid">
-    <div class="container-fluid">
+    <div class="container-fluid" style=" max-width: 1800px">
         <div class="row" style="justify-content: center;">
-            <!-------------------------------TABLAS------------------------------------>
+            <!-------------------------------PRODUCTOS------------------------------------>
             <!------------------------------------------------------------------------->
-            <div class="col-12 col-md-6 contenedor contenedorIzquierdo">
-                <!--TABLA CLIENTES-->
-                <div class="tablaPrincipal">
-                    
-                        <div class="card text-white " style="height: 100%;">
-                        <div class="card-header d-flex justify-content-between align-items-center" style="padding: 0;padding-top: 3px;padding-bottom: 3px;">
-                            <h5 id="tituloHeaderA" style="margin-left: 10px;margin-top: 5px; ">Tabla de Productos</h5>
-                            <div>
-                                <button class="btn btnColor" style="margin-left: 3px;margin-right: 3px; " 
-                                id="btn-ProductoRelacionar">Nueva relacion</button>
+            <div class="col-12 col-md-4  contenedor contenedorIzquierdo">
+                <div class="card">
+                    <!--CARD PRODUCTOS-->
+                    <h5 class="card-header">Producto</h5>
+                    <div id="card-body-producto" class="card-body form-group">
+                        <label class="form-label mt-2 labelsColor" for="Datos-Id-Producto">Id:</label>
+                        <div class="input-group">
+                            <input type="search" id="Datos-Id-Producto" class="form-control form-input respIdentificacionLabel" name="Id-Producto" 
+                                                placeholder="Id del producto" minlength="1"maxlength="15" style="width: auto">
+                            <button class="btn btn-info " type="button" id="btn-BuscarProducto" >Buscar</button>
+                        </div>
+                        <div class="invalid-feedback">Texto incorrecto!</div>
+                        <hr>
+                        <div class="form-group d-flex" >
+                            <label for="staticId" class="col-sm-2 col-form-label"style="min-width:102px">Id</label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly="" class="form-control-plaintext" id="staticId" value="_">
                             </div>
                         </div>
-                        
-                        <div class="card-body tablaModeloBodys">
-                            <div class="diseñoTablaGrid" style="height:100%">
-                                    <div id="myGridProductos" class="ag-theme-alpine-dark" style="height: 100%"></div>
+
+                        <div class="form-group d-flex" >
+                            <label for="staticMarcaProducto" class="col-sm-2 col-form-label"style="min-width:102px">Marca</label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly="" class="form-control-plaintext" id="staticMarcaProducto" value="_">
                             </div>
                         </div>
+
+                        <div class="form-group d-flex" >
+                            <label for="staticProducto" class="col-sm-2 col-form-label"style="min-width:102px">Producto</label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly="" class="form-control-plaintext" id="staticProducto" value="_">
+                            </div>
+                        </div>
+
+
                     </div>
-                    
+
                 </div>
-                <!--TABLA RELACION-->
-                <div class="tablaRelacion">
-                        <div class="card text-white " style="height: 100%;">
-                            <div class="card-header colorHeaderRelacion d-flex justify-content-between align-items-center" style="padding: 0;padding-top: 3px;padding-bottom: 3px;">
-                                <h6 id="titulo-Producto-Autos" style="margin-left: 10px;margin-top: 5px; ">Producto: autos</h6>
-                                <div>
-                                    <button class="btn btnColor2" style="margin-left: 3px;margin-right: 3px; " 
-                                    id="btn-ProductoEliminarRelacion">Eliminar</button>
-                                </div>
-                            </div>
-                            <div class="card-body colorBodyRelacion tablaModeloBodys">
-                                <div class="diseñoTablaGrid" style="height:100%">
-                                        <div id="myGridRelacionAutos" class="ag-theme-alpine-dark" style="height: 100%"></div>
-                                </div>
-                            </div>
-                        </div>
-                </div>
+                
             </div>
 
             
-            <!-------------------------------TABLAS------------------------------------>
+
+            
+            <!-------------------------------VEHICULOS------------------------------------>
             <!------------------------------------------------------------------------->
-            <div class="col-12 col-md-6 contenedor">
-                <!--TABLA CLIENTES-->
-                <div class="tablaPrincipal">
-                    
-                        <div class="card text-white " style="height: 100%;">
-                        <div class="card-header d-flex justify-content-between align-items-center" style="padding: 0;padding-top: 3px;padding-bottom: 3px;">
-                            <h5 id="tituloHeaderB" style="margin-left: 10px;margin-top: 5px; ">Tabla de Autos</h5>
-                            <div>
-                                <button class="btn btnColor" style="margin-left: 3px;margin-right: 3px; " 
-                                id="btn-AutoRelacionar">Nueva relacion</button>
+            <div class="col-12 col-md-4 contenedor">
+                <div class="card">
+                    <!--CARD VEHICULOS-->
+                    <h5 class="card-header">Vehiculo</h5>
+                    <div id="card-body-vehiculo" class="card-body form-group">
+                        <label class="form-label mt-2 labelsColor" for="Datos-Placa">Id:</label>
+                        <div class="input-group">
+                            <input type="search" id="Datos-Id-Vehiculo" class="form-control form-input respPlacaLabel" name="Id-Vehiculo" 
+                                                placeholder="Id del vehiculo" minlength="1"maxlength="15" style="width: auto">
+                            <button class="btn btn-info " type="button" id="btn-BuscarVehiculo" >Buscar</button>
+                        </div>
+                        <div class="invalid-feedback">Texto incorrecto!</div>
+                        <hr>
+
+                        <div class="form-group d-flex">
+                            <label for="staticMarca" class="col-sm-2 col-form-label"style="min-width:86px">Marca</label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly="" class="form-control-plaintext" id="staticMarca" value="_">
                             </div>
                         </div>
-                        
-                        <div class="card-body tablaModeloBodys">
-                            <div class="diseñoTablaGrid" style="height:100%">
-                                    <div id="myGridAutos" class="ag-theme-alpine-dark" style="height: 100%"></div>
+
+                        <div class="form-group d-flex">
+                            <label for="staticModel" class="col-sm-2 col-form-label"style="min-width:86px">Modelo</label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly="" class="form-control-plaintext" id="staticModel" value="_">
                             </div>
                         </div>
+
+                        <div class="form-group d-flex">
+                            <label for="staticInfo" class="col-sm-2 col-form-label"style="min-width:86px">Info</label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly="" class="form-control-plaintext" id="staticInfo" value="_">
+                            </div>
+                        </div>
+
                     </div>
+
+                    
+                        
                     
                 </div>
-                <!--TABLA RELACION-->
-                <div class="tablaRelacion">
-                        <div class="card text-white " style="height: 100%;">
-                            <div class="card-header colorHeaderRelacion d-flex justify-content-between align-items-center" style="padding: 0;padding-top: 3px;padding-bottom: 3px;">
-                                <h6 id="titulo-Auto-Productos" style="margin-left: 10px;margin-top: 5px; ">Auto: productos</h6>
-                                <div>
-                                    <button class="btn btnColor2" style="margin-left: 3px;margin-right: 3px; " 
-                                    id="btn-AutoEliminarRelacion">Eliminar</button>
-                                </div>
-                            </div>
-                            <div class="card-body colorBodyRelacion tablaModeloBodys">
-                                <div class="diseñoTablaGrid" style="height:100%">
-                                        <div id="myGridRelacionProductos" class="ag-theme-alpine-dark" style="height: 100%"></div>
-                                </div>
-                            </div>
-                        </div>
-                </div>
+                
             </div>
 
-
-
-
-
-
-
-<!--
-
-
-            <div class="col-12 col-md-6">
-                <div class="card text-white ">
+            <div class="col-12 col-md-8 text-center">
+                <button class="btn btnColor" style="margin-top: 10px;margin-bottom: 10px; "
+                id="btn-Relacionar">Nueva relacion</button>
+            </div>
+            
+            
+            
+            
+            
+            <!-------------------------------TABLAS------------------------------------>
+            <!------------------------------------------------------------------------->
+            <div class="col-12 col-md-8 tablaPrincipal">
+                
+                    <div class="card text-white " style="height: 100%;">
                     <div class="card-header d-flex justify-content-between align-items-center" style="padding: 0;padding-top: 3px;padding-bottom: 3px;">
-                        <h6 id="tituloHeader" style="margin-left: 10px;margin-top: 5px; ">Tabla de Placas</h6>
-                        <div>
-                            <div class="orientacionDivs form-group" >
-                                <button class="btn btnColor"  id="btn-PlacasTodos">Todos</button>
-                                <button class="btn btnColor" style="margin-left: 3px;margin-right: 3px; " id="btn-PlacasCancelar">Cancelar</button>
-                            </div>
-                        </div>
+                        <h5 id="tituloHeaderRelacion" style="margin-left: 10px;margin-top: 5px; ">Tabla Relacional</h5>
                     </div>
-                    <div class="card-body tablaModeloBody">
-                        <div class="diseñoTablaGrid" style="height:100%">
-                                <div id="myGridPlacas" class="ag-theme-alpine-dark" style="height: 100%"></div>
+                    
+                    <div class="card-body tablaModeloBodys">
+                        <div class="diseñoTablaGrid" style="height:500px">
+                                <div id="myGridRelacion" class="ag-theme-alpine-dark" style="height: 100%"></div>
                         </div>
                     </div>
                 </div>
+                
             </div>
-        </div>
-
--->
 
 
 
+
+            <button id="btnPrueba" style="display:none">Prueba</button>
         
+        
+        
+            <div class="firma" style="display: none;">
+                <figure>
+                    <figcaption class="blockquote-footer">
+                Developed by <cite title="Source Title">Alex Carangui</cite>
+                </figcaption>
+                </figure>   
+                
+            </div>
 
-        <button id="btnPrueba" style="display:none">Prueba</button>
-    
-    
-    
-        <div class="firma" style="display: none;">
-            <figure>
-                <figcaption class="blockquote-footer">
-            Developed by <cite title="Source Title">Alex Carangui</cite>
-            </figcaption>
-            </figure>   
-            
+
         </div>
-
-
-    </div>
 
 
     <div id="myModal" class="modal">
